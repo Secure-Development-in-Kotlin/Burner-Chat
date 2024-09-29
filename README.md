@@ -1,2 +1,2 @@
 # Lunar-Chat
-Lunar Chat
+Lunar Chat application
