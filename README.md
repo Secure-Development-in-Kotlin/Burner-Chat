@@ -15,4 +15,4 @@ No será necesario un número de teléfono, sino que se generará un nombre de u
 <img src="https://github.com/user-attachments/assets/630363dd-93f2-4639-85cc-5e6f08a71251" width="50%" height="50%"/>
 
 ## Diagrama del modelo de datos
-<img src="./assets/diagrama_modelo_datos.jpeg" width="75%" height="75%"/>
+<img src="./assets/diagrama_modelo_datos.jpeg" width="100%" height="100%"/>
