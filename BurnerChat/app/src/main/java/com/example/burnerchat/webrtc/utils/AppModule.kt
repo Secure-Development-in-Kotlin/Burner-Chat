@@ -1,4 +1,4 @@
-package com.example.burnerchat.utils
+package com.example.burnerchat.webrtc.utils
 
 import android.content.Context
 import com.google.gson.Gson

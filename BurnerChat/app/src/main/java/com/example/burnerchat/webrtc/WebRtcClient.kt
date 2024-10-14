@@ -1,8 +1,8 @@
 package com.example.burnerchat.webrtc
 
 import android.content.Context
-import com.example.burnerchat.utils.DataModel
-import com.example.burnerchat.utils.DataModelType
+import com.example.burnerchat.webrtc.utils.DataModel
+import com.example.burnerchat.webrtc.utils.DataModelType
 import com.google.gson.Gson
 import org.webrtc.*
 import org.webrtc.PeerConnection.Observer
@@ -54,14 +54,13 @@ class WebRtcClient @Inject constructor(
         initPeerConnectionFacory(context)
     }
 
-    fun initializeWebRtcClient(
-        username:String, view: SurfaceViewRenderer, observer: Observer
-    ){
+    fun initializeWebrtcClient(
+        username: String, observer: Observer
+    ) {
         this.username = username
         this.observer = observer
-
         peerConnection = createPeerConnection(observer)
-        createDataChannel() // The data channel is created before making our call
+        createDataChannel()
     }
 
     private fun createDataChannel() {

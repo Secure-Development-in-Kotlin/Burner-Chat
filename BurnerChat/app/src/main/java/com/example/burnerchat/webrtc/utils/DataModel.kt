@@ -1,4 +1,4 @@
-package com.example.burnerchat.utils
+package com.example.burnerchat.webrtc.utils
 
 data class DataModel(
     val type: DataModelType?=null,
@@ -8,5 +8,5 @@ data class DataModel(
 )
 
 enum class DataModelType {
-    SignIn, StartStreaming, EndCall, Offer, Answer, IceCandidates
+    SignIn, StartConnection, Offer, Answer, IceCandidates
 }

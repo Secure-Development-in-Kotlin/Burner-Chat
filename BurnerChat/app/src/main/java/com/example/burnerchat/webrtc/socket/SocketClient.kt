@@ -1,7 +1,7 @@
-package com.example.burnerchat.socket
+package com.example.burnerchat.webrtc.socket
 
-import com.example.burnerchat.utils.DataModel
-import com.example.burnerchat.utils.DataModelType
+import com.example.burnerchat.webrtc.utils.DataModel
+import com.example.burnerchat.webrtc.utils.DataModelType
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -23,8 +23,9 @@ class SocketClient @Inject constructor(
 
     companion object {
         private var webSocket : WebSocketClient?=null
-        var listener : Listener?=null
     }
+
+    var listener : Listener?=null
 
     fun init(username:String){
         this.username = username
@@ -79,6 +80,6 @@ class SocketClient @Inject constructor(
     }
 
     interface Listener{
-        fun onNewMessageReceived(model: Any)
+        fun onNewMessageReceived(model: DataModel)
     }
 }
