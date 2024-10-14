@@ -16,7 +16,7 @@ class LoginActivity : AppCompatActivity() {
 
         views.enterBtn.setOnClickListener {
             if (views.usernameEt.text.isNullOrEmpty()) {
-                Toast.makeText(this, "Please fill the username", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "please fill the username", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 

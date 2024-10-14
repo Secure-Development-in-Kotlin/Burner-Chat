@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -9,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.burnerchat"
-        minSdk = 21  // Cambia a 21 o la mínima que necesites
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -43,18 +45,19 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.activity)
+    implementation(libs.androidx.core.ktx.v170)
+    implementation(libs.androidx.appcompat.v161)
+    implementation(libs.material.v190)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.media3.common.ktx)
+    testImplementation(libs.junit.v4132)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 
     // For WebRTC
-    implementation(libs.webrtc)
     implementation(libs.gson)
-    implementation(libs.hilt.android)
-    implementation(libs.hilt.compiler)
+    implementation(libs.webrtc)
+    implementation(libs.hilt.android.v244)
+    kapt(libs.hilt.compiler.v244)
     implementation(libs.java.websocket)
     implementation(libs.glide)
 }

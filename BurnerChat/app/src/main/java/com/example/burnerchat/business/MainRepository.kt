@@ -53,7 +53,6 @@ class MainRepository @Inject constructor(
                 dataChannel = p0
                 listener?.onDataChannelReceived()
             }
-
         })
     }
 
@@ -78,6 +77,23 @@ class MainRepository @Inject constructor(
     // The comunication begins between two peers
     fun startCall(target: String){
         webRtcClient.call(target)
+    }
+
+    /*
+    fun sendTextToDataChannel(text:String){
+        sendBufferToDataChannel(DataConverter.convertToBuffer(FileMetaDataType.META_DATA_TEXT,text))
+        sendBufferToDataChannel(DataConverter.convertToBuffer(FileMetaDataType.TEXT,text))
+    }
+
+    fun sendImageToChannel(path:String){
+        sendBufferToDataChannel(DataConverter.convertToBuffer(FileMetaDataType.META_DATA_IMAGE,path))
+        sendBufferToDataChannel(DataConverter.convertToBuffer(FileMetaDataType.IMAGE,path))
+    }
+     */
+
+    private fun sendBufferToDataChannel(buffer: DataChannel.Buffer){
+        dataChannel?.send(buffer)
+
     }
 
     override fun onNewMessageReceived(model: DataModel) {

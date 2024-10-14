@@ -3,42 +3,37 @@ package com.example.burnerchat.views
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.example.burnerchat.business.MainRepository
-import com.example.burnerchat.databinding.ActivityLoginBinding
 import com.example.burnerchat.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 import org.webrtc.DataChannel
 import javax.inject.Inject
 
 // ESTA CLASE HA SIDO MODIFICADA PARA SER TOMADA COMO EJEMPLO PARA UTILIZAR WEBRTC CON LA CAPA DE NEGOCIO
 // TODO: Cambiar esta clase por la que correspondería
+@AndroidEntryPoint // Important for using Hilt
 class MainActivity : AppCompatActivity(), MainRepository.Listener {
 
     private var username : String?=null
 
-    @Inject lateinit var mainRepository: MainRepository // Here we initialize the business layout
+    @Inject
+    lateinit var mainRepository: MainRepository // Here we initialize the business layout
 
     private lateinit var views: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /*
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-         */
-        views = LoginActivity.inflate(layoutInflater)
+        views = ActivityMainBinding.inflate(layoutInflater)
         setContentView(views.root)
         init()
     }
 
     private fun init(){
         username = intent.getStringExtra("username")
-        if(username.isNullOrEmpty())
+        if(username.isNullOrEmpty()) {
             finish()
+        }
 
         mainRepository.listener = this
         mainRepository.init(username!!)
@@ -58,15 +53,46 @@ class MainActivity : AppCompatActivity(), MainRepository.Listener {
             sendImageButton.setOnClickListener{
                 //TODO: ME QUEDÉ POR AQUÍ <---------------------------------------------------3
             }
+            // Sending Text button
+            sendTextButton.setOnClickListener{
+                TODO("Not yet implemented")
+            }
+
+            // Sending Image (open the gallery)
+            sendingImageView.setOnClickListener{
+                TODO("Not yet implemented")
+            }
         }
     }
 
     override fun onConnectionRequestReceived(target: String) {
-        TODO("Not yet implemented")
+        runOnUiThread{
+            views.apply {
+                requestLayout.isVisible = false
+                notificationLayout.isVisible = true
+                // If the connection is accepted then the comunication between two peers start
+                notificationAcceptBtn.setOnClickListener{
+                    mainRepository.startCall(target)
+                    notificationLayout.isVisible = false
+                }
+                // If the connection is declined the pending requests view is visible again
+                notificationDeclineBtn.setOnClickListener{
+                    notificationLayout.isVisible = false
+                    requestLayout.isVisible = true
+                }
+            }
+        }
     }
 
+    // Once the connection is stablished, the layouts to receive and send data become visible
     override fun onDataChannelReceived() {
-        TODO("Not yet implemented")
+        runOnUiThread{
+            views.apply {
+                requestLayout.isVisible = false
+                receivedDataLayout.isVisible = true
+                sendDataLayout.isVisible = true
+            }
+        }
     }
 
     override fun onDatareceivedFromChannel(it: DataChannel.Buffer) {
