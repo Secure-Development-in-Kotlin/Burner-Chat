@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "BurnerChat"
+rootProject.name = "Burner Chat"
 include(":app")
