@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.burnerchat"
-        minSdk = 34
+        minSdk = 21  // Cambia a 21 o la mínima que necesites
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -26,23 +26,30 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.media3.common.ktx)
+
+    // For WebRTC
+    implementation(libs.webrtc)
+    implementation(libs.gson)
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.compiler)
+    implementation(libs.java.websocket)
+    implementation(libs.glide)
 }
