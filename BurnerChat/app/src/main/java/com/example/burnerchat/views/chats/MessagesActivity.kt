@@ -1,36 +1,17 @@
-package com.example.burnerchat
+package com.example.burnerchat.views.chats
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.burnerchat.views.chats.ChatsView
+import com.example.burnerchat.R
 
-class MainActivity : AppCompatActivity() {
-
-    //LogIn button
-    private lateinit var btLogIn : Button
-
-    /**
-     * Initalizes all components
-     */
-    private fun initComponents(){
-        btLogIn = findViewById(R.id.btLogin)
-        val intent = Intent(applicationContext, ChatsView::class.java)
-        btLogIn.setOnClickListener(){
-
-            startActivity(intent)
-        }
-    }
-
+class MessagesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        initComponents()
+        setContentView(R.layout.activity_messages)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)

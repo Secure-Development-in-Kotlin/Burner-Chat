@@ -13,6 +13,12 @@
         android:theme="@style/Theme.BurnerChat"
         tools:targetApi="31">
         <activity
+            android:name=".views.chats.MessagesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.chats.ChatsView"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
