@@ -40,9 +40,12 @@ class WebRtcClient @Inject constructor(
 
     // It is important to use TCP because UDP packets are usually blocked in internal networks
     private val iceServer = listOf(
-        PeerConnection.IceServer.builder("turn:openrelay.metered.ca:443?transport=tcp")
-            .setUsername("openrelayproject").setPassword("openrelayproject").createIceServer()
+        PeerConnection.IceServer.builder("turn:192.168.1.61:3478?transport=tcp")
+            .setUsername("burnerchat")
+            .setPassword("burnerchat")
+            .createIceServer()
     )
+
 
     // For the SdpObserver
     private val mediaConstraint = MediaConstraints().apply {

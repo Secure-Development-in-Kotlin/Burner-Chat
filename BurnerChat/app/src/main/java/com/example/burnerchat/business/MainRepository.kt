@@ -1,5 +1,6 @@
 package com.example.burnerchat.business
 
+import android.util.Log
 import com.example.burnerchat.webrtc.socket.SocketClient
 import com.example.burnerchat.webrtc.MyPeerObserver
 import com.example.burnerchat.webrtc.WebRtcClient
@@ -52,6 +53,7 @@ class MainRepository @Inject constructor(
             }
 
             override fun onDataChannel(p0: DataChannel?) {
+                Log.d("MainRepository", "Llega a establecer el canal")
                 super.onDataChannel(p0)
                 dataChannel = p0
                 listener?.onDataChannelReceived()

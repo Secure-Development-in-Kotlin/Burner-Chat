@@ -3,6 +3,7 @@ package com.example.burnerchat.views
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -131,8 +132,10 @@ class MainActivity : AppCompatActivity(), MainRepository.Listener {
             views.apply {
                 requestLayout.isVisible = false
                 notificationLayout.isVisible = true
+                Log.d("MainActivity", "Notification layout visible for target: $target")
                 // If the connection is accepted then the comunication between two peers start
                 notificationAcceptBtn.setOnClickListener {
+                    Log.d("MainActivity", "Connection accepted with target: $target")
                     mainRepository.startCall(target)
                     notificationLayout.isVisible = false
                 }
@@ -149,6 +152,7 @@ class MainActivity : AppCompatActivity(), MainRepository.Listener {
     override fun onDataChannelReceived() {
         runOnUiThread{
             views.apply {
+                Log.d("MainActivity", "Llega a canal recibido")
                 requestLayout.isVisible = false
                 receivedDataLayout.isVisible = true
                 sendDataLayout.isVisible = true
