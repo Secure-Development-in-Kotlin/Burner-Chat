@@ -3,13 +3,16 @@ package com.example.burnerchat.business
 import com.example.burnerchat.webrtc.socket.SocketClient
 import com.example.burnerchat.webrtc.MyPeerObserver
 import com.example.burnerchat.webrtc.WebRtcClient
+import com.example.burnerchat.webrtc.utils.DataConverter
 import com.example.burnerchat.webrtc.utils.DataModel
 import com.example.burnerchat.webrtc.utils.DataModelType
+import com.example.burnerchat.webrtc.utils.FileMetaDataType
 import com.google.gson.Gson
 import org.webrtc.DataChannel
 import org.webrtc.IceCandidate
 import javax.inject.Inject
 import org.webrtc.SessionDescription
+import java.nio.ByteBuffer
 
 class MainRepository @Inject constructor(
     private val socketClient: SocketClient,
@@ -79,21 +82,25 @@ class MainRepository @Inject constructor(
         webRtcClient.call(target)
     }
 
-    /*
-    fun sendTextToDataChannel(text:String){
+    // +------------------------------------------------------------+
+    // |-------------Sending DATA functions over WebRTC-------------|
+    // +------------------------------------------------------------+
+
+    // This function is the one which sends a TextMessage type to the Data channel
+    fun sendTextToDataChannel(text: String)
+    {
         sendBufferToDataChannel(DataConverter.convertToBuffer(FileMetaDataType.META_DATA_TEXT,text))
         sendBufferToDataChannel(DataConverter.convertToBuffer(FileMetaDataType.TEXT,text))
     }
 
+    // This function is the one who sends an ImageMessage type to the Data channel
     fun sendImageToChannel(path:String){
         sendBufferToDataChannel(DataConverter.convertToBuffer(FileMetaDataType.META_DATA_IMAGE,path))
         sendBufferToDataChannel(DataConverter.convertToBuffer(FileMetaDataType.IMAGE,path))
     }
-     */
 
     private fun sendBufferToDataChannel(buffer: DataChannel.Buffer){
         dataChannel?.send(buffer)
-
     }
 
     override fun onNewMessageReceived(model: DataModel) {
@@ -140,13 +147,13 @@ class MainRepository @Inject constructor(
     }
 
     override fun onDataReceived(it: DataChannel.Buffer) {
-        listener?.onDatareceivedFromChannel(it)
+        listener?.onDataReceivedFromChannel(it)
     }
 
     // Listener to notify to the UI that something is going on behind
     interface Listener {
         fun onConnectionRequestReceived(target: String)
         fun onDataChannelReceived()// Status of our peer connection
-        fun onDatareceivedFromChannel(it: DataChannel.Buffer)
+        fun onDataReceivedFromChannel(it: DataChannel.Buffer)
     }
 }

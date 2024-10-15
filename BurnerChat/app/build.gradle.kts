@@ -45,19 +45,19 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx.v170)
-    implementation(libs.androidx.appcompat.v161)
-    implementation(libs.material.v190)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
-    testImplementation(libs.junit.v4132)
+    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
     // For WebRTC
     implementation(libs.gson)
     implementation(libs.webrtc)
-    implementation(libs.hilt.android.v244)
-    kapt(libs.hilt.compiler.v244)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
     implementation(libs.java.websocket)
     implementation(libs.glide)
 }

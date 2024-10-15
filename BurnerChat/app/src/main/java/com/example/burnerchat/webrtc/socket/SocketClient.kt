@@ -15,6 +15,7 @@ import java.net.URI
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
 @Singleton
 class SocketClient @Inject constructor(
     private val gson:Gson
@@ -29,7 +30,7 @@ class SocketClient @Inject constructor(
 
     fun init(username:String){
         this.username = username
-        webSocket = object : WebSocketClient(URI("ws://192.168.1.60:3000")) { // TODO: que no esté hardcodeada la URL
+        webSocket = object : WebSocketClient(URI("ws://192.168.1.61:3000")) { // TODO: que no esté hardcodeada la URL
             override fun onOpen(handshakedata: ServerHandshake?) {
                 // Login or Signin events
                 sendMessageToSocket(

@@ -6,8 +6,9 @@ import org.webrtc.MediaStream
 import org.webrtc.PeerConnection
 import org.webrtc.RtpReceiver
 
-open class MyPeerObserver :  PeerConnection.Observer{
+open class MyPeerObserver : PeerConnection.Observer{
     override fun onSignalingChange(p0: PeerConnection.SignalingState?) {
+
     }
 
     override fun onIceConnectionChange(p0: PeerConnection.IceConnectionState?) {
