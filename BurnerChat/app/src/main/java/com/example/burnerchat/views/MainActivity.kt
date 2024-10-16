@@ -1,183 +1,441 @@
 package com.example.burnerchat.views
 
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
-import com.bumptech.glide.Glide
-import com.example.burnerchat.R
-import com.example.burnerchat.business.MainRepository
-import com.example.burnerchat.databinding.ActivityMainBinding
-import com.example.burnerchat.webrtc.utils.DataConverter
-import com.example.burnerchat.webrtc.utils.getFilePath
-import dagger.hilt.android.AndroidEntryPoint
-import org.webrtc.DataChannel
-import java.nio.charset.Charset
-import javax.inject.Inject
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.burnerchat.business.MainActions
+import com.example.burnerchat.business.MainOneTimeEvents
+import com.example.burnerchat.business.MainScreenState
+import com.example.burnerchat.backend.MainViewModel
+import com.example.burnerchat.backend.webrtc.MessageType
+import com.example.burnerchat.views.theme.BurnerChatTheme
 
-// ESTA CLASE HA SIDO MODIFICADA PARA SER TOMADA COMO EJEMPLO PARA UTILIZAR WEBRTC CON LA CAPA DE NEGOCIO
-// TODO: Cambiar esta clase por la que correspondería
-@AndroidEntryPoint
-class MainActivity : AppCompatActivity(), MainRepository.Listener {
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 
-    private var username: String? = null
-    private var imagePathToSend:String? = null
+private const val TAG = "MainActivity"
 
-    @Inject
-    lateinit var mainRepository: MainRepository // Here we initialize the business layout
-
-    private lateinit var views: ActivityMainBinding
-
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if(isGranted){
-                //open gallery
-                pickImageLauncher.launch("image/*")
-            }else{
-                Toast.makeText(this, "we need storage permission", Toast.LENGTH_SHORT).show()
-            }
-
-        }
-
-    private val pickImageLauncher =
-        registerForActivityResult(ActivityResultContracts.GetContent()){uri ->
-            //convert the uri to real path
-            uri?.let {
-                val imagePath : String? = it.getFilePath(this)
-                if (imagePath!=null){
-                    this.imagePathToSend = imagePath
-                    Glide.with(this).load(imagePath).into(views.sendingImageView)
-                } else {
-                    Toast.makeText(this, "image was not found", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-        }
-
-    private fun openGallery(){
-        val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
-        if (ContextCompat.checkSelfPermission(
-                this,permission
-            ) != PackageManager.PERMISSION_GRANTED ) {
-            requestPermissionLauncher.launch(permission)
-        } else {
-            pickImageLauncher.launch("image/*")
-        }
-    }
-
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        views = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(views.root)
-        init()
-    }
-
-    private fun init() {
-        username = intent.getStringExtra("username")
-        if (username.isNullOrEmpty()) {
-            finish()
-        }
-
-        mainRepository.listener = this
-        mainRepository.init(username!!)
-
-        // Handle UI stuff
-        views.apply {
-            // Request connection button
-            requestBtn.setOnClickListener{
-                if(targetEt.text.toString().isEmpty()){
-                    Toast.makeText(this@MainActivity, "Please, fill up the target", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-                // Here we send the petition to the target
-                mainRepository.sendStartConnection(targetEt.text.toString())
-            }
-            // Sending Image button
-            sendImageButton.setOnClickListener {
-                if (imagePathToSend.isNullOrEmpty()){
-                    Toast.makeText(this@MainActivity, "select image first", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-                mainRepository.sendImageToChannel(imagePathToSend!!)
-                imagePathToSend = null
-                sendingImageView.setImageResource(R.drawable.ic_add_photo)
-
-            }
-            // Sending Text button
-            sendTextButton.setOnClickListener {
-                if(sendingTextEditText.text.isEmpty()){
-                    Toast.makeText(this@MainActivity, "fill send text editText", Toast.LENGTH_SHORT)
-                        .show()
-                    return@setOnClickListener
-                }
-                // If not empty, we send the text inputted by the current user to the target
-                mainRepository.sendTextToDataChannel(sendingTextEditText.text.toString())
-                sendingTextEditText.setText("")
-            }
-            // Sending Image (open the gallery)
-            sendingImageView.setOnClickListener {
-                openGallery()
-            }
-        }
-
-    }
-
-    override fun onConnectionRequestReceived(target: String) {
-        runOnUiThread{
-            views.apply {
-                requestLayout.isVisible = false
-                notificationLayout.isVisible = true
-                Log.d("MainActivity", "Notification layout visible for target: $target")
-                // If the connection is accepted then the comunication between two peers start
-                notificationAcceptBtn.setOnClickListener {
-                    Log.d("MainActivity", "Connection accepted with target: $target")
-                    mainRepository.startCall(target)
-                    notificationLayout.isVisible = false
-                }
-                // If the connection is declined the pending requests view is visible again
-                notificationDeclineBtn.setOnClickListener {
-                    notificationLayout.isVisible = false
-                    requestLayout.isVisible = true
-                }
+        setContent {
+            BurnerChatTheme {
+                MainScreen()
             }
         }
     }
+}
 
-    // Once the connection is stablished, the layouts to receive and send data become visible
-    override fun onDataChannelReceived() {
-        runOnUiThread{
-            views.apply {
-                Log.d("MainActivity", "Llega a canal recibido")
-                requestLayout.isVisible = false
-                receivedDataLayout.isVisible = true
-                sendDataLayout.isVisible = true
-            }
-        }
+@Composable
+fun <T> rememberFlowWithLifecycle(
+    flow: Flow<T>,
+    lifecycle: Lifecycle = androidx.lifecycle.compose.LocalLifecycleOwner.current.lifecycle,
+    minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
+): Flow<T> = remember(flow, lifecycle, minActiveState) {
+    flow.flowWithLifecycle(
+        lifecycle = lifecycle,
+        minActiveState = minActiveState,
+    )
+}
+
+@Composable
+fun MainScreen() {
+    val viewModel = viewModel(modelClass = MainViewModel::class.java)
+    val state by viewModel.state.collectAsState()
+    val events = rememberFlowWithLifecycle(flow = viewModel.oneTimeEvents)
+    var showIncomingRequestDialog by remember {
+        mutableStateOf(false)
     }
-
-    // Convert the data back from the MainRepository to simple text
-    override fun onDataReceivedFromChannel(it: DataChannel.Buffer) {
-        runOnUiThread {
-            val model = DataConverter.convertToModel(it)
-            model?.let {
-                when(it.first){
-                    "TEXT"->{
-                        views.receivedText.text = it.second
-                            .toString()
+    LaunchedEffect(
+        key1 = events,
+        block = {
+            events.collectLatest {
+                when (it) {
+                    is MainOneTimeEvents.GotInvite -> {
+                        showIncomingRequestDialog = true
                     }
-                    "IMAGE"->{
-                        Glide.with(this).load(it.second as Bitmap).into(
-                            views.receivedImageView
+                }
+            }
+        },
+    )
+    if (showIncomingRequestDialog) {
+        DialogForIncomingRequest(
+            onDismiss = {
+                showIncomingRequestDialog = false
+            },
+            onAccept = {
+                viewModel.dispatchAction(
+                    MainActions.AcceptIncomingConnection
+                )
+                showIncomingRequestDialog = false
+            },
+            inviteFrom = state.inComingRequestFrom,
+        )
+    }
+    HomeScreenContent(
+        state = state,
+        dispatchAction = {
+            viewModel.dispatchAction(
+                it
+            )
+        },
+    )
+}
+
+@Composable
+fun HomeScreenContent(
+    state: MainScreenState,
+    dispatchAction: (MainActions) -> Unit = {},
+) {
+    var yourName by remember {
+        mutableStateOf("")
+    }
+    var connectTo by remember {
+        mutableStateOf("")
+    }
+    var chatMessage by remember {
+        mutableStateOf("")
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                color = Color(0xFFFEFDED)
+            ),
+    ) {
+        LazyColumn(
+            content = {
+                item {
+                    if (state.peerConnectionString.isEmpty()) {
+                        Text(
+                            text = if (state.isConnectedToServer)
+                                "Connected to server as ${state.connectedAs}"
+                            else "Not connected to server",
+                            modifier = Modifier
+                                .align(
+                                    Alignment.TopCenter,
+                                )
+                                .fillMaxWidth()
+                                .background(
+                                    color = Color(0xFFD20062),
+                                )
+                                .padding(
+                                    10.dp
+                                ),
+                            color = Color.White,
+                        )
+                    } else {
+                        Text(
+                            text = state.peerConnectionString,
+                            modifier = Modifier
+                                .align(
+                                    Alignment.TopCenter,
+                                )
+                                .fillMaxWidth()
+                                .background(
+                                    Color(0xFFD20062),
+                                )
+                                .padding(
+                                    10.dp
+                                ),
+                            color = Color.White,
                         )
                     }
-                    // add more formats here
+                }
+                items(state.messagesFromServer.size) {
+                    val current = state.messagesFromServer[it]
+                    when (current) {
+                        is MessageType.Info -> {
+                            Text(
+                                text = current.msg,
+                                modifier = Modifier
+                                    .padding(
+                                        top = 10.dp,
+                                        start = 10.dp,
+                                    )
+                                    .fillMaxWidth()
+                            )
+                        }
+                        is MessageType.MessageByMe -> {
+                            Row(
+                                modifier = Modifier
+                                    .padding(
+                                        top = 10.dp,
+                                        start = 10.dp,
+                                    )
+                                    .fillMaxWidth(),
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
+                                )
+                                Text(
+                                    text = current.msg,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
+                                        .background(
+                                            color = Color(0xFF240A34),
+                                            shape = RoundedCornerShape(10.dp)
+                                        )
+                                        .padding(
+                                            8.dp,
+                                        ),
+                                    color = Color.White,
+                                )
+                            }
+                        }
+                        is MessageType.MessageByPeer -> {
+                            Row(
+                                modifier = Modifier
+                                    .padding(
+                                        top = 10.dp,
+                                        start = 10.dp,
+                                    )
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = current.msg,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
+                                        .background(
+                                            color = Color(0xFFFA7070),
+                                            shape = RoundedCornerShape(10.dp)
+                                        )
+                                        .padding(
+                                            8.dp,
+                                        ),
+                                    color = Color.White,
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
+                                )
+                            }
+                        }
+
+                        else -> {}
+                    }
+                }
+            },
+        )
+        Column(
+            modifier = Modifier.align(
+                Alignment.BottomCenter,
+            ),
+        ) {
+            if (state.isRtcEstablished) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(
+                        top = 10.dp,
+                        bottom = 10.dp,
+                        start = 10.dp,
+                    ),
+                ) {
+                    TextField(
+                        modifier = Modifier.weight(1f),
+                        value = chatMessage,
+                        onValueChange = {
+                            chatMessage = it
+                        },
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedContainerColor = Color(0xFFFA7070),
+                            unfocusedContainerColor = Color(0xFFFA7070),
+                        ),
+                        shape = RoundedCornerShape(15.dp),
+                    )
+                    Button(
+                        // Check here -> When the user clicks the send button, the message is sent using MainActions
+                        onClick = {
+                            dispatchAction(
+                                MainActions.SendChatMessage(chatMessage)
+                            )
+                        },
+                        modifier = Modifier.padding(
+                            start = 10.dp,
+                            end = 10.dp,
+                        ),
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = Color.White,
+                            containerColor = Color(0xFFFA7070),
+                        ),
+                    ) {
+                        Text(text = "Chat")
+                    }
+                }
+            } else {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(
+                        start = 10.dp,
+                    ),
+                ) {
+                    TextField(
+                        modifier = Modifier.weight(1f),
+                        value = if (state.connectedAs.isNotEmpty()) {
+                            connectTo
+                        } else {
+                            yourName
+                        },
+                        onValueChange = {
+                            if (state.connectedAs.isNotEmpty()) {
+                                connectTo = it
+                            } else {
+                                yourName = it
+                            }
+                        },
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedContainerColor = Color(0xFFFA7070),
+                            unfocusedContainerColor = Color(0xFFFA7070),
+                        ),
+                        shape = RoundedCornerShape(15.dp),
+                    )
+                    Button(
+                        onClick = {
+                            if (state.connectedAs.isNotEmpty()) {
+                                dispatchAction(
+                                    MainActions.ConnectToUser(connectTo)
+                                )
+                            } else {
+                                dispatchAction(
+                                    MainActions.ConnectAs(yourName)
+                                )
+                            }
+                        },
+                        modifier = Modifier.padding(
+                            start = 10.dp,
+                            end = 10.dp,
+                        ),
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = Color.White,
+                            containerColor = Color(0xFFFA7070),
+                        ),
+                    ) {
+                        Text(text = "GO")
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+@Preview
+@Composable
+fun DialogForIncomingRequestPreview() {
+    BurnerChatTheme {
+        DialogForIncomingRequest(
+            onAccept = {},
+            onDismiss = {},
+            inviteFrom = "Shah Rukh Khan"
+        )
+    }
+}
+
+@Composable
+fun DialogForIncomingRequest(
+    onDismiss: () -> Unit = {},
+    onAccept: () -> Unit = {},
+    inviteFrom: String,
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = Color.White,
+                )
+                .padding(
+                    8.dp,
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(text = "You got invite from $inviteFrom")
+            Row(
+                modifier = Modifier
+                    .padding(
+                        horizontal = 20.dp,
+                    )
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.padding(
+                        vertical = 10.dp,
+                    ),
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = Color.White,
+                        containerColor = Color(0xFFFA7070),
+                    ),
+                ) {
+                    Text(text = "Cancel")
+                }
+                Button(
+                    onClick = onAccept,
+                    modifier = Modifier.padding(
+                        vertical = 10.dp,
+                    ),
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = Color.White,
+                        containerColor = Color(0xFFFA7070),
+                    ),
+                ) {
+                    Text(text = "Accept")
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    BurnerChatTheme {
+        val state by remember {
+            mutableStateOf(MainScreenState.forPreview())
+        }
+        HomeScreenContent(
+            state = state,
+        )
     }
 }

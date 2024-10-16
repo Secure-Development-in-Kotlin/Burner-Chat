@@ -3,11 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools">
     <!--Internet permissions-->
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
-        android:name=".webrtc.utils.MyApplication"
+        android:name=".backend.BurnerChat"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -15,20 +13,18 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.BurnerChat"
-        tools:targetApi="34">
+        android:theme="@style/Base.Theme.BurnerChat"
+        tools:targetApi="31">
         <activity
-            android:name=".views.LoginActivity"
-            android:exported="true">
+            android:name=".views.MainActivity"
+            android:exported="true"
+            android:theme="@style/Base.Theme.BurnerChat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".views.MainActivity"
-            android:exported="true"/>
     </application>
 
 </manifest>
