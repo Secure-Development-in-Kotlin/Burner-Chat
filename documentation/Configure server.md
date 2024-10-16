@@ -24,27 +24,12 @@ chmod +x setup_turn_server.sh && ./setup_turn_server.sh && rm -rf ./TurnServer &
 cd /tmp
 git clone https://github.com/Secure-Development-in-Kotlin/SignalingServer.git
 cd SignalingServer && npm install
-chmod +x signaling_server_daemon.sh && ./signaling_server_daemon.sh
 ```
 
-- Now you can run, stop or restart the signaling server as a daemon
-
-### Run it
+- Now you can run it with:
 
 ```shell
-sudo systemctl start signalingserver
-```
-
-### Stop it
-
-```shell
-sudo systemctl stop signalingserver
-```
-
-### Restart it
-
-```shell
-sudo systemctl restart signalingserver
+npm start
 ```
 
 ## 3. Configure Burner Chat to use those servers
