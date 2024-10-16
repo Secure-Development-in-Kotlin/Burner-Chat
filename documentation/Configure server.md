@@ -24,7 +24,7 @@ chmod +x setup_turn_server.sh && ./setup_turn_server.sh && rm -rf ./TurnServer &
 cd /tmp
 git clone https://github.com/Secure-Development-in-Kotlin/SignalingServer.git
 cd SignalingServer && npm install
-chmod + x signaling_server_daemon.sh && ./signaling_server_daemon.sh
+chmod +x signaling_server_daemon.sh && ./signaling_server_daemon.sh
 ```
 
 - Now you can run, stop or restart the signaling server as a daemon
