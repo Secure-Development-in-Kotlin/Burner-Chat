@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Signaling_Server.md",
+                "file": "Configure server.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Signaling_Server.md",
+                "file": "Configure server.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Signaling_Server.md",
+                "file": "Configure server.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Signaling_Server.md"
+                "file": "Configure server.md"
               }
             }
           }
@@ -148,7 +148,11 @@
   },
   "active": "cb3b128bfef6efaf",
   "lastOpenFiles": [
+    "img/Pasted image 20241016094754.png",
+    "img/Pasted image 20241016094539.png",
+    "Pasted image 20241016094455.png",
     "Signaling_Server.md",
+    "Configure server.md",
     "img"
   ]
 }

@@ -53,7 +53,6 @@ class MainRepository @Inject constructor(
             }
 
             override fun onDataChannel(p0: DataChannel?) {
-                Log.d("MainRepository", "Llega a establecer el canal")
                 super.onDataChannel(p0)
                 dataChannel = p0
                 listener?.onDataChannelReceived()
