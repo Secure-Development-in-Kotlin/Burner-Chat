@@ -16,3 +16,7 @@ No será necesario un número de teléfono, sino que se generará un nombre de u
 
 ## Diagrama del modelo de datos
 <img src="./assets/diagrama_modelo_datos.jpeg" width="100%" height="100%"/>
+
+## Cómo configurar los servidores
+
+- Revisar [Documentación](https://github.com/Secure-Development-in-Kotlin/Burner-Chat/blob/gitblanc/documentation/Configure%20server.md)
