@@ -16,6 +16,8 @@ import com.example.burnerchat.model.messages.Message
 import com.example.burnerchat.model.messages.messageImpls.TextMessage
 import com.example.burnerchat.model.users.KeyPair
 import com.example.burnerchat.model.users.User
+import com.example.burnerchat.views.users.AddChatActivity
+import com.example.burnerchat.views.users.UserProfileActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ChatsView : AppCompatActivity() {
@@ -46,6 +48,25 @@ class ChatsView : AppCompatActivity() {
         ivIcon = findViewById(R.id.ivIcon);
         fabAdd = findViewById(R.id.fabAdd);
         initChatRecycler()
+        initFAB()
+        initIcon()
+    }
+
+    private fun initIcon() {
+        ivIcon.setOnClickListener{
+            val intent = Intent(this, UserProfileActivity::class.java)
+            intent.putExtra(UserProfileActivity.CLAVE_NOMBRE_USUARIO, loggedUser.userName.toString())
+            Log.d("chat", loggedUser.userName)
+            intent.putExtra(UserProfileActivity.CLAVE_CLAVE_PUBLICA, loggedUser.keyPair.publicKey.toString())
+            startActivity(intent)
+        }
+    }
+
+    private fun initFAB() {
+        fabAdd.setOnClickListener{
+            val intent = Intent(this, AddChatActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun initChatRecycler() {
