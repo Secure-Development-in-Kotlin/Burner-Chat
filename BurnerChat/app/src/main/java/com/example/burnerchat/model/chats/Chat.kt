@@ -24,7 +24,7 @@ class Chat (val users : Map<String, User>) {
         return result
     }
 
-    fun getLastMessage() : Message{
+    fun getLastMessage() : Message {
         return messages.last()
     }
 

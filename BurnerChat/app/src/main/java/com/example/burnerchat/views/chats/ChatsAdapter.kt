@@ -29,14 +29,18 @@ class ChatsAdapter (
 
     override fun getItemCount(): Int  = chatsList.size
 
-    class ViewHolder(view: View, private val id: String, onClickListener: (Chat?) -> Unit): RecyclerView.ViewHolder(view){
+    class ViewHolder(view: View, private val id: String, onClick: (Chat?) -> Unit): RecyclerView.ViewHolder(view){
         private lateinit var ivIcon : ImageView
         private lateinit var tvName : TextView
         private lateinit var tvLastMessage : TextView
         private lateinit var chatActual: Chat
 
+
         init {
             initComponents(view)
+            view.setOnClickListener{
+                onClick(chatActual)
+            }
         }
         fun initComponents(view: View){
             ivIcon = view.findViewById(R.id.ivChatIcon)
@@ -44,9 +48,10 @@ class ChatsAdapter (
             tvLastMessage = view.findViewById(R.id.tvLastMessage)
         }
 
+
         fun bind(chat: Chat){
             chatActual = chat
-            tvName.text = chatActual.getOtherUser(id)?.userName
+            tvName.text =  chatActual.getOtherUser(id)?.userName
             tvLastMessage.text = chatActual.getLastMessage().getLastContent()
         }
     }

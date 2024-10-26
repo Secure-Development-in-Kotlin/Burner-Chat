@@ -52,6 +52,7 @@ class ChatsView : AppCompatActivity() {
         val customAdapter = ChatsAdapter(chatsList,loggedUser.keyPair.publicKey){
             chat ->
                 val intent = Intent(this, MessagesActivity::class.java)
+                Log.d("debug",chat?.getLastMessage()?.getContent().toString())
                 intent.putExtra("chat", chat?.getLastMessage()?.getLastContent())
                 startActivity(intent)
         }
