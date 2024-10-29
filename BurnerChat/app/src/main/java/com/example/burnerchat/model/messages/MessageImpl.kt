@@ -4,7 +4,7 @@ import com.example.burnerchat.model.chats.Chat
 import com.example.burnerchat.model.users.User
 import java.time.LocalDate
 
-abstract class MessageImpl (val user: User, val chat: Chat) : Message {
+abstract class MessageImpl (private val user: User, private val chat: Chat) : Message {
     private val sentDate : LocalDate = LocalDate.now()
 
     override fun getSentDate(): LocalDate {
