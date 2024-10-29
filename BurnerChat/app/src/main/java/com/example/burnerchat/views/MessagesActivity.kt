@@ -39,7 +39,10 @@ import com.example.burnerchat.business.MainOneTimeEvents
 import com.example.burnerchat.business.MainScreenState
 import com.example.burnerchat.backend.MainViewModel
 import com.example.burnerchat.backend.webrtc.MessageType
+import com.example.burnerchat.views.theme.Black
 import com.example.burnerchat.views.theme.BurnerChatTheme
+import com.example.burnerchat.views.theme.Green
+import com.example.burnerchat.views.theme.SoftRed
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -131,7 +134,7 @@ fun HomeScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                color = Color(0xFFFEFDED)
+                color = Black
             ),
     ) {
         LazyColumn(
@@ -148,7 +151,7 @@ fun HomeScreenContent(
                                 )
                                 .fillMaxWidth()
                                 .background(
-                                    color = Color(0xFFD20062),
+                                    color = Black,
                                 )
                                 .padding(
                                     10.dp
@@ -178,6 +181,7 @@ fun HomeScreenContent(
                     when (current) {
                         is MessageType.Info -> {
                             Text(
+                                color = Color.White,
                                 text = current.msg,
                                 modifier = Modifier
                                     .padding(
@@ -207,13 +211,13 @@ fun HomeScreenContent(
                                         .fillMaxWidth()
                                         .weight(1f)
                                         .background(
-                                            color = Color(0xFF240A34),
+                                            color = Green,
                                             shape = RoundedCornerShape(10.dp)
                                         )
                                         .padding(
                                             8.dp,
                                         ),
-                                    color = Color.White,
+                                    color = Color.Black,
                                 )
                             }
                         }
@@ -232,13 +236,13 @@ fun HomeScreenContent(
                                         .fillMaxWidth()
                                         .weight(1f)
                                         .background(
-                                            color = Color(0xFFFA7070),
+                                            color = Color(0xFF58BDDB),
                                             shape = RoundedCornerShape(10.dp)
                                         )
                                         .padding(
                                             8.dp,
                                         ),
-                                    color = Color.White,
+                                    color = Color.Black,
                                 )
                                 Box(
                                     modifier = Modifier
@@ -256,6 +260,8 @@ fun HomeScreenContent(
         Column(
             modifier = Modifier.align(
                 Alignment.BottomCenter,
+            ).background(
+                color = Color.Gray
             ),
         ) {
             if (state.isRtcEstablished) {
@@ -309,11 +315,7 @@ fun HomeScreenContent(
                 ) {
                     TextField(
                         modifier = Modifier.weight(1f),
-                        value = if (state.connectedAs.isNotEmpty()) {
-                            connectTo
-                        } else {
-                            yourName
-                        },
+                        value = "Message...",
                         onValueChange = {
                             if (state.connectedAs.isNotEmpty()) {
                                 connectTo = it
@@ -324,8 +326,7 @@ fun HomeScreenContent(
                         colors = TextFieldDefaults.colors(
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
-                            focusedContainerColor = Color(0xFFFA7070),
-                            unfocusedContainerColor = Color(0xFFFA7070),
+                            unfocusedContainerColor = Color.Gray,
                         ),
                         shape = RoundedCornerShape(15.dp),
                     )
@@ -346,8 +347,8 @@ fun HomeScreenContent(
                             end = 10.dp,
                         ),
                         colors = ButtonDefaults.buttonColors(
-                            contentColor = Color.White,
-                            containerColor = Color(0xFFFA7070),
+                            contentColor = Color.Black,
+                            containerColor = Green
                         ),
                     ) {
                         Text(text = "GO")
@@ -382,14 +383,17 @@ fun DialogForIncomingRequest(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    color = Color.White,
+                    color = Color.Black
                 )
                 .padding(
                     8.dp,
                 ),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = "You got invite from $inviteFrom")
+            Text(
+                text = "You got invite from $inviteFrom",
+                color = Color.White
+            )
             Row(
                 modifier = Modifier
                     .padding(
@@ -404,11 +408,11 @@ fun DialogForIncomingRequest(
                         vertical = 10.dp,
                     ),
                     colors = ButtonDefaults.buttonColors(
-                        contentColor = Color.White,
-                        containerColor = Color(0xFFFA7070),
+                        contentColor = Color.Black,
+                        containerColor = SoftRed
                     ),
                 ) {
-                    Text(text = "Cancel")
+                    Text(text = "Reject")
                 }
                 Button(
                     onClick = onAccept,
@@ -416,8 +420,8 @@ fun DialogForIncomingRequest(
                         vertical = 10.dp,
                     ),
                     colors = ButtonDefaults.buttonColors(
-                        contentColor = Color.White,
-                        containerColor = Color(0xFFFA7070),
+                        contentColor = Color.Black,
+                        containerColor = Green
                     ),
                 ) {
                     Text(text = "Accept")
