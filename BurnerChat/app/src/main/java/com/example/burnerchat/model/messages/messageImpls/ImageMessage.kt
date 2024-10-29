@@ -8,4 +8,8 @@ class ImageMessage(private val path: String, chat: Chat, user: User) : MessageIm
     override fun getConcreteContent(): String {
         return path;
     }
+
+    override fun getLastContent(): String {
+        return "Image message"
+    }
 }

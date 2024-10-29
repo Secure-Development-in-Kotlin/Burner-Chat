@@ -8,4 +8,8 @@ class VideoMessage (val path: String, user: User, chat: Chat) : MessageImpl(user
     override fun getConcreteContent(): String {
         return path;
     }
+
+    override fun getLastContent(): String {
+        return "Video message";
+    }
 }
