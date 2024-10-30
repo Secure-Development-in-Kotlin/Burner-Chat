@@ -10,6 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.burnerchat.MainActivity
 import com.example.burnerchat.R
 import com.example.burnerchat.model.chats.Chat
 import com.example.burnerchat.model.messages.Message
@@ -47,6 +48,7 @@ class ChatsView : AppCompatActivity() {
         rvChats = findViewById(R.id.rcChats);
         ivIcon = findViewById(R.id.ivIcon);
         fabAdd = findViewById(R.id.fabAdd);
+
         initChatRecycler()
         initFAB()
         initIcon()
@@ -83,7 +85,7 @@ class ChatsView : AppCompatActivity() {
     }
 
     private fun initUser(){
-        loggedUser = User(KeyPair("a","b"),"LoggedUser")
+        loggedUser = User(KeyPair("a","b"),intent.getStringExtra(MainActivity.CLAVE_NOMBRE_USUARIO).toString())
         Log.d("debug",loggedUser.userName)
     }
 
