@@ -1,3 +1,4 @@
+
 package com.example.burnerchat.views
 
 import android.os.Bundle

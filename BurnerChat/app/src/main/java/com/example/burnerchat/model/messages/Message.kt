@@ -9,4 +9,5 @@ interface Message {
     public fun getContent() : String
     public fun getUser() : User
     public fun getChat() : Chat
+    public fun getLastContent() : String
 }
