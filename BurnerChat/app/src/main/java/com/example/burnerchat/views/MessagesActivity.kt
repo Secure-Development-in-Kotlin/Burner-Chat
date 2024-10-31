@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -140,41 +141,39 @@ fun HomeScreenContent(
         LazyColumn(
             content = {
                 item {
-                    if (state.peerConnectionString.isEmpty()) {
-                        Text(
-                            text = if (state.isConnectedToServer)
-                                "Connected to server as ${state.connectedAs}"
-                            else "Not connected to server",
-                            modifier = Modifier
-                                .align(
-                                    Alignment.TopCenter,
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                        content = {
+                            item {
+                                Text(
+                                    // TODO: cambiar esto por el nombre que se recibe de la activity anterior
+                                    text = "Nombre del pibardo",
+                                    color = Color.White,
+                                    modifier = Modifier
+                                        .padding(start = 16.dp)
                                 )
-                                .fillMaxWidth()
-                                .background(
-                                    color = Black,
-                                )
-                                .padding(
-                                    10.dp
-                                ),
-                            color = Color.White,
-                        )
-                    } else {
-                        Text(
-                            text = state.peerConnectionString,
-                            modifier = Modifier
-                                .align(
-                                    Alignment.TopCenter,
-                                )
-                                .fillMaxWidth()
-                                .background(
-                                    Color(0xFFD20062),
-                                )
-                                .padding(
-                                    10.dp
-                                ),
-                            color = Color.White,
-                        )
-                    }
+                            }
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .padding(end = 16.dp, top = 8.dp)
+                                        .background(
+                                            color = if (state.isConnectedToServer && !state.isConnectToPeer.isNullOrEmpty()) Green else SoftRed,
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
+                                        .padding(10.dp)
+                                ) {
+                                    Text(
+                                        text = "Server",
+                                        color = Color.Black,
+                                        modifier = Modifier.align(Alignment.Center)
+                                    )
+                                }
+                            }
+                        }
+                    )
                 }
                 items(state.messagesFromServer.size) {
                     val current = state.messagesFromServer[it]
@@ -191,6 +190,7 @@ fun HomeScreenContent(
                                     .fillMaxWidth()
                             )
                         }
+
                         is MessageType.MessageByMe -> {
                             Row(
                                 modifier = Modifier
@@ -221,6 +221,7 @@ fun HomeScreenContent(
                                 )
                             }
                         }
+
                         is MessageType.MessageByPeer -> {
                             Row(
                                 modifier = Modifier
@@ -258,11 +259,13 @@ fun HomeScreenContent(
             },
         )
         Column(
-            modifier = Modifier.align(
-                Alignment.BottomCenter,
-            ).background(
-                color = Color.Gray
-            ),
+            modifier = Modifier
+                .align(
+                    Alignment.BottomCenter,
+                )
+                .background(
+                    color = Color.Gray
+                ),
         ) {
             if (state.isRtcEstablished) {
                 Row(
