@@ -51,7 +51,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "MainActivity"
 
-class MainActivity : ComponentActivity() {
+class MessagesActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

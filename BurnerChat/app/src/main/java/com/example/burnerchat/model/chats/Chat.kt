@@ -14,6 +14,11 @@ class Chat (val users : Map<String, User>) {
      */
     public fun getOtherUser(id : String) : User?{
         var keys = users.keys
+        // TODO: refactor to do it better when only chat with one user
+        if (keys.size == 1){
+            return users[keys.first()]
+        }
+
         var result : User? = null
         for (key in keys){
             if(key != id){

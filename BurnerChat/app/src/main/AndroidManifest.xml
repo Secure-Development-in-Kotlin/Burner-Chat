@@ -24,7 +24,7 @@
             android:theme="@style/Base.Theme.BurnerChat"
             android:exported="false" />
         <activity
-            android:name=".views.chats.MessagesActivity"
+            android:name=".views.MessagesActivity"
             android:theme="@style/Base.Theme.BurnerChat"
             android:exported="false" />
         <activity

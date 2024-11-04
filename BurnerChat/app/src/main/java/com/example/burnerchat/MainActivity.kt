@@ -2,49 +2,73 @@ package com.example.burnerchat
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.burnerchat.backend.MainViewModel
 import com.example.burnerchat.business.MainActions
 import com.example.burnerchat.views.chats.ChatsView
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+    private val viewModel: MainViewModel by viewModels()
 
-    companion object{
+    companion object {
         public const val CLAVE_NOMBRE_USUARIO = "userName"
     }
+
     //LogIn button
-    private lateinit var btLogIn : Button
-    private lateinit var etUserName : EditText
+    private lateinit var btLogIn: Button
+    private lateinit var etUserName: EditText
 
     /**
      * Initalizes all components
      */
-    private fun initComponents(){
+    private fun initComponents() {
         btLogIn = findViewById(R.id.btLogin)
 
         etUserName = findViewById(R.id.etMainName)
-        btLogIn.setOnClickListener(){
+        btLogIn.setOnClickListener {
             val userName = etUserName.text.toString()
 
-            if(!(userName.isBlank()||userName.isEmpty())){
+            if (userName.isNotEmpty()) {
+
+                login(userName)
+
                 val intent = Intent(applicationContext, ChatsView::class.java)
                 intent.putExtra(CLAVE_NOMBRE_USUARIO, userName)
-                login(userName)
                 startActivity(intent)
-            }else{
-                Toast.makeText(this, "El nombre de usuario no puede estar vacío", Toast.LENGTH_SHORT).show()
+
+            } else {
+                Toast.makeText(
+                    this,
+                    "El nombre de usuario no puede estar vacío",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
         }
+
     }
 
-    fun login(name:String){
-        MainActions.ConnectAs(name)
+    fun login(name: String) {
+        // TODO: se debe usar asi para llamar a la accion para los servers
+        lifecycleScope.launch {
+            viewModel.dispatchAction(
+                MainActions.ConnectAs(name)
+            )
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

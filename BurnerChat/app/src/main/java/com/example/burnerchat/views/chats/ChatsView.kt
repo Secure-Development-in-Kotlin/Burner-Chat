@@ -12,39 +12,46 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.MainActivity
 import com.example.burnerchat.R
+import com.example.burnerchat.business.MainActions
 import com.example.burnerchat.model.chats.Chat
 import com.example.burnerchat.model.messages.Message
 import com.example.burnerchat.model.messages.messageImpls.TextMessage
 import com.example.burnerchat.model.users.KeyPair
 import com.example.burnerchat.model.users.User
+import com.example.burnerchat.views.MessagesActivity
 import com.example.burnerchat.views.users.AddChatActivity
 import com.example.burnerchat.views.users.UserProfileActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ChatsView : AppCompatActivity() {
 
+    companion object {
+        const val OTHER_USER_KEY = "OTHER_USER_KEY"
+        const val OTHER_USER_NAME = "OTHER_USER_NAME"
+    }
 
     //Main recyclerView
-    private lateinit var rvChats : RecyclerView;
+    private lateinit var rvChats: RecyclerView;
 
     //ImageView that displays the profile icon
-    private lateinit var ivIcon : ImageView;
+    private lateinit var ivIcon: ImageView;
 
     //FAB which opens the add chat menu
-    private lateinit var fabAdd : FloatingActionButton
+    private lateinit var fabAdd: FloatingActionButton
 
     //Chats list
     private var chatsList: MutableList<Chat> = mutableListOf()
 
     //Logged user
-    private lateinit var loggedUser : User
+    private lateinit var loggedUser: User
 
     //Users List
     private var usersList: MutableList<User> = mutableListOf()
+
     /**
      * Initializes all components
      */
-    private fun initComponents(){
+    private fun initComponents() {
         rvChats = findViewById(R.id.rcChats);
         ivIcon = findViewById(R.id.ivIcon);
         fabAdd = findViewById(R.id.fabAdd);
@@ -55,43 +62,62 @@ class ChatsView : AppCompatActivity() {
     }
 
     private fun initIcon() {
-        ivIcon.setOnClickListener{
+        ivIcon.setOnClickListener {
             val intent = Intent(this, UserProfileActivity::class.java)
-            intent.putExtra(UserProfileActivity.CLAVE_NOMBRE_USUARIO, loggedUser.userName.toString())
+            intent.putExtra(
+                UserProfileActivity.CLAVE_NOMBRE_USUARIO,
+                loggedUser.userName
+            )
             Log.d("chat", loggedUser.userName)
-            intent.putExtra(UserProfileActivity.CLAVE_CLAVE_PUBLICA, loggedUser.keyPair.publicKey.toString())
+            intent.putExtra(
+                UserProfileActivity.CLAVE_CLAVE_PUBLICA,
+                loggedUser.keyPair.publicKey
+            )
             startActivity(intent)
         }
     }
 
     private fun initFAB() {
-        fabAdd.setOnClickListener{
+        fabAdd.setOnClickListener {
             val intent = Intent(this, AddChatActivity::class.java)
             startActivity(intent)
         }
     }
 
     private fun initChatRecycler() {
-        val customAdapter = ChatsAdapter(chatsList,loggedUser.keyPair.publicKey){
-            chat ->
-                val intent = Intent(this, MessagesActivity::class.java)
-                Log.d("debug",chat?.getLastMessage()?.getContent().toString())
-                intent.putExtra("chat", chat?.getLastMessage()?.getLastContent())
-                startActivity(intent)
+        val customAdapter = ChatsAdapter(chatsList, loggedUser.keyPair.publicKey) { chat ->
+            val user = chat?.getOtherUser("")
+            val key = user?.keyPair?.publicKey
+
+            Log.d("debug", key.toString())
+
+            // TODO: Se puede comprobar el resutlado de la conexion?
+            MainActions.ConnectToUser(key.toString())
+
+            val intent = Intent(this, MessagesActivity::class.java)
+            // TODO: Se puede comprobar el resutlado de la conexion?
+            MainActions.ConnectToUser(key.toString())
+            intent.putExtra(OTHER_USER_KEY, key.toString())
+            intent.putExtra(OTHER_USER_NAME, user?.userName)
+            startActivity(intent)
+
         }
 
         rvChats.layoutManager = LinearLayoutManager(this)
         rvChats.adapter = customAdapter
     }
 
-    private fun initUser(){
-        loggedUser = User(KeyPair("a","b"),intent.getStringExtra(MainActivity.CLAVE_NOMBRE_USUARIO).toString())
-        Log.d("debug",loggedUser.userName)
+    private fun initUser() {
+        loggedUser = User(
+            KeyPair("a", "b"),
+            intent.getStringExtra(MainActivity.CLAVE_NOMBRE_USUARIO).toString()
+        )
+        Log.d("debug", loggedUser.userName)
     }
 
-    private fun initChats(){
-        for (user in usersList){
-            var map : MutableMap<String, User> = mutableMapOf()
+    private fun initChats() {
+        for (user in usersList) {
+            var map: MutableMap<String, User> = mutableMapOf()
             map.put(loggedUser.keyPair.publicKey, loggedUser)
             map.put(user.keyPair.publicKey, user)
             var chat = Chat(map)
@@ -100,20 +126,21 @@ class ChatsView : AppCompatActivity() {
         }
     }
 
-    private fun generateUsers(number: Int){
-        for (i in (0..number)){
+    private fun generateUsers(number: Int) {
+        for (i in (0..number)) {
             usersList.add(User(KeyPair("sample$i", "sampleb$i"), "SampleUser$i"))
         }
     }
 
-    private fun addMessagesToAChat(chat : Chat, user: User, number: Int){
-        for (i in (0..number)){
-            if (i%2==0)
+    private fun addMessagesToAChat(chat: Chat, user: User, number: Int) {
+        for (i in (0..number)) {
+            if (i % 2 == 0)
                 chat.addMessage(TextMessage("Text Message $i", user, chat))
             else
                 chat.addMessage(TextMessage("Text Message $i", loggedUser, chat))
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
