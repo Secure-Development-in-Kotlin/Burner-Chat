@@ -40,7 +40,7 @@ class WebRTCManager(
         get() = _messageStream
 
     private val iceServers = listOf(
-        PeerConnection.IceServer.builder("turn:192.168.1.61:3478?transport=tcp")
+        PeerConnection.IceServer.builder("turn:<YOUR_IP>>?transport=tcp")
             .setUsername("burnerchat")
             .setPassword("burnerchat")
             .createIceServer()
