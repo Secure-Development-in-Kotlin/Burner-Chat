@@ -76,7 +76,7 @@ fun <T> rememberFlowWithLifecycle(
 
 @Composable
 fun MainScreen() {
-    val viewModel = viewModel(modelClass = MainViewModel::class.java)
+    val viewModel = MainViewModel.getInstance()
     val state by viewModel.state.collectAsState()
     val events = rememberFlowWithLifecycle(flow = viewModel.oneTimeEvents)
     var showIncomingRequestDialog by remember {
@@ -319,7 +319,7 @@ fun HomeScreenContent(
                 ) {
                     TextField(
                         modifier = Modifier.weight(1f),
-                        value = "Message...",
+                        value = "",
                         onValueChange = {
                             if (state.connectedAs.isNotEmpty()) {
                                 connectTo = it

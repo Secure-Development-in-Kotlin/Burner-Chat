@@ -22,7 +22,7 @@ import com.example.burnerchat.views.chats.ChatsView
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel = MainViewModel.getInstance()
 
     companion object {
         public const val CLAVE_NOMBRE_USUARIO = "userName"

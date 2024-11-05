@@ -7,7 +7,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -19,6 +18,7 @@ import com.example.burnerchat.views.MessagesActivity
 import kotlinx.coroutines.launch
 
 class AddChatActivity : AppCompatActivity() {
+    private val viewModel : MainViewModel = MainViewModel.getInstance()
 
     private lateinit var etPublicKey: EditText
     private lateinit var ivIcon : ImageView
@@ -54,12 +54,11 @@ class AddChatActivity : AppCompatActivity() {
 
             } else {
                 // TODO: Se puede comprobar el resutlado de la conexion?
-//                lifecycleScope.launch {
-//                    viewModel.dispatchAction(
-//                        MainActions.ConnectAs(key.toString())
-////                        MainActions.ConnectToUser(key.toString())
-//                    )
-//                }
+                lifecycleScope.launch {
+                    viewModel.dispatchAction(
+                        MainActions.ConnectToUser(key.toString())
+                    )
+                }
 
                 val intent = Intent(applicationContext, MessagesActivity::class.java)
                 intent.putExtra(OTHER_USER_KEY, key)

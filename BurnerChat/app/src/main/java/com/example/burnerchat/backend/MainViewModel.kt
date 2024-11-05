@@ -28,6 +28,16 @@ import org.webrtc.SessionDescription
 private const val TAG = "MainViewModel"
 
 class MainViewModel : ViewModel() {
+    companion object {
+
+        @Volatile
+        private var instance: MainViewModel? = null
+
+        fun getInstance() =
+            instance ?: synchronized(this) {
+                instance ?: MainViewModel().also { instance = it }
+            }
+    }
 
     private val _state = MutableStateFlow(
         MainScreenState()
