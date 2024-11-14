@@ -1,4 +1,3 @@
-
 package com.example.burnerchat.views
 
 import android.os.Bundle
@@ -51,7 +50,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "MainActivity"
 
-class MainActivity : ComponentActivity() {
+class MessagesActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -123,24 +122,26 @@ fun HomeScreenContent(
     state: MainScreenState,
     dispatchAction: (MainActions) -> Unit = {},
 ) {
-    var yourName by remember {
-        mutableStateOf("")
+    var yourName by remember { mutableStateOf("") }
+    var connectTo by remember { mutableStateOf("") }
+    var chatMessage by remember { mutableStateOf("") }
+
+    fun changeConnect(name:String){
+        connectTo = name
     }
-    var connectTo by remember {
-        mutableStateOf("")
-    }
-    var chatMessage by remember {
-        mutableStateOf("")
-    }
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                color = Black
-            ),
+            .background(color = Black)
     ) {
+        // La zona de mensajes con LazyColumn ocupará el espacio restante
         LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f) // Hace que el LazyColumn ocupe todo el espacio disponible
+                .padding(bottom = 8.dp), // Añade un pequeño margen inferior
             content = {
+                // Tu contenido de LazyColumn como antes
                 item {
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
@@ -149,21 +150,16 @@ fun HomeScreenContent(
                         content = {
                             item {
                                 Text(
-                                    // TODO: cambiar esto por el nombre que se recibe de la activity anterior
-                                    text = "Nombre del pibardo",
+                                    text = state.inComingRequestFrom ?: "Nombre del pibardo", // Mostrar isConnectToPeer o texto predeterminado,
                                     color = Color.White,
-                                    modifier = Modifier
-                                        .padding(start = 16.dp)
+                                    modifier = Modifier.padding(start = 16.dp)
                                 )
                             }
                             item {
                                 Box(
                                     modifier = Modifier
                                         .padding(end = 16.dp, top = 8.dp)
-                                        .background(
-                                            color = if (state.isConnectedToServer && !state.isConnectToPeer.isNullOrEmpty()) Green else SoftRed,
-                                            shape = RoundedCornerShape(8.dp)
-                                        )
+                                        .background(color = Green, shape = RoundedCornerShape(8.dp))
                                         .padding(10.dp)
                                 ) {
                                     Text(
@@ -184,128 +180,83 @@ fun HomeScreenContent(
                                 color = Color.White,
                                 text = current.msg,
                                 modifier = Modifier
-                                    .padding(
-                                        top = 10.dp,
-                                        start = 10.dp,
-                                    )
+                                    .padding(top = 10.dp, start = 10.dp)
                                     .fillMaxWidth()
                             )
                         }
-
                         is MessageType.MessageByMe -> {
                             Row(
                                 modifier = Modifier
-                                    .padding(
-                                        top = 10.dp,
-                                        start = 10.dp,
-                                    )
-                                    .fillMaxWidth(),
+                                    .padding(top = 10.dp, start = 10.dp)
+                                    .fillMaxWidth()
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .weight(1f)
-                                )
+                                Box(modifier = Modifier.fillMaxWidth().weight(1f))
                                 Text(
                                     text = current.msg,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .weight(1f)
-                                        .background(
-                                            color = Green,
-                                            shape = RoundedCornerShape(10.dp)
-                                        )
-                                        .padding(
-                                            8.dp,
-                                        ),
-                                    color = Color.Black,
+                                        .background(color = Green, shape = RoundedCornerShape(10.dp))
+                                        .padding(8.dp),
+                                    color = Color.Black
                                 )
                             }
                         }
-
                         is MessageType.MessageByPeer -> {
                             Row(
                                 modifier = Modifier
-                                    .padding(
-                                        top = 10.dp,
-                                        start = 10.dp,
-                                    )
-                                    .fillMaxWidth(),
+                                    .padding(top = 10.dp, start = 10.dp)
+                                    .fillMaxWidth()
                             ) {
                                 Text(
                                     text = current.msg,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .weight(1f)
-                                        .background(
-                                            color = Color(0xFF58BDDB),
-                                            shape = RoundedCornerShape(10.dp)
-                                        )
-                                        .padding(
-                                            8.dp,
-                                        ),
-                                    color = Color.Black,
+                                        .background(color = Color(0xFF58BDDB), shape = RoundedCornerShape(10.dp))
+                                        .padding(8.dp),
+                                    color = Color.Black
                                 )
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .weight(1f)
-                                )
+                                Box(modifier = Modifier.fillMaxWidth().weight(1f))
                             }
                         }
-
                         else -> {}
                     }
                 }
-            },
+            }
         )
+
+        // La zona de chat en la parte inferior
         Column(
             modifier = Modifier
-                .align(
-                    Alignment.BottomCenter,
-                )
-                .background(
-                    color = Color.Gray
-                ),
+                .fillMaxWidth()
+                .background(Color.Gray)
+                .padding(8.dp)
         ) {
             if (state.isRtcEstablished) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(
-                        top = 10.dp,
-                        bottom = 10.dp,
-                        start = 10.dp,
-                    ),
+                    modifier = Modifier.padding(top = 10.dp, bottom = 10.dp, start = 10.dp)
                 ) {
                     TextField(
                         modifier = Modifier.weight(1f),
                         value = chatMessage,
-                        onValueChange = {
-                            chatMessage = it
-                        },
+                        onValueChange = { chatMessage = it },
                         colors = TextFieldDefaults.colors(
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
-                            focusedContainerColor = Color(0xFFFA7070),
-                            unfocusedContainerColor = Color(0xFFFA7070),
+                            focusedContainerColor = Color(0xFFE5E4E2),
+                            unfocusedContainerColor = Color(0xFFE5E4E2)
                         ),
-                        shape = RoundedCornerShape(15.dp),
+                        shape = RoundedCornerShape(15.dp)
                     )
                     Button(
-                        // Check here -> When the user clicks the send button, the message is sent using MainActions
                         onClick = {
-                            dispatchAction(
-                                MainActions.SendChatMessage(chatMessage)
-                            )
+                            dispatchAction(MainActions.SendChatMessage(chatMessage)) ;
+                            chatMessage=""
                         },
-                        modifier = Modifier.padding(
-                            start = 10.dp,
-                            end = 10.dp,
-                        ),
-                        colors = ButtonDefaults.buttonColors(
-                            contentColor = Color.White,
-                            containerColor = Color(0xFFFA7070),
-                        ),
+                        modifier = Modifier.padding(start = 10.dp, end = 10.dp),
+                        colors = ButtonDefaults.buttonColors(contentColor = Color.Black, containerColor = Green)
                     ) {
                         Text(text = "Chat")
                     }
@@ -313,13 +264,11 @@ fun HomeScreenContent(
             } else {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(
-                        start = 10.dp,
-                    ),
+                    modifier = Modifier.padding(start = 10.dp)
                 ) {
                     TextField(
                         modifier = Modifier.weight(1f),
-                        value = "Message...",
+                        value = if (state.connectedAs.isNotEmpty()) connectTo else yourName,
                         onValueChange = {
                             if (state.connectedAs.isNotEmpty()) {
                                 connectTo = it
@@ -330,36 +279,25 @@ fun HomeScreenContent(
                         colors = TextFieldDefaults.colors(
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Gray,
+                            unfocusedContainerColor = Color.Gray
                         ),
-                        shape = RoundedCornerShape(15.dp),
+                        shape = RoundedCornerShape(15.dp)
                     )
                     Button(
                         onClick = {
                             if (state.connectedAs.isNotEmpty()) {
-                                dispatchAction(
-                                    MainActions.ConnectToUser(connectTo)
-                                )
+                                dispatchAction(MainActions.ConnectToUser(connectTo))
                             } else {
-                                dispatchAction(
-                                    MainActions.ConnectAs(yourName)
-                                )
+                                dispatchAction(MainActions.ConnectAs(yourName))
                             }
                         },
-                        modifier = Modifier.padding(
-                            start = 10.dp,
-                            end = 10.dp,
-                        ),
-                        colors = ButtonDefaults.buttonColors(
-                            contentColor = Color.Black,
-                            containerColor = Green
-                        ),
+                        modifier = Modifier.padding(start = 10.dp, end = 10.dp),
+                        colors = ButtonDefaults.buttonColors(contentColor = Color.Black, containerColor = Green)
                     ) {
                         Text(text = "GO")
                     }
                 }
             }
-
         }
     }
 }
@@ -382,6 +320,7 @@ fun DialogForIncomingRequest(
     onAccept: () -> Unit = {},
     inviteFrom: String,
 ) {
+
     Dialog(onDismissRequest = onDismiss) {
         Column(
             modifier = Modifier
@@ -421,6 +360,7 @@ fun DialogForIncomingRequest(
                 Button(
                     onClick = onAccept,
                     modifier = Modifier.padding(
+
                         vertical = 10.dp,
                     ),
                     colors = ButtonDefaults.buttonColors(
