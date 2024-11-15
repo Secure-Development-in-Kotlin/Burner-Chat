@@ -100,7 +100,9 @@ fun MainScreen() {
             },
             onAccept = {
                 viewModel.dispatchAction(
-                    MainActions.AcceptIncomingConnection
+                    MainActions.AcceptIncomingConnection(
+                        viewModel.newOfferMessage
+                    )
                 )
                 showIncomingRequestDialog = false
             },
