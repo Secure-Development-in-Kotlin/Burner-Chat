@@ -30,13 +30,13 @@ data class MainScreenState(
     }
 }
 
-sealed class MainActions {
-    data class ConnectAs(val name: String) : MainActions()
-    data object AcceptIncomingConnection: MainActions()
-    data class ConnectToUser(val name: String): MainActions()
-
-    data class SendChatMessage(val msg: String): MainActions()
-}
+//sealed class MainActions {
+//    data class ConnectAs(val name: String) : MainActions()
+//    data object AcceptIncomingConnection: MainActions()
+//    data class ConnectToUser(val name: String): MainActions()
+//
+//    data class SendChatMessage(val msg: String): MainActions()
+//}
 
 sealed class MainOneTimeEvents {
     object GotInvite: MainOneTimeEvents()
