@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.burnerchat.business.ChatsPersistenceManager
+import com.example.burnerchat.business.MainActions
 import com.example.burnerchat.model.chats.Chat
 import com.example.burnerchat.model.messages.messageImpls.TextMessage
 import com.example.burnerchat.model.users.KeyPair
@@ -32,6 +33,7 @@ class ChatsViewViewModel : ViewModel() {
     }
     fun logIn(user : User){
         _loggedUser.value = user
+        //TODO Aquí irá el MainActions.ConnectAs(user.userName)
     }
 
     fun addChat(userName: String){
@@ -49,6 +51,7 @@ class ChatsViewViewModel : ViewModel() {
     fun addChat(chat : Chat){
         dataBase.addChat(chat)
         _chatsList.value = dataBase.getChats()
+        //TODO Aquí irá MainActions.ConnectToUser(chat.getOtherUser())
     }
 
     private fun generateUsers(number: Int) : List<User>{

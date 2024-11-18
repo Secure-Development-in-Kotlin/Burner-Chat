@@ -82,7 +82,7 @@ class ChatsView : AppCompatActivity() {
     }
 
     private fun initChatRecycler() {
-        val customAdapter = ChatsAdapter(viewModel.chatsList.value!!,viewModel.loggedUser.value?.keyPair?.publicKey!!){
+        val customAdapter = ChatsAdapter(viewModel.getChats(),viewModel.loggedUser.value?.keyPair?.publicKey!!){
             chat ->
                 val intent = Intent(this, MessagesActivity::class.java)
                 Log.d("debug",chat?.getLastMessage()?.getContent().toString())
