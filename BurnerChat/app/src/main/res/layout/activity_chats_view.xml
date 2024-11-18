@@ -11,10 +11,12 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcChats"
-        android:layout_width="411dp"
-        android:layout_height="689dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:layout_margin="16sp"
+        android:layout_marginTop="42sp"
         android:padding="16sp"
+        android:paddingTop="32sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvChats" />
