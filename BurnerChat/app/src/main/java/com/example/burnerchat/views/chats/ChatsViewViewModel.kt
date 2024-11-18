@@ -3,12 +3,15 @@ package com.example.burnerchat.views.chats
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.burnerchat.business.ChatsPersistenceManager
 import com.example.burnerchat.business.MainActions
 import com.example.burnerchat.model.chats.Chat
 import com.example.burnerchat.model.messages.messageImpls.TextMessage
 import com.example.burnerchat.model.users.KeyPair
 import com.example.burnerchat.model.users.User
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ChatsViewViewModel : ViewModel() {
     private val dataBase = ChatsPersistenceManager
@@ -48,6 +51,7 @@ class ChatsViewViewModel : ViewModel() {
         val chat = Chat(map)
         addChat(chat)
     }
+
     fun addChat(chat : Chat){
         dataBase.addChat(chat)
         _chatsList.value = dataBase.getChats()

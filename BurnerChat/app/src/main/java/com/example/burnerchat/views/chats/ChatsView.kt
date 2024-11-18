@@ -14,8 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.MainActivity
 import com.example.burnerchat.R
 import com.example.burnerchat.model.chats.Chat
-import com.example.burnerchat.model.messages.Message
-import com.example.burnerchat.model.messages.messageImpls.TextMessage
 import com.example.burnerchat.model.users.KeyPair
 import com.example.burnerchat.model.users.User
 import com.example.burnerchat.views.users.AddChatActivity
@@ -23,22 +21,19 @@ import com.example.burnerchat.views.users.UserProfileActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ChatsView : AppCompatActivity() {
-
+    private val viewModel: ChatsViewViewModel by viewModels()
 
     //Main recyclerView
-    private lateinit var rvChats : RecyclerView;
+    private lateinit var rvChats: RecyclerView;
 
     //ImageView that displays the profile icon
-    private lateinit var ivIcon : ImageView;
+    private lateinit var ivIcon: ImageView;
 
     //FAB which opens the add chat menu
-    private lateinit var fabAdd : FloatingActionButton
+    private lateinit var fabAdd: FloatingActionButton
 
     //Chats list
     private var chatsList: List<Chat> = mutableListOf()
-
-    //ViewModel
-    private val viewModel: ChatsViewViewModel by viewModels()
 
     override fun onResume(){
         super.onResume()
@@ -47,7 +42,7 @@ class ChatsView : AppCompatActivity() {
     /**
      * Initializes all components
      */
-    private fun initComponents(){
+    private fun initComponents() {
         rvChats = findViewById(R.id.rcChats);
         ivIcon = findViewById(R.id.ivIcon);
         fabAdd = findViewById(R.id.fabAdd);
@@ -56,61 +51,67 @@ class ChatsView : AppCompatActivity() {
         initFAB()
         initIcon()
 
-        viewModel.chatsList.observe(this){
-            newChatsList->
-            chatsList=newChatsList
-            initChatRecycler()
+        viewModel.chatsList.observe(this) { newChatsList ->
+            chatsList = newChatsList
+            rvChats.adapter?.notifyDataSetChanged() // TODO revisar
         }
     }
 
     private fun initIcon() {
-        ivIcon.setOnClickListener{
+        ivIcon.setOnClickListener {
             val intent = Intent(this, UserProfileActivity::class.java)
             var loggedUser = viewModel.loggedUser.value
-            intent.putExtra(UserProfileActivity.CLAVE_NOMBRE_USUARIO, loggedUser?.userName.toString())
+            intent.putExtra(
+                UserProfileActivity.CLAVE_NOMBRE_USUARIO,
+                loggedUser?.userName.toString()
+            )
             Log.d("chat", loggedUser?.userName!!)
-            intent.putExtra(UserProfileActivity.CLAVE_CLAVE_PUBLICA, loggedUser?.keyPair?.publicKey.toString())
+            intent.putExtra(
+                UserProfileActivity.CLAVE_CLAVE_PUBLICA,
+                loggedUser.keyPair.publicKey.toString()
+            )
             startActivity(intent)
         }
     }
 
     private fun initFAB() {
-        fabAdd.setOnClickListener{
+        fabAdd.setOnClickListener {
             val intent = Intent(this, AddChatActivity::class.java)
             startActivity(intent)
         }
     }
 
     private fun initChatRecycler() {
-        val customAdapter = ChatsAdapter(viewModel.getChats(),viewModel.loggedUser.value?.keyPair?.publicKey!!){
-            chat ->
-                val intent = Intent(this, MessagesActivity::class.java)
-                Log.d("debug",chat?.getLastMessage()?.getContent().toString())
-                intent.putExtra("chat", chat?.getLastMessage()?.getLastContent())
-                startActivity(intent)
+        val customAdapter = ChatsAdapter(
+            viewModel.getChats(),
+            viewModel.loggedUser.value?.keyPair?.publicKey!!
+        ) { chat ->
+            val intent = Intent(this, MessagesActivity::class.java)
+            Log.d("debug", chat?.getLastMessage()?.getContent().toString())
+            intent.putExtra("chat", chat?.getLastMessage()?.getLastContent())
+            startActivity(intent)
         }
 
         rvChats.layoutManager = LinearLayoutManager(this)
         rvChats.adapter = customAdapter
     }
 
-    private fun initUser(){
-        var loggedUser = User(KeyPair("a","b"),intent.getStringExtra(MainActivity.CLAVE_NOMBRE_USUARIO).toString())
+    private fun initUser() {
+        var loggedUser = User(
+            KeyPair("a", "b"),
+            intent.getStringExtra(MainActivity.CLAVE_NOMBRE_USUARIO).toString()
+        )
         viewModel.logIn(loggedUser)
-        Log.d("debug",loggedUser.userName)
+        Log.d("debug", loggedUser.userName)
     }
 
-    private fun initVM(){
-        viewModel.init()
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_chats_view)
 
         initUser()
-        initVM()
-
+        viewModel.init()
 
         initComponents()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->

@@ -4,13 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class NewMainActivityViewModel : ViewModel() {
+class MainActivityViewModel : ViewModel() {
+    // TODO: verificar si mejor tener valor o no de inicializacion
     private val _userName = MutableLiveData("User")
 
-    val userName : LiveData<String>
-        get()=_userName
+    val userName: LiveData<String>
+        get() = _userName
 
-    fun setName(name:String){
+    fun setName(name: String) {
         _userName.value = name
     }
 
