@@ -31,4 +31,8 @@ class Chat (val users : Map<String, User>) {
     fun addMessage(message: Message){
         messages.add(message)
     }
+
+    fun isEmpty():Boolean{
+        return messages.isEmpty()
+    }
 }

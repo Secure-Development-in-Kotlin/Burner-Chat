@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -34,13 +35,15 @@ class ChatsView : AppCompatActivity() {
     private lateinit var fabAdd : FloatingActionButton
 
     //Chats list
-    private var chatsList: MutableList<Chat> = mutableListOf()
+    private var chatsList: List<Chat> = mutableListOf()
 
-    //Logged user
-    private lateinit var loggedUser : User
+    //ViewModel
+    private val viewModel: ChatsViewViewModel by viewModels()
 
-    //Users List
-    private var usersList: MutableList<User> = mutableListOf()
+    override fun onResume(){
+        super.onResume()
+        chatsList = viewModel.getChats()
+    }
     /**
      * Initializes all components
      */
@@ -52,14 +55,21 @@ class ChatsView : AppCompatActivity() {
         initChatRecycler()
         initFAB()
         initIcon()
+
+        viewModel.chatsList.observe(this){
+            newChatsList->
+            chatsList=newChatsList
+            initChatRecycler()
+        }
     }
 
     private fun initIcon() {
         ivIcon.setOnClickListener{
             val intent = Intent(this, UserProfileActivity::class.java)
-            intent.putExtra(UserProfileActivity.CLAVE_NOMBRE_USUARIO, loggedUser.userName.toString())
-            Log.d("chat", loggedUser.userName)
-            intent.putExtra(UserProfileActivity.CLAVE_CLAVE_PUBLICA, loggedUser.keyPair.publicKey.toString())
+            var loggedUser = viewModel.loggedUser.value
+            intent.putExtra(UserProfileActivity.CLAVE_NOMBRE_USUARIO, loggedUser?.userName.toString())
+            Log.d("chat", loggedUser?.userName!!)
+            intent.putExtra(UserProfileActivity.CLAVE_CLAVE_PUBLICA, loggedUser?.keyPair?.publicKey.toString())
             startActivity(intent)
         }
     }
@@ -72,7 +82,7 @@ class ChatsView : AppCompatActivity() {
     }
 
     private fun initChatRecycler() {
-        val customAdapter = ChatsAdapter(chatsList,loggedUser.keyPair.publicKey){
+        val customAdapter = ChatsAdapter(viewModel.getChats(),viewModel.loggedUser.value?.keyPair?.publicKey!!){
             chat ->
                 val intent = Intent(this, MessagesActivity::class.java)
                 Log.d("debug",chat?.getLastMessage()?.getContent().toString())
@@ -85,34 +95,13 @@ class ChatsView : AppCompatActivity() {
     }
 
     private fun initUser(){
-        loggedUser = User(KeyPair("a","b"),intent.getStringExtra(MainActivity.CLAVE_NOMBRE_USUARIO).toString())
+        var loggedUser = User(KeyPair("a","b"),intent.getStringExtra(MainActivity.CLAVE_NOMBRE_USUARIO).toString())
+        viewModel.logIn(loggedUser)
         Log.d("debug",loggedUser.userName)
     }
 
-    private fun initChats(){
-        for (user in usersList){
-            var map : MutableMap<String, User> = mutableMapOf()
-            map.put(loggedUser.keyPair.publicKey, loggedUser)
-            map.put(user.keyPair.publicKey, user)
-            var chat = Chat(map)
-            addMessagesToAChat(chat, user, 12)
-            chatsList.add(chat)
-        }
-    }
-
-    private fun generateUsers(number: Int){
-        for (i in (0..number)){
-            usersList.add(User(KeyPair("sample$i", "sampleb$i"), "SampleUser$i"))
-        }
-    }
-
-    private fun addMessagesToAChat(chat : Chat, user: User, number: Int){
-        for (i in (0..number)){
-            if (i%2==0)
-                chat.addMessage(TextMessage("Text Message $i", user, chat))
-            else
-                chat.addMessage(TextMessage("Text Message $i", loggedUser, chat))
-        }
+    private fun initVM(){
+        viewModel.init()
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -120,8 +109,7 @@ class ChatsView : AppCompatActivity() {
         setContentView(R.layout.activity_chats_view)
 
         initUser()
-        generateUsers(25)
-        initChats()
+        initVM()
 
 
         initComponents()

@@ -5,10 +5,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.burnerchat.R
+import com.example.burnerchat.views.chats.ChatsViewViewModel
 import com.example.burnerchat.views.users.UserProfileActivity.Companion.CLAVE_CLAVE_PUBLICA
 import com.example.burnerchat.views.users.UserProfileActivity.Companion.CLAVE_NOMBRE_USUARIO
 
@@ -20,6 +22,8 @@ class AddChatActivity : AppCompatActivity() {
     private lateinit var btGoBack : Button
     private lateinit var btConfirm : Button
 
+    private val chatsViewModel : ChatsViewViewModel by viewModels()
+
     fun initComponents(){
         etPublicKey = findViewById(R.id.etAddKey)
         ivIcon = findViewById(R.id.ivNewChat)
@@ -27,10 +31,19 @@ class AddChatActivity : AppCompatActivity() {
         btConfirm = findViewById(R.id.btAddChat)
         btQR = findViewById(R.id.btAddQR)
         initGoBack()
+        initAddChat()
     }
 
     private fun initGoBack() {
         btGoBack.setOnClickListener{
+            finish()
+        }
+    }
+
+    private fun initAddChat(){
+        btConfirm.setOnClickListener{
+            var userName = etPublicKey.text.toString()
+            chatsViewModel.addChat(userName)
             finish()
         }
     }

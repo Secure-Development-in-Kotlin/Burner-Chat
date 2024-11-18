@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -20,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     //LogIn button
     private lateinit var btLogIn : Button
     private lateinit var etUserName : EditText
+    private val viewModel : NewMainActivityViewModel by viewModels()
 
     /**
      * Initalizes all components
@@ -29,8 +31,9 @@ class MainActivity : AppCompatActivity() {
 
         etUserName = findViewById(R.id.etMainName)
         btLogIn.setOnClickListener(){
-            val userName = etUserName.text.toString()
 
+            val userName = etUserName.text.toString()
+            viewModel.setName(userName)
             if(!(userName.isBlank()||userName.isEmpty())){
                 val intent = Intent(applicationContext, ChatsView::class.java)
                 intent.putExtra(CLAVE_NOMBRE_USUARIO, userName)
