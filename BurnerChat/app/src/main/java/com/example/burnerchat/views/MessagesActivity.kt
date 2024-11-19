@@ -38,7 +38,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.burnerchat.business.MainActions
 import com.example.burnerchat.business.MainOneTimeEvents
 import com.example.burnerchat.business.MainScreenState
-import com.example.burnerchat.backend.MainViewModel
 import com.example.burnerchat.backend.webrtc.MessageType
 import com.example.burnerchat.views.theme.Black
 import com.example.burnerchat.views.theme.BurnerChatTheme
@@ -48,7 +47,7 @@ import com.example.burnerchat.views.theme.SoftRed
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
-private const val TAG = "MainActivity"
+const val TAG = "MainActivity"
 
 class MessagesActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,7 +74,7 @@ fun <T> rememberFlowWithLifecycle(
 
 @Composable
 fun MainScreen() {
-    val viewModel = viewModel(modelClass = MainViewModel::class.java)
+    val viewModel = viewModel(modelClass = MessagesActivityViewModel::class.java)
     val state by viewModel.state.collectAsState()
     val events = rememberFlowWithLifecycle(flow = viewModel.oneTimeEvents)
     var showIncomingRequestDialog by remember {

@@ -5,23 +5,15 @@ import com.example.burnerchat.model.users.User
 import java.time.LocalDate
 
 
-class Chat (val users : Map<String, User>) {
+class Chat (private val otherUser : User) {
     private var messages : MutableList<Message> = mutableListOf()
     private val creationDate : LocalDate = LocalDate.now()
 
     /**
      * Returns the other user
      */
-    public fun getOtherUser(id : String) : User?{
-        var keys = users.keys
-        var result : User? = null
-        for (key in keys){
-            if(key != id){
-                return users[key]
-            }
-
-        }
-        return result
+    fun getOtherUser() : User{
+        return otherUser
     }
 
     fun getLastMessage() : Message {

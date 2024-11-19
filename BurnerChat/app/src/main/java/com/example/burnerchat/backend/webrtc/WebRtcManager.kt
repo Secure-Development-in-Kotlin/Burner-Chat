@@ -1,7 +1,7 @@
 package com.example.burnerchat.backend.webrtc
 
 import android.util.Log
-import com.example.burnerchat.backend.BurnerChat
+import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.backend.socket.MessageModel
 import com.example.burnerchat.backend.socket.SocketConnection
 import kotlinx.coroutines.CoroutineScope
@@ -40,7 +40,7 @@ class WebRTCManager(
         get() = _messageStream
 
     private val iceServers = listOf(
-        PeerConnection.IceServer.builder("turn:<YOUR_IP>?transport=tcp")
+        PeerConnection.IceServer.builder("turn:83.54.220.160:3478?transport=tcp")
             .setUsername("burnerchat")
             .setPassword("burnerchat")
             .createIceServer()
@@ -62,7 +62,7 @@ class WebRTCManager(
     private fun initializePeerConnectionFactory() {
         val options = PeerConnectionFactory
             .InitializationOptions
-            .builder(BurnerChat.getContext())
+            .builder(BurnerChatApp.getContext())
             .createInitializationOptions()
         PeerConnectionFactory.initialize(options)
 

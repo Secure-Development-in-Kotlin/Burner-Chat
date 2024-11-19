@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +17,7 @@ import com.example.burnerchat.R
 import com.example.burnerchat.model.chats.Chat
 import com.example.burnerchat.model.users.KeyPair
 import com.example.burnerchat.model.users.User
+import com.example.burnerchat.views.MessagesActivity
 import com.example.burnerchat.views.users.AddChatActivity
 import com.example.burnerchat.views.users.UserProfileActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -87,9 +89,13 @@ class ChatsView : AppCompatActivity() {
             viewModel.loggedUser.value?.keyPair?.publicKey!!
         ) { chat ->
             val intent = Intent(this, MessagesActivity::class.java)
-            Log.d("debug", chat?.getLastMessage()?.getContent().toString())
-            intent.putExtra("chat", chat?.getLastMessage()?.getLastContent())
-            startActivity(intent)
+            if (chat != null) {
+                Log.d("debug", chat.getOtherUser().toString())
+                intent.putExtra("user", chat.getOtherUser().userName)
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Cannot open chat", Toast.LENGTH_SHORT).show()
+            }
         }
 
         rvChats.layoutManager = LinearLayoutManager(this)

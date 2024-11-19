@@ -51,7 +51,7 @@ class ChatsAdapter (
 
         fun bind(chat: Chat){
             chatActual = chat
-            tvName.text =  chatActual.getOtherUser(id)?.userName
+            tvName.text =  chatActual.getOtherUser().userName
 
             if(!chatActual.isEmpty())
                 tvLastMessage.text = chatActual.getLastMessage().getLastContent()

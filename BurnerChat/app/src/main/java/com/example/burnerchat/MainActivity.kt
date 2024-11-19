@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainActivityViewModel by viewModels()
 
     companion object {
-        public const val CLAVE_NOMBRE_USUARIO = "userName"
+        const val CLAVE_NOMBRE_USUARIO = "userName"
     }
 
     //LogIn button
@@ -63,7 +63,11 @@ class MainActivity : AppCompatActivity() {
 
     // TODO: Verificar que funciona correctamente
     private fun login(name: String) {
-        MainActions.ConnectAs(name)
+        lifecycleScope.launch {
+            viewModel.dispatchAction(
+                MainActions.ConnectAs(name)
+            )
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
