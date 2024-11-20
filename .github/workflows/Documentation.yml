@@ -1,0 +1,62 @@
+name: Build & Deploy Hugo site to GitHub Pages
+
+# Esta acción se activará en cada push a la rama documentation
+on:
+  push:
+    branches:
+      - documentation  # Cambia esto a tu rama de documentación
+
+  # Permite ejecutar este flujo de trabajo manualmente desde la pestaña de Actions
+  workflow_dispatch:
+
+# Configura los permisos del GITHUB_TOKEN para permitir el despliegue en GitHub Pages
+permissions:
+  contents: read
+  id-token: write
+  pages: write
+
+# Permitir solo un despliegue concurrente
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Trabajo de construcción
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Extraer el código de la rama documentation
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      # Configurar Hugo
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.136.5'  # Asegúrate de usar la versión que necesites
+          extended: true
+      
+      # Construir tu sitio y guardar los archivos en ./public
+      - name: Build
+        run: hugo --minify
+
+      # Subir los archivos generados para que el siguiente trabajo pueda acceder a ellos
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+  # Trabajo de despliegue
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}  # URL donde se desplegará el sitio
+    runs-on: ubuntu-latest
+    needs: build  # Solo ejecutar si la construcción fue exitosa
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
