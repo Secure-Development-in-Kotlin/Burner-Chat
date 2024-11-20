@@ -9,4 +9,8 @@ class AudioMessage(private val path: String, user: User, chat: Chat) : MessageIm
         return path;
     }
 
+    override fun getLastContent(): String {
+        return "Audio message"
+    }
+
 }

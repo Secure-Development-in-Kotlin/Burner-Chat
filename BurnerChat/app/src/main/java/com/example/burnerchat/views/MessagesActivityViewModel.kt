@@ -1,4 +1,4 @@
-package com.example.burnerchat.backend
+package com.example.burnerchat.views
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -25,10 +25,8 @@ import kotlinx.coroutines.launch
 import org.webrtc.IceCandidate
 import org.webrtc.SessionDescription
 
-private const val TAG = "MainViewModel"
 
-class MainViewModel : ViewModel() {
-
+class MessagesActivityViewModel : ViewModel() {
     private val _state = MutableStateFlow(
         MainScreenState()
     )

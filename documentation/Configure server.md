@@ -34,14 +34,14 @@ npm start
 
 ## 3. Configure Burner Chat to use those servers
 
-- Now go to `BurnerChat/app/src/main/java/com/example/burnerchat/webrtc/WebRtcClient.kt` and change this section:
+- Now go to `BurnerChat/app/src/main/java/com/example/burnerchat/backend/webrtc/WebRtcManager.kt` and change this section:
 	- *Change `<YOUR_IP>` by yours*
 
-![](img/Pasted%20image%2020241016094539.png)
+![](img/Pasted%20image%2020241101095818.png)
 
-- Then go to `BurnerChat/app/src/main/java/com/example/burnerchat/webrtc/socket/SocketClient.kt` and change this section:
+- Then go to `BurnerChat/app/src/main/java/com/example/burnerchat/backend/socket/SocketConnection.kt` and change this section:
 	- *Change `<YOUR_IP>` by yours*
 
-![](img/Pasted%20image%2020241016094754.png)
+![](img/Pasted%20image%2020241101095934.png)
 
 *Now you are ready to go!  🦜*

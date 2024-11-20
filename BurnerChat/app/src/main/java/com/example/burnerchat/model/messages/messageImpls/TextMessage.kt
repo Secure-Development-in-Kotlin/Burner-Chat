@@ -8,4 +8,8 @@ class TextMessage (private val text: String, user: User, chat: Chat) : MessageIm
     override fun getConcreteContent(): String {
         return text;
     }
+
+    override fun getLastContent(): String {
+        return text;
+    }
 }
