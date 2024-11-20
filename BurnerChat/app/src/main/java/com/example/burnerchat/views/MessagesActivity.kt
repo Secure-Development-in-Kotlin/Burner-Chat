@@ -1,6 +1,7 @@
 package com.example.burnerchat.views
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -125,7 +126,7 @@ fun HomeScreenContent(
     var connectTo by remember { mutableStateOf("") }
     var chatMessage by remember { mutableStateOf("") }
 
-    fun changeConnect(name:String){
+    fun changeConnect(name: String) {
         connectTo = name
     }
     Column(
@@ -149,7 +150,8 @@ fun HomeScreenContent(
                         content = {
                             item {
                                 Text(
-                                    text = state.inComingRequestFrom ?: "Nombre del pibardo", // Mostrar isConnectToPeer o texto predeterminado,
+                                    text = state.inComingRequestFrom
+                                        ?: "Nombre del pibardo", // Mostrar isConnectToPeer o texto predeterminado,
                                     color = Color.White,
                                     modifier = Modifier.padding(start = 16.dp)
                                 )
@@ -186,24 +188,31 @@ fun HomeScreenContent(
                                     .fillMaxWidth()
                             )
                         }
+
                         is MessageType.MessageByMe -> {
                             Row(
                                 modifier = Modifier
                                     .padding(top = 10.dp, start = 10.dp)
                                     .fillMaxWidth()
                             ) {
-                                Box(modifier = Modifier.fillMaxWidth().weight(1f))
+                                Box(modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f))
                                 Text(
                                     text = current.msg,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .weight(1f)
-                                        .background(color = Green, shape = RoundedCornerShape(10.dp))
+                                        .background(
+                                            color = Green,
+                                            shape = RoundedCornerShape(10.dp)
+                                        )
                                         .padding(8.dp),
                                     color = Color.Black
                                 )
                             }
                         }
+
                         is MessageType.MessageByPeer -> {
                             Row(
                                 modifier = Modifier
@@ -215,13 +224,19 @@ fun HomeScreenContent(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .weight(1f)
-                                        .background(color = Color(0xFF58BDDB), shape = RoundedCornerShape(10.dp))
+                                        .background(
+                                            color = Color(0xFF58BDDB),
+                                            shape = RoundedCornerShape(10.dp)
+                                        )
                                         .padding(8.dp),
                                     color = Color.Black
                                 )
-                                Box(modifier = Modifier.fillMaxWidth().weight(1f))
+                                Box(modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f))
                             }
                         }
+
                         else -> {}
                     }
                 }
@@ -254,11 +269,14 @@ fun HomeScreenContent(
                     )
                     Button(
                         onClick = {
-                            dispatchAction(MainActions.SendChatMessage(chatMessage)) ;
-                            chatMessage=""
+                            dispatchAction(MainActions.SendChatMessage(chatMessage));
+                            chatMessage = ""
                         },
                         modifier = Modifier.padding(start = 10.dp, end = 10.dp),
-                        colors = ButtonDefaults.buttonColors(contentColor = Color.Black, containerColor = Green)
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = Color.Black,
+                            containerColor = Green
+                        )
                     ) {
                         Text(text = "Chat")
                     }
@@ -287,14 +305,15 @@ fun HomeScreenContent(
                     )
                     Button(
                         onClick = {
-                            if (state.connectedAs.isNotEmpty()) {
-                                dispatchAction(MainActions.ConnectToUser(connectTo))
-                            } else {
-                                dispatchAction(MainActions.ConnectAs(yourName))
-                            }
+                            Log.d(TAG, "HomeScreenContent: $state")
+                            Log.d(TAG, "StetConnectedAs: ${state.connectedAs}")
+                            dispatchAction(MainActions.ConnectToUser(connectTo))
                         },
                         modifier = Modifier.padding(start = 10.dp, end = 10.dp),
-                        colors = ButtonDefaults.buttonColors(contentColor = Color.Black, containerColor = Green)
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = Color.Black,
+                            containerColor = Green
+                        )
                     ) {
                         Text(text = "GO")
                     }

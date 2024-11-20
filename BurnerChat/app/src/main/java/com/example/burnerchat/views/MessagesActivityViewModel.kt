@@ -3,6 +3,7 @@ package com.example.burnerchat.views
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.backend.socket.MessageModel
 import com.example.burnerchat.backend.socket.SocketConnection
 import com.example.burnerchat.backend.socket.SocketEvents
@@ -28,7 +29,7 @@ import org.webrtc.SessionDescription
 
 class MessagesActivityViewModel : ViewModel() {
     private val _state = MutableStateFlow(
-        MainScreenState()
+        MainScreenState.getInstance(BurnerChatApp.getContext())
     )
     val state: StateFlow<MainScreenState>
         get() = _state
@@ -39,12 +40,13 @@ class MessagesActivityViewModel : ViewModel() {
     val oneTimeEvents: Flow<MainOneTimeEvents>
         get() = _oneTimeEvents.asSharedFlow()
 
-    private val socketConnection = SocketConnection()
+    private val socketConnection = BurnerChatApp.appModule.socketConnection
     private val gson = Gson()
-    private lateinit var rtcManager: WebRTCManager
+    private var rtcManager: WebRTCManager = BurnerChatApp.appModule.rtcManager
 
     init {
         listenToSocketEvents()
+        Log.d(TAG, "State: ${state.value}")
     }
 
     private fun listenToSocketEvents() {
@@ -53,11 +55,9 @@ class MessagesActivityViewModel : ViewModel() {
                 when (it) {
                     is SocketEvents.ConnectionChange -> {
                         if (!it.isConnected) {
-                            _state.update {
-                                state.value.copy(
-                                    isConnectedToServer = false,
-                                    connectedAs = "",
-                                )
+                            MainScreenState.updateInstance {
+                                isConnectedToServer = false
+                                connectedAs = ""
                             }
                         }
                     }
@@ -80,16 +80,16 @@ class MessagesActivityViewModel : ViewModel() {
             "user_already_exists" -> {
                 sendMessageToUi(MessageType.Info("User already exists"))
             }
+
             "user_stored" -> {
                 Log.d(TAG, "User stored in socket")
                 sendMessageToUi(MessageType.Info("User stored in socket"))
-                _state.update {
-                    state.value.copy(
-                        isConnectedToServer = true,
-                        connectedAs = message.data.toString(),
-                    )
+                MainScreenState.updateInstance {
+                    isConnectedToServer = true
+                    connectedAs = message.data.toString()
                 }
             }
+
             "transfer_response" -> {
                 Log.d(TAG, "transfer_response: ")
                 // user is online / offline
@@ -99,30 +99,30 @@ class MessagesActivityViewModel : ViewModel() {
                 }
                 // important to update target
                 rtcManager = WebRTCManager(
-                    socketConnection = socketConnection,
                     userName = state.value.connectedAs,
                     target = message.data.toString(),
                 )
+                MainScreenState.updateInstance {
+                    isRtcEstablished = true
+                }
+
                 consumeEventsFromRTC()
                 rtcManager.updateTarget(message.data.toString())
                 sendMessageToUi(MessageType.Info("User is Connected to ${message.data}"))
-                _state.update {
-                    state.value.copy(
-                        isConnectToPeer = message.data.toString(),
-                    )
+                MainScreenState.updateInstance {
+                    isConnectToPeer = message.data.toString()
                 }
                 rtcManager.createOffer(
                     from = state.value.connectedAs,
                     target = message.data.toString(),
                 )
             }
+
             "offer_received" -> {
                 newOfferMessage = message
                 Log.d(TAG, "offer_received ")
-                _state.update {
-                    state.value.copy(
-                        inComingRequestFrom = message.name.orEmpty(),
-                    )
+                MainScreenState.updateInstance {
+                    inComingRequestFrom = message.name.orEmpty()
                 }
                 viewModelScope.launch {
                     _oneTimeEvents.emit(
@@ -130,6 +130,7 @@ class MessagesActivityViewModel : ViewModel() {
                     )
                 }
             }
+
             "answer_received" -> {
                 val session = SessionDescription(
                     SessionDescription.Type.ANSWER,
@@ -138,6 +139,7 @@ class MessagesActivityViewModel : ViewModel() {
                 Log.d(TAG, "onNewMessage: answer received $session")
                 rtcManager.onRemoteSessionReceived(session)
             }
+
             "ice_candidate" -> {
                 try {
                     val receivingCandidate = gson.fromJson(
@@ -163,15 +165,13 @@ class MessagesActivityViewModel : ViewModel() {
     private fun consumeEventsFromRTC() {
         viewModelScope.launch {
             rtcManager.messageStream.collectLatest {
-                if(it is MessageType.ConnectedToPeer){
-                    _state.update {
-                        state.value.copy(
-                            isRtcEstablished = true,
-                            peerConnectionString = "Is connected to peer ${state.value.isConnectToPeer}",
-                        )
+                if (it is MessageType.ConnectedToPeer) {
+                    MainScreenState.updateInstance {
+                        isRtcEstablished = true
+                        peerConnectionString = "Is connected to peer ${state.value.isConnectToPeer}"
                     }
                 }
-                if(it is MessageType.MessageByMe){
+                if (it is MessageType.MessageByMe) {
                     Log.d(TAG, "consumeEventsFromRTC: ${it.msg}")
                 }
                 sendMessageToUi(msg = it)
@@ -182,10 +182,8 @@ class MessagesActivityViewModel : ViewModel() {
     // This function sends the message of the user to the User Interface
     private fun sendMessageToUi(msg: MessageType) {
         viewModelScope.launch(Dispatchers.IO) {
-            _state.update {
-                state.value.copy(
-                    messagesFromServer = state.value.messagesFromServer + msg,
-                )
+            MainScreenState.updateInstance {
+                messagesFromServer = state.value.messagesFromServer + msg
             }
         }
     }
@@ -195,24 +193,18 @@ class MessagesActivityViewModel : ViewModel() {
             is MainActions.ConnectAs -> {
                 socketConnection.initSocket(actions.name)
             }
+
             is MainActions.AcceptIncomingConnection -> {
-                // TODO do add view for confirmation, and then take further actions
                 val session = SessionDescription(
                     SessionDescription.Type.OFFER,
                     newOfferMessage.data.toString()
                 )
                 // move to new place
-                if(!::rtcManager.isInitialized){
-                    rtcManager = WebRTCManager(
-                        socketConnection = socketConnection,
-                        userName = state.value.connectedAs,
-                        target = newOfferMessage.name.toString(),
-                    )
-                    consumeEventsFromRTC()
-                }
+                consumeEventsFromRTC()
                 rtcManager.onRemoteSessionReceived(session)
                 rtcManager.answerToOffer(newOfferMessage.name)
             }
+
             is MainActions.ConnectToUser -> {
                 socketConnection.sendMessageToSocket(
                     MessageModel(
@@ -224,7 +216,7 @@ class MessagesActivityViewModel : ViewModel() {
                 )
             }
             // In this part the message is send using the WebRtcManager
-            is MainActions.SendChatMessage->{
+            is MainActions.SendChatMessage -> {
                 rtcManager.sendMessage(actions.msg)
             }
         }

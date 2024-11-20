@@ -30,10 +30,10 @@ sealed class MessageType{
 
 class WebRTCManager(
     private var target: String,
-    private val socketConnection: SocketConnection,
     private val userName: String,
 ): PeerConnection.Observer {
 
+    private val socketConnection = BurnerChatApp.appModule.socketConnection
     private val scope = CoroutineScope(Dispatchers.IO)
     private val _messageStream = MutableSharedFlow<MessageType>()
     val messageStream: SharedFlow<MessageType>

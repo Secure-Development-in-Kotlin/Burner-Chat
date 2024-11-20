@@ -6,14 +6,22 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.burnerchat.backend.socket.SocketConnection
 import com.example.burnerchat.business.MainActions
+import com.example.burnerchat.business.MainScreenState
 import com.example.burnerchat.model.users.KeyPair
 import com.example.burnerchat.model.users.User
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 class MainActivityViewModel : ViewModel() {
+    private val _state = MutableStateFlow(
+        MainScreenState.getInstance(BurnerChatApp.getContext())
+    )
+    val state: StateFlow<MainScreenState>
+        get() = _state
+
     // TODO: verificar si mejor tener valor o no de inicializacion
     private val _userName = MutableLiveData("User")
-
-    private val socketConnection = BurnerChatApp.appModule.socketConnection
 
     val userName: LiveData<String>
         get() = _userName
@@ -26,9 +34,13 @@ class MainActivityViewModel : ViewModel() {
         when (actions) {
             is MainActions.ConnectAs -> {
                 // Iniciar socket
-                socketConnection.initSocket(actions.name)
+                BurnerChatApp.appModule.socketConnection.initSocket(actions.name)
                 // Establecer el usuario como loggeado a nivel global en la app
                 BurnerChatApp.appModule.userLogged = User(KeyPair("a", "b"), actions.name)
+                MainScreenState.updateInstance {
+                    isConnectedToServer = true
+                    connectedAs = actions.name
+                }
             }
 
             else -> {
