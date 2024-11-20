@@ -158,7 +158,10 @@ fun HomeScreenContent(
                                 Box(
                                     modifier = Modifier
                                         .padding(end = 16.dp, top = 8.dp)
-                                        .background(color = Green, shape = RoundedCornerShape(8.dp))
+                                        .background(
+                                            color = if (state.isRtcEstablished) Green else SoftRed,
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
                                         .padding(10.dp)
                                 ) {
                                     Text(
