@@ -61,13 +61,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // TODO: Verificar que funciona correctamente
     private fun login(name: String) {
-        lifecycleScope.launch {
-            viewModel.dispatchAction(
-                MainActions.ConnectAs(name)
-            )
-        }
+        viewModel.dispatchAction(
+            MainActions.ConnectAs(name)
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,15 +1,9 @@
 package com.example.burnerchat.views.users
 
-import android.content.Intent
 import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.core.content.ContextCompat.startActivity
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.burnerchat.BurnerChatApp
-import com.example.burnerchat.backend.socket.MessageModel
 import com.example.burnerchat.business.MainActions
 import com.example.burnerchat.model.chats.Chat
 import com.example.burnerchat.model.users.KeyPair
@@ -27,7 +21,7 @@ class AddChatViewModel : ViewModel() {
         BurnerChatApp.appModule.chatsRepository.addChat(chat)
         viewModelScope.launch(Dispatchers.IO) {
             dispatchAction(
-                MainActions.ConnectToUser(chat.getOtherUser().userName)
+                MainActions.ConnectToUser(chat.getTarget().userName)
             )
         }
     }

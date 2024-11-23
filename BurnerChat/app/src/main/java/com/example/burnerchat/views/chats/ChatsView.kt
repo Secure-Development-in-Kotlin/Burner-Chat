@@ -17,7 +17,7 @@ import com.example.burnerchat.R
 import com.example.burnerchat.model.chats.Chat
 import com.example.burnerchat.model.users.KeyPair
 import com.example.burnerchat.model.users.User
-import com.example.burnerchat.views.MessagesActivity
+import com.example.burnerchat.views.messages.MessagesActivity2
 import com.example.burnerchat.views.users.AddChatActivity
 import com.example.burnerchat.views.users.UserProfileActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -55,7 +55,7 @@ class ChatsView : AppCompatActivity() {
 
         viewModel.chatsList.observe(this) { newChatsList ->
             chatsList = newChatsList
-            rvChats.adapter?.notifyDataSetChanged() // TODO revisar
+            rvChats.adapter?.notifyDataSetChanged()
         }
     }
 
@@ -88,10 +88,10 @@ class ChatsView : AppCompatActivity() {
             viewModel.getChats(),
             viewModel.loggedUser.value?.keyPair?.publicKey!!
         ) { chat ->
-            val intent = Intent(this, MessagesActivity::class.java)
+            val intent = Intent(this, MessagesActivity2::class.java)
             if (chat != null) {
-                Log.d("debug", chat.getOtherUser().toString())
-                intent.putExtra("user", chat.getOtherUser().userName)
+                Log.d("debug", chat.getTarget().toString())
+                intent.putExtra("user", chat.getTarget().userName)
                 startActivity(intent)
             } else {
                 Toast.makeText(this, "Cannot open chat", Toast.LENGTH_SHORT).show()
