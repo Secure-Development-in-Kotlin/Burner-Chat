@@ -1,8 +1,11 @@
 package com.example.burnerchat.views.chats
 
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -14,6 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.MainActivity
 import com.example.burnerchat.R
+import com.example.burnerchat.business.MainActions
+import com.example.burnerchat.business.MainOneTimeEvents
 import com.example.burnerchat.model.chats.Chat
 import com.example.burnerchat.model.users.KeyPair
 import com.example.burnerchat.model.users.User
@@ -21,6 +26,7 @@ import com.example.burnerchat.views.messages.MessagesActivity2
 import com.example.burnerchat.views.users.AddChatActivity
 import com.example.burnerchat.views.users.UserProfileActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+
 
 class ChatsView : AppCompatActivity() {
     private val viewModel: ChatsViewViewModel by viewModels()
@@ -57,6 +63,31 @@ class ChatsView : AppCompatActivity() {
             chatsList = newChatsList
             rvChats.adapter?.notifyDataSetChanged()
         }
+
+        viewModel.oneTimeEvents.observe(this) {
+            when (it) {
+                is MainOneTimeEvents.GotInvite -> {
+                    val dialog = Dialog(this)
+                    dialog.setContentView(R.layout.incomming_dialog)
+                    dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                    dialog.setCancelable(false)
+
+                    // TODO: comportamiento de los botones
+                    dialog.findViewById<Button>(R.id.btAccept).setOnClickListener {
+                        viewModel.dispatchAction (
+                            MainActions.AcceptIncomingConnection
+                        )
+                        dialog.dismiss()
+                    }
+
+                    dialog.findViewById<Button>(R.id.btCancel).setOnClickListener {
+                        dialog.dismiss()
+                    }
+
+                    dialog.show()
+                }
+            }
+        }
     }
 
     private fun initIcon() {
@@ -65,9 +96,9 @@ class ChatsView : AppCompatActivity() {
             var loggedUser = viewModel.loggedUser.value
             intent.putExtra(
                 UserProfileActivity.CLAVE_NOMBRE_USUARIO,
-                loggedUser?.userName.toString()
+                loggedUser?.username.toString()
             )
-            Log.d("chat", loggedUser?.userName!!)
+            Log.d("chat", loggedUser?.username!!)
             intent.putExtra(
                 UserProfileActivity.CLAVE_CLAVE_PUBLICA,
                 loggedUser.keyPair.publicKey.toString()
@@ -90,8 +121,6 @@ class ChatsView : AppCompatActivity() {
         ) { chat ->
             val intent = Intent(this, MessagesActivity2::class.java)
             if (chat != null) {
-                Log.d("debug", chat.getTarget().toString())
-                intent.putExtra("user", chat.getTarget().userName)
                 startActivity(intent)
             } else {
                 Toast.makeText(this, "Cannot open chat", Toast.LENGTH_SHORT).show()
@@ -108,7 +137,7 @@ class ChatsView : AppCompatActivity() {
             intent.getStringExtra(MainActivity.CLAVE_NOMBRE_USUARIO).toString()
         )
         viewModel.logIn(loggedUser)
-        Log.d("debug", loggedUser.userName)
+        Log.d("debug", loggedUser.username)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

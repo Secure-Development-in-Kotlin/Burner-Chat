@@ -12,6 +12,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.burnerchat.business.MainActions
+import com.example.burnerchat.business.State
+import com.example.burnerchat.model.users.KeyPair
+import com.example.burnerchat.model.users.User
 import com.example.burnerchat.views.chats.ChatsView
 import com.example.burnerchat.views.users.AddChatActivity
 import kotlinx.coroutines.Dispatchers
@@ -65,6 +68,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.dispatchAction(
             MainActions.ConnectAs(name)
         )
+        State.connectedAs = User(KeyPair("", ""), name)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

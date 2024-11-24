@@ -45,6 +45,11 @@ class MessagesActivity2 : AppCompatActivity() {
         etMessage = findViewById(R.id.etMessage)
         btSendMessage = findViewById(R.id.btSendMessage)
         rvMessages = findViewById(R.id.rvMessages)
+
+        btSendMessage.setOnClickListener {
+            viewModel.sendMessage(etMessage.text.toString())
+            etMessage.text.clear()
+        }
     }
 
 

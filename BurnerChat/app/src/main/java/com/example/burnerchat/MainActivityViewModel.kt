@@ -34,10 +34,8 @@ class MainActivityViewModel : ViewModel() {
                 is MainActions.ConnectAs -> {
                     // Iniciar socket
                     BurnerChatApp.appModule.socketConnection.initSocket(actions.name)
-                    // Establecer el usuario como loggeado a nivel global en la app
-                    BurnerChatApp.appModule.userLogged = User(KeyPair("a", "b"), actions.name)
 
-                    State.connectedAs = actions.name
+                    State.connectedAs = User(KeyPair("a", "b"), actions.name)
                     State.isConnectedToServer = true
                 }
 

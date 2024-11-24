@@ -35,7 +35,7 @@ class SocketConnection {
         username: String,
     ) {
 
-        webSocket = object : WebSocketClient(URI("ws://83.54.220.160:3000")) {
+        webSocket = object : WebSocketClient(URI("ws://83.54.225.146:3000")) {
             override fun onOpen(handshakedata: ServerHandshake?) {
                 Log.d(TAG, "onOpen: ${Thread.currentThread()}")
                 sendMessageToSocket(

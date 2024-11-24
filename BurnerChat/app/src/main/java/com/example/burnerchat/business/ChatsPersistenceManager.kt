@@ -23,4 +23,13 @@ object ChatsPersistenceManager {
         }
         return listOf()
     }
+
+    fun getChat(targetUser: String?): Chat? {
+        for (chat in chatsDataBase){
+            if (chat.getTarget().username == targetUser){
+                return chat
+            }
+        }
+        return null
+    }
 }

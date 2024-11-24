@@ -6,6 +6,7 @@ import com.example.burnerchat.backend.socket.SocketConnection
 import com.example.burnerchat.backend.webrtc.WebRTCManager
 import com.example.burnerchat.business.ChatsPersistenceManager
 import com.example.burnerchat.model.users.User
+import com.google.gson.Gson
 
 class BurnerChatApp : Application() {
     companion object {
@@ -26,19 +27,22 @@ class BurnerChatApp : Application() {
 
 //¿Por qué utilizamos una interfaz?
 interface AppModule {
-    var userLogged: User
     val chatsRepository: ChatsPersistenceManager
     val socketConnection: SocketConnection
     val rtcManager: WebRTCManager
+    val gson: Gson
+    val contexto: Context
 }
 
 
 class AppModuleImpl(
-    private val contexto: Context // No lo quito porque lo necesitaremos en el futuro para la db
+    override val contexto: Context // No lo quito porque lo necesitaremos en el futuro para la db
 ) : AppModule {
 
-    // Logged user
-    override lateinit var userLogged: User
+    // Gson
+    override val gson: Gson by lazy {
+        Gson()
+    }
 
     // Socket
     override val socketConnection: SocketConnection by lazy {

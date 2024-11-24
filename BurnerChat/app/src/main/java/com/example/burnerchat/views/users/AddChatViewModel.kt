@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.burnerchat.BurnerChatApp
+import com.example.burnerchat.backend.socket.MessageModel
 import com.example.burnerchat.business.MainActions
+import com.example.burnerchat.business.State
 import com.example.burnerchat.model.chats.Chat
 import com.example.burnerchat.model.users.KeyPair
 import com.example.burnerchat.model.users.User
@@ -14,14 +16,13 @@ import kotlinx.coroutines.launch
 class AddChatViewModel : ViewModel() {
     private val socketConnection = BurnerChatApp.appModule.socketConnection
 
-
-    fun addChat(userName: String) {
+    fun connectToChat(userName: String) {
         val otherUser = User(KeyPair("aa", "bb"), userName)
         val chat = Chat(otherUser)
         BurnerChatApp.appModule.chatsRepository.addChat(chat)
         viewModelScope.launch(Dispatchers.IO) {
             dispatchAction(
-                MainActions.ConnectToUser(chat.getTarget().userName)
+                MainActions.ConnectToUser(userName)
             )
         }
     }
@@ -29,7 +30,14 @@ class AddChatViewModel : ViewModel() {
     private fun dispatchAction(actions: MainActions) {
         when (actions) {
             is MainActions.ConnectToUser -> {
-                // TODO
+                socketConnection.sendMessageToSocket(
+                    MessageModel(
+                        type = "start_transfer",
+                        name = State.connectedAs.username,
+                        target = actions.name,
+                        data = null,
+                    )
+                )
             }
 
             else -> {

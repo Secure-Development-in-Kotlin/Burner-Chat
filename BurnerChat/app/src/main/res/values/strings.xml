@@ -3,4 +3,7 @@
     <string name="server">Server</string>
     <string name="message">Message...</string>
     <string name="chat">Chat</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="quiero_hablar_nano">Quiero hablar nano</string>
 </resources>
