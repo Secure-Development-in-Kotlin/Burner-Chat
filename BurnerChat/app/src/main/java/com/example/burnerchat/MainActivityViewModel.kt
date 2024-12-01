@@ -5,9 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.burnerchat.backend.socket.SocketConnection
 import com.example.burnerchat.business.MainActions
 import com.example.burnerchat.business.MainScreenState
+import com.example.burnerchat.business.ProtocolHandler
 import com.example.burnerchat.business.State
 import com.example.burnerchat.model.users.KeyPair
 import com.example.burnerchat.model.users.User
@@ -28,22 +30,12 @@ class MainActivityViewModel : ViewModel() {
         _userName.value = name
     }
 
-    fun dispatchAction(actions: MainActions) {
+    // Función para iniciar el login en el servidor
+    fun login(name: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            when (actions) {
-                is MainActions.ConnectAs -> {
-                    // Iniciar socket
-                    BurnerChatApp.appModule.socketConnection.initSocket(actions.name)
-
-                    State.connectedAs = User(KeyPair("a", "b"), actions.name)
-                    State.isConnectedToServer = true
-                }
-
-                else -> {
-                    Log.d("MainViewModel", "dispatchAction: Action not recognized")
-                }
-            }
+            BurnerChatApp.appModule.protocolHandler.dispatchAction(
+                MainActions.ConnectAs(name)
+            )
         }
     }
-
 }

@@ -99,9 +99,10 @@ fun MainScreen() {
                 showIncomingRequestDialog = false
             },
             onAccept = {
-                viewModel.dispatchAction(
-                    MainActions.AcceptIncomingConnection
-                )
+//                viewModel.dispatchAction(
+//                    MainActions.AcceptIncomingConnection
+//                )
+                viewModel.acceptConnection()
                 showIncomingRequestDialog = false
             },
             inviteFrom = state.inComingRequestFrom,
@@ -110,9 +111,7 @@ fun MainScreen() {
     HomeScreenContent(
         state = state,
         dispatchAction = {
-            viewModel.dispatchAction(
-                it
-            )
+            viewModel.acceptConnection()
         },
     )
 }

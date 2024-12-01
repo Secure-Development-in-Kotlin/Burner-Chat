@@ -13,8 +13,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.MainActivity
 import com.example.burnerchat.R
 import com.example.burnerchat.business.MainActions
@@ -43,10 +45,11 @@ class ChatsView : AppCompatActivity() {
     //Chats list
     private var chatsList: List<Chat> = mutableListOf()
 
-    override fun onResume(){
+    override fun onResume() {
         super.onResume()
         chatsList = viewModel.getChats()
     }
+
     /**
      * Initializes all components
      */
@@ -65,18 +68,23 @@ class ChatsView : AppCompatActivity() {
         }
 
         viewModel.oneTimeEvents.observe(this) {
+            Log.d("INVITATION", "Got invite")
             when (it) {
                 is MainOneTimeEvents.GotInvite -> {
                     val dialog = Dialog(this)
                     dialog.setContentView(R.layout.incomming_dialog)
-                    dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                    dialog.window?.setLayout(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
                     dialog.setCancelable(false)
 
                     // TODO: comportamiento de los botones
                     dialog.findViewById<Button>(R.id.btAccept).setOnClickListener {
-                        viewModel.dispatchAction (
-                            MainActions.AcceptIncomingConnection
-                        )
+//                        viewModel.dispatchAction (
+//                            MainActions.AcceptIncomingConnection
+//                        )
+                        viewModel.acceptIncomingConnection()
                         dialog.dismiss()
                     }
 
@@ -120,6 +128,7 @@ class ChatsView : AppCompatActivity() {
             viewModel.loggedUser.value?.keyPair?.publicKey!!
         ) { chat ->
             val intent = Intent(this, MessagesActivity2::class.java)
+            intent.putExtra("target", chat?.getTarget()?.username)
             if (chat != null) {
                 startActivity(intent)
             } else {

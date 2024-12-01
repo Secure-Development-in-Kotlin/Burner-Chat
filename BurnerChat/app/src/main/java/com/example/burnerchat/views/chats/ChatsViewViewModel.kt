@@ -31,7 +31,7 @@ class ChatsViewViewModel : ViewModel() {
     private val _loggedUser = MutableLiveData(User(KeyPair("a", "b"), "userName"))
 
     // WebRTC connection variables
-    private val socketConnection = BurnerChatApp.appModule.socketConnection
+    //private val socketConnection = BurnerChatApp.appModule.socketConnection
     private var rtcManager: WebRTCManager = BurnerChatApp.appModule.rtcManager
     private lateinit var newOfferMessage: MessageModel
     private val _oneTimeEvents = MutableLiveData<MainOneTimeEvents>()
@@ -39,101 +39,101 @@ class ChatsViewViewModel : ViewModel() {
         get() = _oneTimeEvents
 
 
-    init {
-        listenToSocketEvents()
-    }
+//    init {
+//        listenToSocketEvents()
+//    }
 
-    private fun listenToSocketEvents() {
-        viewModelScope.launch {
-            socketConnection.event.collectLatest {
-                when (it) {
-                    is SocketEvents.ConnectionChange -> {
-                        if (!it.isConnected) {
-                            State.isConnectedToServer = false
-                            State.connectedAs = User(KeyPair("", ""), "")
-                        }
-                    }
-
-                    is SocketEvents.OnSocketMessageReceived -> {
-                        handleNewMessage(it.message)
-                    }
-
-                    is SocketEvents.ConnectionError -> {
-                        Log.d(TAG, "socket ConnectionError ${it.error}")
-                    }
-                }
-            }
-        }
-    }
-
-    private fun handleNewMessage(message: MessageModel) {
-        Log.d(TAG, "handleNewMessage in VM")
-        when (message.type) {
-            "transfer_response" -> {
-                Log.d(TAG, "transfer_response: ")
-                // user is online / offline
-                if (message.data == null) {
-                    // TODO: change to toast??
-                    Log.d(TAG, "User is not available")
-                    return
-                }
-                // important to update target
-                rtcManager = WebRTCManager(
-                    userName = State.connectedAs.username,
-                    target = message.data.toString(),
-                )
-                State.isRtcEstablished = true
-
-                consumeEventsFromRTC()
-                rtcManager.updateTarget(message.data.toString())
-                // TODO: change to toast?
-                Log.d(TAG, "User is Connected to ${message.data}")
-                State.isConnectToPeer = message.data.toString()
-                rtcManager.createOffer(
-                    from = State.connectedAs.username,
-                    target = message.data.toString(),
-                )
-            }
-
-            "offer_received" -> {
-                newOfferMessage = message
-                Log.d(TAG, "offer_received ")
-                State.inComingRequestFrom = message.name.orEmpty()
-                viewModelScope.launch {
-                    _oneTimeEvents.postValue(MainOneTimeEvents.GotInvite)
-                }
-            }
-
-            "answer_received" -> {
-                val session = SessionDescription(
-                    SessionDescription.Type.ANSWER,
-                    message.data.toString()
-                )
-                Log.d(TAG, "onNewMessage: answer received $session")
-                rtcManager.onRemoteSessionReceived(session)
-            }
-
-            "ice_candidate" -> {
-                try {
-                    val receivingCandidate = BurnerChatApp.appModule.gson.fromJson(
-                        BurnerChatApp.appModule.gson.toJson(message.data),
-                        IceCandidateModel::class.java
-                    )
-                    Log.d(TAG, "onNewMessage: ice candidate $receivingCandidate")
-                    rtcManager.addIceCandidate(
-                        IceCandidate(
-                            receivingCandidate.sdpMid,
-                            Math.toIntExact(receivingCandidate.sdpMLineIndex.toLong()),
-                            receivingCandidate.sdpCandidate
-                        )
-                    )
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-
-        }
-    }
+//    private fun listenToSocketEvents() {
+//        viewModelScope.launch {
+//            socketConnection.event.collectLatest {
+//                when (it) {
+//                    is SocketEvents.ConnectionChange -> {
+//                        if (!it.isConnected) {
+//                            State.isConnectedToServer = false
+//                            State.connectedAs = User(KeyPair("", ""), "")
+//                        }
+//                    }
+//
+//                    is SocketEvents.OnSocketMessageReceived -> {
+//                        handleNewMessage(it.message)
+//                    }
+//
+//                    is SocketEvents.ConnectionError -> {
+//                        Log.d(TAG, "socket ConnectionError ${it.error}")
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    private fun handleNewMessage(message: MessageModel) {
+//        Log.d(TAG, "handleNewMessage in VM")
+//        when (message.type) {
+//            "transfer_response" -> {
+//                Log.d(TAG, "transfer_response: ")
+//                // user is online / offline
+//                if (message.data == null) {
+//                    // TODO: change to toast??
+//                    Log.d(TAG, "User is not available")
+//                    return
+//                }
+//                // important to update target
+//                rtcManager = WebRTCManager(
+//                    userName = State.connectedAs.username,
+//                    target = message.data.toString(),
+//                )
+//                State.isRtcEstablished = true
+//
+//                consumeEventsFromRTC()
+//                rtcManager.updateTarget(message.data.toString())
+//                // TODO: change to toast?
+//                Log.d(TAG, "User is Connected to ${message.data}")
+//                State.isConnectToPeer = message.data.toString()
+//                rtcManager.createOffer(
+//                    from = State.connectedAs.username,
+//                    target = message.data.toString(),
+//                )
+//            }
+//
+//            "offer_received" -> {
+//                newOfferMessage = message
+//                Log.d(TAG, "offer_received ")
+//                State.inComingRequestFrom = message.name.orEmpty()
+//                viewModelScope.launch {
+//                    _oneTimeEvents.postValue(MainOneTimeEvents.GotInvite)
+//                }
+//            }
+//
+//            "answer_received" -> {
+//                val session = SessionDescription(
+//                    SessionDescription.Type.ANSWER,
+//                    message.data.toString()
+//                )
+//                Log.d(TAG, "onNewMessage: answer received $session")
+//                rtcManager.onRemoteSessionReceived(session)
+//            }
+//
+//            "ice_candidate" -> {
+//                try {
+//                    val receivingCandidate = BurnerChatApp.appModule.gson.fromJson(
+//                        BurnerChatApp.appModule.gson.toJson(message.data),
+//                        IceCandidateModel::class.java
+//                    )
+//                    Log.d(TAG, "onNewMessage: ice candidate $receivingCandidate")
+//                    rtcManager.addIceCandidate(
+//                        IceCandidate(
+//                            receivingCandidate.sdpMid,
+//                            Math.toIntExact(receivingCandidate.sdpMLineIndex.toLong()),
+//                            receivingCandidate.sdpCandidate
+//                        )
+//                    )
+//                } catch (e: Exception) {
+//                    e.printStackTrace()
+//                }
+//            }
+//
+//        }
+//    }
 
     private fun addChat(userName: String) {
         val otherUser = User(KeyPair("aa", "bb"), userName)
@@ -144,44 +144,44 @@ class ChatsViewViewModel : ViewModel() {
         _chatsList.value = dataBase.getChats()
     }
 
-    private fun consumeEventsFromRTC() {
-        viewModelScope.launch {
-            rtcManager.messageStream.collectLatest {
-                if (it is MessageType.ConnectedToPeer) {
-                    State.isRtcEstablished = true
-                    State.peerConnectionString = "Is connected to peer ${State.isConnectToPeer}"
-                }
-                if (it is MessageType.MessageByMe) {
-                    Log.d(TAG, "consumeEventsFromRTC: ${it.msg}")
-                }
-                // TODO: change to Toast?
-                // or notification system
-                Log.d(TAG, "$it")
-            }
-        }
-    }
-
-    fun dispatchAction(actions: MainActions) {
-        when (actions) {
-            is MainActions.AcceptIncomingConnection -> {
-                val session = SessionDescription(
-                    SessionDescription.Type.OFFER,
-                    newOfferMessage.data.toString()
-                )
-                // move to new place
-                consumeEventsFromRTC()
-                rtcManager.onRemoteSessionReceived(session)
-                rtcManager.answerToOffer(newOfferMessage.name)
-
-                // Add chat to offer reciever db
-                addChat(newOfferMessage.name.toString())
-            }
-
-            else -> {
-                Log.d(TAG, "dispatchAction not recognized: $actions")
-            }
-        }
-    }
+//    private fun consumeEventsFromRTC() {
+//        viewModelScope.launch {
+//            rtcManager.messageStream.collectLatest {
+//                if (it is MessageType.ConnectedToPeer) {
+//                    State.isRtcEstablished = true
+//                    State.peerConnectionString = "Is connected to peer ${State.isConnectToPeer}"
+//                }
+//                if (it is MessageType.MessageByMe) {
+//                    Log.d(TAG, "consumeEventsFromRTC: ${it.msg}")
+//                }
+//                // TODO: change to Toast?
+//                // or notification system
+//                Log.d(TAG, "$it")
+//            }
+//        }
+//    }
+//
+//    fun dispatchAction(actions: MainActions) {
+//        when (actions) {
+//            is MainActions.AcceptIncomingConnection -> {
+//                val session = SessionDescription(
+//                    SessionDescription.Type.OFFER,
+//                    newOfferMessage.data.toString()
+//                )
+//                // move to new place
+//                consumeEventsFromRTC()
+//                rtcManager.onRemoteSessionReceived(session)
+//                rtcManager.answerToOffer(newOfferMessage.name)
+//
+//                // Add chat to offer reciever db
+//                addChat(newOfferMessage.name.toString())
+//            }
+//
+//            else -> {
+//                Log.d(TAG, "dispatchAction not recognized: $actions")
+//            }
+//        }
+//    }
 
     val chatsList: LiveData<List<Chat>>
         get() = _chatsList
@@ -214,8 +214,9 @@ class ChatsViewViewModel : ViewModel() {
     }
 
     fun init() {
-        var users = generateUsers(25)
-        initChats(users)
+        // Por ahora los quiero vacíos, no hardcodeados
+//        var users = generateUsers(25)
+//        initChats(users)
         _chatsList.value = dataBase.getChats()
     }
 
@@ -233,6 +234,15 @@ class ChatsViewViewModel : ViewModel() {
                 chat.addMessage(TextMessage("Text Message $i", user, chat))
             else
                 chat.addMessage(TextMessage("Text Message $i", _loggedUser.value!!, chat))
+        }
+    }
+
+    // Método para aceptar una conexión entrante
+    fun acceptIncomingConnection() {
+        viewModelScope.launch {
+            BurnerChatApp.appModule.protocolHandler.dispatchAction(
+                MainActions.AcceptIncomingConnection
+            )
         }
     }
 

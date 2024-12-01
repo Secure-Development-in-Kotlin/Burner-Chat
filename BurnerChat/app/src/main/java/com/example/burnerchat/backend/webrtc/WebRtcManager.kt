@@ -21,19 +21,20 @@ import java.nio.ByteBuffer
 
 private const val TAG = "WebRtcManager"
 
-sealed class MessageType{
-    data class Info(val msg: String): MessageType()
-    data class MessageByMe(val msg: String): MessageType()
-    data class MessageByPeer(val msg: String): MessageType()
+sealed class MessageType {
+    data class Info(val msg: String) : MessageType()
+    data class MessageByMe(val msg: String) : MessageType()
+    data class MessageByPeer(val msg: String) : MessageType()
     data object ConnectedToPeer : MessageType()
 }
 
 class WebRTCManager(
+    private var socketConnection: SocketConnection,
     private var target: String,
     private val userName: String,
-): PeerConnection.Observer {
+) : PeerConnection.Observer {
 
-    private val socketConnection = BurnerChatApp.appModule.socketConnection
+    //private val socketConnection = BurnerChatApp.appModule.socketConnection
     private val scope = CoroutineScope(Dispatchers.IO)
     private val _messageStream = MutableSharedFlow<MessageType>()
     val messageStream: SharedFlow<MessageType>
@@ -55,7 +56,7 @@ class WebRTCManager(
         createDataChannel("localDataChannel")
     }
 
-    fun updateTarget(name: String){
+    fun updateTarget(name: String) {
         target = name
     }
 
@@ -85,9 +86,11 @@ class WebRTCManager(
             override fun onBufferedAmountChange(amount: Long) {
                 Log.d(TAG, "data channel onBufferedAmountChange: ")
             }
+
             override fun onStateChange() {
                 Log.d(TAG, "data channel onStateChange ")
             }
+
             override fun onMessage(buffer: DataChannel.Buffer?) {
                 Log.d(TAG, "onMessage: at line 86")
                 consumeDataChannelData(buffer)
@@ -96,7 +99,7 @@ class WebRTCManager(
     }
 
     private fun consumeDataChannelData(buffer: DataChannel.Buffer?) {
-        buffer?: return
+        buffer ?: return
         val data = buffer.data
         val bytes = ByteArray(data.capacity())
         data.get(bytes)
@@ -104,7 +107,7 @@ class WebRTCManager(
         // Handle the received message
         Log.d(TAG, "Received message: $message")
         scope.launch {
-            if(message.isEmpty()) return@launch
+            if (message.isEmpty()) return@launch
             _messageStream.emit(
                 MessageType.MessageByPeer(
                     message
@@ -113,7 +116,7 @@ class WebRTCManager(
         }
     }
 
-    fun createOffer(from: String, target: String){
+    fun createOffer(from: String, target: String) {
         Log.d(TAG, "user is available creating offer")
         val sdpObserver = object : SdpObserver {
             override fun onCreateSuccess(desc: SessionDescription?) {
@@ -121,6 +124,7 @@ class WebRTCManager(
                     override fun onCreateSuccess(desc: SessionDescription?) {
                         Log.d(TAG, "onCreateSuccess: .... using socket to notify peer")
                     }
+
                     override fun onSetSuccess() {
                         Log.d(TAG, "onSetSuccess: ")
                         val offer = hashMapOf(
@@ -134,9 +138,11 @@ class WebRTCManager(
                             )
                         )
                     }
+
                     override fun onCreateFailure(error: String?) {
                         Log.d(TAG, "error in creating offer $error")
                     }
+
                     override fun onSetFailure(error: String?) {
                         Log.d(TAG, "onSetFailure: err-> $error")
                     }
@@ -174,6 +180,7 @@ class WebRTCManager(
                     )
                 }
             }
+
             else -> {
                 // Peers are not connected
                 Log.d(TAG, "ICE Connection State: not Connected")
@@ -196,7 +203,7 @@ class WebRTCManager(
             "sdpCandidate" to p0?.sdp
         )
         socketConnection.sendMessageToSocket(
-            MessageModel("ice_candidate",userName,target,candidate)
+            MessageModel("ice_candidate", userName, target, candidate)
         )
     }
 
@@ -211,7 +218,7 @@ class WebRTCManager(
 
     override fun onDataChannel(p0: DataChannel?) {
         Log.d(TAG, "onDataChannel: called for peers")
-        p0!!.registerObserver(object: DataChannel.Observer{
+        p0!!.registerObserver(object : DataChannel.Observer {
             override fun onBufferedAmountChange(p0: Long) {
             }
 
@@ -292,7 +299,7 @@ class WebRTCManager(
         val buffer = ByteBuffer.wrap(msg.toByteArray(Charsets.UTF_8))
         val binaryData = DataChannel.Buffer(buffer, false)
         scope.launch {
-            if(msg.isEmpty()) return@launch
+            if (msg.isEmpty()) return@launch
             _messageStream.emit(
                 MessageType.MessageByMe(msg)
             )

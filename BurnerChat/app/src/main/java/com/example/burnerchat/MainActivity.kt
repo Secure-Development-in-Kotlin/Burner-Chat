@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.burnerchat.business.MainActions
+import com.example.burnerchat.business.ProtocolHandler
 import com.example.burnerchat.business.State
 import com.example.burnerchat.model.users.KeyPair
 import com.example.burnerchat.model.users.User
@@ -30,6 +31,10 @@ class MainActivity : AppCompatActivity() {
     //LogIn button
     private lateinit var btLogIn: Button
     private lateinit var etUserName: EditText
+
+    init {
+        BurnerChatApp.appModule.protocolHandler.setScope(lifecycleScope)
+    }
 
     /**
      * Initalizes all components
@@ -65,10 +70,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun login(name: String) {
-        viewModel.dispatchAction(
-            MainActions.ConnectAs(name)
-        )
-        State.connectedAs = User(KeyPair("", ""), name)
+        viewModel.login(name)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

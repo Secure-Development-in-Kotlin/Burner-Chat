@@ -12,17 +12,16 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.R
-import com.example.burnerchat.views.chats.ChatsViewViewModel
 
 class MessagesActivity2 : AppCompatActivity() {
     private val viewModel: MessagesViewModel by viewModels()
     private lateinit var rvMessages: RecyclerView
 
     // View elements
-    private lateinit var tvChatName : TextView
-    private lateinit var tvServerState : TextView
-    private lateinit var etMessage : EditText
-    private lateinit var btSendMessage : Button
+    private lateinit var tvChatName: TextView
+    private lateinit var tvServerState: TextView
+    private lateinit var etMessage: EditText
+    private lateinit var btSendMessage: Button
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,10 +36,20 @@ class MessagesActivity2 : AppCompatActivity() {
 
         initComponents()
         initChatRecycler()
+
+        viewModel.setTarget(intent.getStringExtra("target")!!)
+
+        establishConnection()
+    }
+
+    // Método para establecer conexión con el otro usuario
+    private fun establishConnection() {
+        viewModel.establishConnection()
     }
 
     private fun initComponents() {
         tvChatName = findViewById(R.id.tvChatName)
+        tvChatName.text = intent.getStringExtra("target")
         tvServerState = findViewById(R.id.tvServerState)
         etMessage = findViewById(R.id.etMessage)
         btSendMessage = findViewById(R.id.btSendMessage)
