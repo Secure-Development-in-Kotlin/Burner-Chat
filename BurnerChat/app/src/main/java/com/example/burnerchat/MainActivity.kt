@@ -11,13 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.example.burnerchat.business.MainActions
-import com.example.burnerchat.business.ProtocolHandler
-import com.example.burnerchat.business.State
-import com.example.burnerchat.model.users.KeyPair
-import com.example.burnerchat.model.users.User
-import com.example.burnerchat.views.chats.ChatsView
-import com.example.burnerchat.views.users.AddChatActivity
+import com.example.burnerchat.firebase.FirebaseAuthView
+import com.example.burnerchat.webRTC.views.chats.ChatsView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -32,6 +27,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btLogIn: Button
     private lateinit var etUserName: EditText
 
+    // Firebase button
+    private lateinit var btFirebase : Button
+
     init {
         BurnerChatApp.appModule.protocolHandler.setScope(lifecycleScope)
     }
@@ -41,6 +39,13 @@ class MainActivity : AppCompatActivity() {
      */
     private fun initComponents() {
         btLogIn = findViewById(R.id.btLogin)
+
+        // FIrebase button
+        btFirebase = findViewById(R.id.btFirebase)
+        btFirebase.setOnClickListener {
+            val intent = Intent(applicationContext, FirebaseAuthView::class.java)
+            startActivity(intent)
+        }
 
         etUserName = findViewById(R.id.etMainName)
         btLogIn.setOnClickListener {

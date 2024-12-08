@@ -1,6 +1,9 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+
+    alias(libs.plugins.googleServices)
+    alias(libs.plugins.crashlytics)
 }
 
 android {
@@ -70,4 +73,11 @@ dependencies {
     implementation(libs.java.websocket)
     implementation(libs.gson)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // Import the Firebase BoM
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.auth)
+
+
 }

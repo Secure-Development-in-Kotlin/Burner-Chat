@@ -2,10 +2,9 @@ package com.example.burnerchat
 
 import android.app.Application
 import android.content.Context
-import com.example.burnerchat.backend.socket.SocketConnection
-import com.example.burnerchat.backend.webrtc.WebRTCManager
-import com.example.burnerchat.business.ChatsPersistenceManager
-import com.example.burnerchat.business.ProtocolHandler
+import com.example.burnerchat.webRTC.backend.webrtc.WebRTCManager
+import com.example.burnerchat.webRTC.business.ChatsPersistenceManager
+import com.example.burnerchat.webRTC.business.ProtocolHandler
 import com.google.gson.Gson
 
 class BurnerChatApp : Application() {
