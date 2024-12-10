@@ -9,7 +9,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.burnerchat.AppModule
+import com.example.burnerchat.BurnerChatApp
+import com.example.burnerchat.MainActivity.Companion.CLAVE_NOMBRE_USUARIO
 import com.example.burnerchat.R
+import com.example.burnerchat.webRTC.business.UserPersistenceManager
+import com.example.burnerchat.webRTC.model.users.KeyPair
+import com.example.burnerchat.webRTC.model.users.User
+import com.example.burnerchat.webRTC.views.chats.ChatsView
 import com.google.firebase.auth.FirebaseAuth
 
 class FirebaseAuthView : AppCompatActivity() {
@@ -49,6 +56,7 @@ class FirebaseAuthView : AppCompatActivity() {
             if (email.isNotBlank() && password.isNotBlank()) {
                 FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
+                        BurnerChatApp.appModule.usersRepository.setUser(User(KeyPair("a","b"), email))
                         showChats(email, ProviderType.BASIC)
                     } else {
                         showAlert()
@@ -63,6 +71,7 @@ class FirebaseAuthView : AppCompatActivity() {
             if (email.isNotBlank() && password.isNotBlank()) {
                 FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
+                        BurnerChatApp.appModule.usersRepository.setUser(User(KeyPair("a","b"), email))
                         showChats(email, ProviderType.BASIC)
                     } else {
                         showAlert()
@@ -73,7 +82,11 @@ class FirebaseAuthView : AppCompatActivity() {
     }
 
     private fun showChats(email: String, provider: ProviderType) {
-        val intent = Intent(applicationContext, ChatsFirebaseView::class.java)
+        //val intent = Intent(applicationContext, ChatsFirebaseView::class.java)
+        val intent = Intent(applicationContext, ChatsView::class.java)
+        intent.putExtra(CLAVE_NOMBRE_USUARIO, email)
+        //login(userName)
+        //startActivity(intent)
         intent.putExtra(EMAIL_KEY, email)
         intent.putExtra(PROVIDER_KEY, provider.toString())
         startActivity(intent)

@@ -16,13 +16,21 @@ object ChatsPersistenceManager {
         chatsDataBase.add(chat)
     }
 
-    fun getMessages(target: User): List<Message> {
+    fun getMessages(target: String): List<Message> {
         for (chat in chatsDataBase) {
-            if (chat.getTarget() == target) {
+            if (chat.getTarget().username == target) {
                 return chat.getMessages()
             }
         }
         return listOf()
+    }
+
+    fun addMessage(target:String, message: Message){
+        for (chat in chatsDataBase) {
+            if (chat.getTarget().username == target) {
+                chat.addMessage(message)
+            }
+        }
     }
 
     fun getChat(targetUser: String?): Chat? {

@@ -34,10 +34,15 @@ class MessagesActivity2 : AppCompatActivity() {
             insets
         }
 
+        viewModel.setTarget(intent.getStringExtra("target")!!)
+
         initComponents()
         initChatRecycler()
 
-        viewModel.setTarget(intent.getStringExtra("target")!!)
+        viewModel.messages.observe(this){
+            newList->
+                rvMessages.adapter?.notifyDataSetChanged()
+        }
 
         establishConnection()
     }
@@ -50,7 +55,6 @@ class MessagesActivity2 : AppCompatActivity() {
     private fun initComponents() {
         tvChatName = findViewById(R.id.tvChatName)
         tvChatName.text = intent.getStringExtra("target")
-        tvServerState = findViewById(R.id.tvServerState)
         etMessage = findViewById(R.id.etMessage)
         btSendMessage = findViewById(R.id.btSendMessage)
         rvMessages = findViewById(R.id.rvMessages)
@@ -63,7 +67,8 @@ class MessagesActivity2 : AppCompatActivity() {
 
 
     private fun initChatRecycler() {
-        val customAdapter = MessagesAdapter(viewModel.getMessages())
+        val messages = viewModel.getMessages()
+        val customAdapter = MessagesAdapter(messages)
 
         rvMessages.layoutManager = LinearLayoutManager(this)
         rvMessages.adapter = customAdapter
