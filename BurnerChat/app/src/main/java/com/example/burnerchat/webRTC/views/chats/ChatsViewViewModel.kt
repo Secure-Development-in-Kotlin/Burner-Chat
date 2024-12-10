@@ -29,102 +29,6 @@ class ChatsViewViewModel : ViewModel() {
         get() = _oneTimeEvents
 
 
-//    init {
-//        listenToSocketEvents()
-//    }
-
-//    private fun listenToSocketEvents() {
-//        viewModelScope.launch {
-//            socketConnection.event.collectLatest {
-//                when (it) {
-//                    is SocketEvents.ConnectionChange -> {
-//                        if (!it.isConnected) {
-//                            State.isConnectedToServer = false
-//                            State.connectedAs = User(KeyPair("", ""), "")
-//                        }
-//                    }
-//
-//                    is SocketEvents.OnSocketMessageReceived -> {
-//                        handleNewMessage(it.message)
-//                    }
-//
-//                    is SocketEvents.ConnectionError -> {
-//                        Log.d(TAG, "socket ConnectionError ${it.error}")
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    private fun handleNewMessage(message: MessageModel) {
-//        Log.d(TAG, "handleNewMessage in VM")
-//        when (message.type) {
-//            "transfer_response" -> {
-//                Log.d(TAG, "transfer_response: ")
-//                // user is online / offline
-//                if (message.data == null) {
-//                    // TODO: change to toast??
-//                    Log.d(TAG, "User is not available")
-//                    return
-//                }
-//                // important to update target
-//                rtcManager = WebRTCManager(
-//                    userName = State.connectedAs.username,
-//                    target = message.data.toString(),
-//                )
-//                State.isRtcEstablished = true
-//
-//                consumeEventsFromRTC()
-//                rtcManager.updateTarget(message.data.toString())
-//                // TODO: change to toast?
-//                Log.d(TAG, "User is Connected to ${message.data}")
-//                State.isConnectToPeer = message.data.toString()
-//                rtcManager.createOffer(
-//                    from = State.connectedAs.username,
-//                    target = message.data.toString(),
-//                )
-//            }
-//
-//            "offer_received" -> {
-//                newOfferMessage = message
-//                Log.d(TAG, "offer_received ")
-//                State.inComingRequestFrom = message.name.orEmpty()
-//                viewModelScope.launch {
-//                    _oneTimeEvents.postValue(MainOneTimeEvents.GotInvite)
-//                }
-//            }
-//
-//            "answer_received" -> {
-//                val session = SessionDescription(
-//                    SessionDescription.Type.ANSWER,
-//                    message.data.toString()
-//                )
-//                Log.d(TAG, "onNewMessage: answer received $session")
-//                rtcManager.onRemoteSessionReceived(session)
-//            }
-//
-//            "ice_candidate" -> {
-//                try {
-//                    val receivingCandidate = BurnerChatApp.appModule.gson.fromJson(
-//                        BurnerChatApp.appModule.gson.toJson(message.data),
-//                        IceCandidateModel::class.java
-//                    )
-//                    Log.d(TAG, "onNewMessage: ice candidate $receivingCandidate")
-//                    rtcManager.addIceCandidate(
-//                        IceCandidate(
-//                            receivingCandidate.sdpMid,
-//                            Math.toIntExact(receivingCandidate.sdpMLineIndex.toLong()),
-//                            receivingCandidate.sdpCandidate
-//                        )
-//                    )
-//                } catch (e: Exception) {
-//                    e.printStackTrace()
-//                }
-//            }
-//
-//        }
-//    }
-
     private fun addChat(userName: String) {
         val otherUser = User(KeyPair("aa", "bb"), userName)
         val chat = Chat(otherUser)
@@ -205,8 +109,9 @@ class ChatsViewViewModel : ViewModel() {
 
     fun init() {
         // Por ahora los quiero vacíos, no hardcodeados
-//        var users = generateUsers(25)
-//        initChats(users)
+        // N O
+        var users = generateUsers(25)
+        initChats(users)
         _chatsList.value = dataBase.getChats()
     }
 

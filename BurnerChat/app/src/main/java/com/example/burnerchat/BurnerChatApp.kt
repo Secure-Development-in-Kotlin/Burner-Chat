@@ -5,6 +5,7 @@ import android.content.Context
 import com.example.burnerchat.webRTC.backend.webrtc.WebRTCManager
 import com.example.burnerchat.webRTC.business.ChatsPersistenceManager
 import com.example.burnerchat.webRTC.business.ProtocolHandler
+import com.example.burnerchat.webRTC.business.UserPersistenceManager
 import com.google.gson.Gson
 
 class BurnerChatApp : Application() {
@@ -27,7 +28,7 @@ class BurnerChatApp : Application() {
 //¿Por qué utilizamos una interfaz?
 interface AppModule {
     val chatsRepository: ChatsPersistenceManager
-
+    val usersRepository: UserPersistenceManager
     // Ahora se hace ALL desde el protocolHandler
     //val socketConnection: SocketConnection
     val rtcManager: WebRTCManager
@@ -69,6 +70,9 @@ class AppModuleImpl(
     // Repository
     override val chatsRepository: ChatsPersistenceManager by lazy {
         ChatsPersistenceManager
+    }
+    override val usersRepository: UserPersistenceManager by lazy {
+        UserPersistenceManager
     }
 
 }

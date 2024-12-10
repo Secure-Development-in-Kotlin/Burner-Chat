@@ -64,6 +64,7 @@ class ChatsView : AppCompatActivity() {
             rvChats.adapter?.notifyDataSetChanged()
         }
 
+        /*
         viewModel.oneTimeEvents.observe(this) {
             Log.d("INVITATION", "Got invite")
             when (it) {
@@ -92,7 +93,7 @@ class ChatsView : AppCompatActivity() {
                     dialog.show()
                 }
             }
-        }
+        }*/
     }
 
     private fun initIcon() {

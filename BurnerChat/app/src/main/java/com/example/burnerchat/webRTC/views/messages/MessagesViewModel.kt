@@ -10,13 +10,18 @@ import com.example.burnerchat.webRTC.business.ChatsPersistenceManager
 import com.example.burnerchat.webRTC.business.MainActions
 import com.example.burnerchat.webRTC.model.chats.Chat
 import com.example.burnerchat.webRTC.model.messages.Message
+import com.example.burnerchat.webRTC.model.messages.messageImpls.TextMessage
 import com.example.burnerchat.webRTC.views.TAG
 import kotlinx.coroutines.launch
 
 class MessagesViewModel : ViewModel() {
-    private lateinit var chat: Chat
+
+    private val userRepository = BurnerChatApp.appModule.usersRepository
+    private val chatsRepository = BurnerChatApp.appModule.chatsRepository
+    //private lateinit var chat: Chat
 
     private var target = ""
+
 
 //    private var rtcManager = BurnerChatApp.appModule.rtcManager
     //private val socketConnection = BurnerChatApp.appModule.socketConnection
@@ -26,10 +31,25 @@ class MessagesViewModel : ViewModel() {
         get() = _messages
 
     fun getMessages(): List<Message> {
-        return _messages.value ?: listOf()
+        _messages.value = chatsRepository.getMessages(target)
+        val messages = _messages.value
+        return messages!!
     }
 
     fun sendMessage(message: String) {
+        val chatObject = chatsRepository.getChat(target)
+        val messageObject = TextMessage(message,
+            userRepository.getUser(),chatObject!!)
+        chatsRepository.addMessage(
+            target,
+            messageObject)
+        _messages.value = BurnerChatApp.appModule.chatsRepository.getMessages(target)
+        /*_chat.value?.addMessage(TextMessage(message,
+            BurnerChatApp.appModule.usersRepository.getUser(), _chat.value!!))
+
+        _chat.value = _chat.value
+
+         */
         //dispatchAction(MainActions.SendChatMessage(message));
     }
 
@@ -46,10 +66,12 @@ class MessagesViewModel : ViewModel() {
 
     fun setTarget(target: String) {
         this.target = target
-
-        val chat: Chat? = ChatsPersistenceManager.getChat(target)
+        val chat: Chat = ChatsPersistenceManager.getChat(target)!!
         if (chat != null) {
-            this.chat = chat
+            /*
+            _chat.value = (chat)
+            var c = this.chat.value
+            */
         } else {
             Log.d(TAG, "Chat not found")
         }
