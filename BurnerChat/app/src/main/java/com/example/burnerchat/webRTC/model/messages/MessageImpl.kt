@@ -3,11 +3,12 @@ package com.example.burnerchat.webRTC.model.messages
 import com.example.burnerchat.webRTC.model.chats.Chat
 import com.example.burnerchat.webRTC.model.users.User
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 abstract class MessageImpl(private val user: User, private val chat: Chat) : Message {
-    private val sentDate: LocalDate = LocalDate.now()
+    private val sentDate: LocalDateTime = LocalDateTime.now()
 
-    override fun getSentDate(): LocalDate {
+    override fun getSentDate(): LocalDateTime {
         return sentDate;
     }
 
