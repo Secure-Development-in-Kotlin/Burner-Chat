@@ -42,6 +42,7 @@ class MessagesActivity2 : AppCompatActivity() {
         viewModel.messages.observe(this){
             newList->
                 rvMessages.adapter?.notifyDataSetChanged()
+                rvMessages.scrollToPosition(newList.size - 1)
         }
 
         establishConnection()
@@ -60,8 +61,12 @@ class MessagesActivity2 : AppCompatActivity() {
         rvMessages = findViewById(R.id.rvMessages)
 
         btSendMessage.setOnClickListener {
-            viewModel.sendMessage(etMessage.text.toString())
-            etMessage.text.clear()
+            val text = etMessage.text.toString()
+            if(text.isNotBlank() && text.isNotEmpty()){
+                viewModel.sendMessage(etMessage.text.toString())
+                etMessage.text.clear()
+
+            }
         }
     }
 
