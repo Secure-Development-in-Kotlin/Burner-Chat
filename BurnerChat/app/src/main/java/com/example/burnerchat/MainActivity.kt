@@ -47,7 +47,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        etUserName = findViewById(R.id.etMainName)
         btLogIn.setOnClickListener {
 
             val userName = etUserName.text.toString()
