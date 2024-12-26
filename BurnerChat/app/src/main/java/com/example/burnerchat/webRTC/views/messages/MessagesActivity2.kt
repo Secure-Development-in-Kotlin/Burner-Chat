@@ -22,6 +22,7 @@ class MessagesActivity2 : AppCompatActivity() {
     private lateinit var tvServerState: TextView
     private lateinit var etMessage: EditText
     private lateinit var btSendMessage: Button
+    private lateinit var btSendFoto: Button
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +43,7 @@ class MessagesActivity2 : AppCompatActivity() {
         viewModel.messages.observe(this){
             newList->
                 rvMessages.adapter?.notifyDataSetChanged()
+                rvMessages.scrollToPosition(newList.size - 1)
         }
 
         establishConnection()
@@ -58,13 +60,23 @@ class MessagesActivity2 : AppCompatActivity() {
         etMessage = findViewById(R.id.etMessage)
         btSendMessage = findViewById(R.id.btSendMessage)
         rvMessages = findViewById(R.id.rvMessages)
-
+        btSendFoto = findViewById(R.id.btFoto)
         btSendMessage.setOnClickListener {
-            viewModel.sendMessage(etMessage.text.toString())
-            etMessage.text.clear()
+            val text = etMessage.text.toString()
+            if(text.isNotBlank() && text.isNotEmpty()){
+                viewModel.sendMessage(etMessage.text.toString())
+                etMessage.text.clear()
+
+            }
         }
+        initBtFoto()
     }
 
+    private fun initBtFoto(){
+        btSendFoto.setOnClickListener{
+            //TODO: AQUÍ VA EL CÓDIGO DE SUBIR LA FOTO
+        }
+    }
 
     private fun initChatRecycler() {
         val messages = viewModel.getMessages()

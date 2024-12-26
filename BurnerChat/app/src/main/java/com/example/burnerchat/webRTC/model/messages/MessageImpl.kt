@@ -25,4 +25,19 @@ abstract class MessageImpl(private val user: User, private val chat: Chat) : Mes
     }
 
     abstract fun getConcreteContent(): String;
+
+    fun isYourMessage(user: User):Boolean{
+        val username = user.username.toString()
+        val messageUsername = this.getUser().username.toString()
+        return username == messageUsername
+    }
+
+    override fun getMessageTypeCode(user: User): Int {
+        if(!isYourMessage(user)){
+            return getOtherType()
+        } else
+            return getSelfType()
+    }
+    protected abstract fun getSelfType():Int
+    protected abstract fun getOtherType():Int
 }

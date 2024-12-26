@@ -4,9 +4,9 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.R
@@ -16,10 +16,12 @@ class MessagesAdapter(
     private val messagesList: List<Message>,
 ) : RecyclerView.Adapter<MessagesAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private var tvMessage: TextView = view.findViewById(R.id.tvMessage)
+    abstract class ViewHolder(view: View) : RecyclerView.ViewHolder(view){
 
-        private fun formatDate(message: Message):String{
+        protected var tvDate : TextView = view.findViewById(R.id.tvDate)
+        protected lateinit var message: Message
+
+        protected fun formatDate(message: Message):String{
             var horas = message.getSentDate().hour
             var minutos = message.getSentDate().minute
             var string1 = message.getSentDate().toLocalDate().atTime(horas,minutos).toString()
@@ -28,22 +30,76 @@ class MessagesAdapter(
 
         }
         fun bind(message: Message) {
-             tvMessage.text = message.getContent()+"\n"+formatDate(message)
-            if(message.getUser()!==BurnerChatApp.appModule.usersRepository.getUser()){
-                var params = tvMessage.layoutParams as RelativeLayout.LayoutParams
-                tvMessage.setBackgroundColor(Color.parseColor("#03A9F4"))
-                params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, R.id.tvMessage)
-            }else{
-                var params = tvMessage.layoutParams as RelativeLayout.LayoutParams
-                params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, R.id.tvMessage)
-            }
+            this.message = message
+            tvDate.text = formatDate(message)
+            extraContent(message)
+
+        }
+        abstract fun extraContent(message: Message)
+    }
+
+     open class TextViewHolder(view: View) : ViewHolder(view) {
+         protected var tvMessage: TextView = view.findViewById(R.id.tvMessage)
+         override fun extraContent(message: Message) {
+             tvMessage.text = message.getContent()
+         }
+
+     }
+    class NameTextViewHolder(view: View) : TextViewHolder(view) {
+        private val tvNombre:TextView = view.findViewById(R.id.tvUser)
+        override fun extraContent(message: Message) {
+            tvNombre.text = message.getUser().username
+            tvMessage.text = message.getContent()
+        }
+    }
+    open class SelfImageViewHolder(view: View) : ViewHolder(view){
+        private val ivImage: ImageView = view.findViewById(R.id.ivImage)
+        override fun extraContent(message: Message) {
+            val image = message.getContent()
+            //TODO: CARGAR LA IMAGEN PER SE
+        }
+    }
+    class OtherImageViewHolder(view: View) : SelfImageViewHolder(view){
+        override fun extraContent(message: Message) {
+            val image = message.getContent()
+            //TODO: CARGAR LA IMAGEN PER SE
         }
     }
 
+    override fun getItemViewType(position: Int): Int {
+        val message = messagesList[position]
+        return message.getMessageTypeCode(BurnerChatApp.appModule.usersRepository.getUser())
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val layoutElement = R.layout.sender_message_element_view
-        val view = LayoutInflater.from(parent.context).inflate(layoutElement, parent, false)
-        return ViewHolder(view)
+
+        return when(viewType){
+            Message.LayoutType.TextoAjeno.ordinal ->{
+                val layoutElement = R.layout.other_text_message_element_view
+                val view = LayoutInflater.from(parent.context).inflate(layoutElement, parent, false)
+                return NameTextViewHolder(view)
+            }
+            Message.LayoutType.TextoPropio.ordinal ->{
+                val layoutElement = R.layout.self_text_message_element_view
+                val view = LayoutInflater.from(parent.context).inflate(layoutElement, parent, false)
+                return TextViewHolder(view)
+            }
+            Message.LayoutType.ImagenAjena.ordinal->{
+                val layoutElement = R.layout.other_image_message_element_view
+                val view = LayoutInflater.from(parent.context).inflate(layoutElement, parent, false)
+                return OtherImageViewHolder(view)
+            }
+            Message.LayoutType.ImagenPropia.ordinal->{
+                val layoutElement = R.layout.self_image_message_element_view
+                val view = LayoutInflater.from(parent.context).inflate(layoutElement, parent, false)
+                return SelfImageViewHolder(view)
+            }
+            else->{
+                val layoutElement = R.layout.self_text_message_element_view
+                val view = LayoutInflater.from(parent.context).inflate(layoutElement, parent, false)
+                return TextViewHolder(view)
+            }
+        }
+
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
