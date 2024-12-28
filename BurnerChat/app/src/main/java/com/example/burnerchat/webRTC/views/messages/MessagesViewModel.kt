@@ -1,5 +1,6 @@
 package com.example.burnerchat.webRTC.views.messages
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,9 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.webRTC.business.ChatsPersistenceManager
+import com.example.burnerchat.webRTC.business.ImageUtils
 import com.example.burnerchat.webRTC.business.MainActions
 import com.example.burnerchat.webRTC.model.chats.Chat
 import com.example.burnerchat.webRTC.model.messages.Message
+import com.example.burnerchat.webRTC.model.messages.messageImpls.ImageMessage
 import com.example.burnerchat.webRTC.model.messages.messageImpls.TextMessage
 import com.example.burnerchat.webRTC.views.TAG
 import kotlinx.coroutines.launch
@@ -51,6 +54,17 @@ class MessagesViewModel : ViewModel() {
 
          */
         //dispatchAction(MainActions.SendChatMessage(message));
+    }
+
+    fun sendImageMessage(bitmap: Bitmap){
+        val chatObject = chatsRepository.getChat(target)
+        val messageObject = ImageMessage(
+            ImageUtils.convertToBase64(bitmap),
+            chatObject!!,
+            userRepository.getUser())
+        chatsRepository.addMessage(target,
+            messageObject)
+        _messages.value = BurnerChatApp.appModule.chatsRepository.getMessages(target)
     }
 
     // Método para establecer conexión con el otro usuario

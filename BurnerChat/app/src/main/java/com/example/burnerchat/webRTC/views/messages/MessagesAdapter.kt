@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.R
+import com.example.burnerchat.webRTC.business.ImageUtils
 import com.example.burnerchat.webRTC.model.messages.Message
 
 class MessagesAdapter(
@@ -53,16 +54,18 @@ class MessagesAdapter(
         }
     }
     open class SelfImageViewHolder(view: View) : ViewHolder(view){
-        private val ivImage: ImageView = view.findViewById(R.id.ivImage)
+        protected val ivImage: ImageView = view.findViewById(R.id.ivImage)
         override fun extraContent(message: Message) {
             val image = message.getContent()
-            //TODO: CARGAR LA IMAGEN PER SE
+            ivImage.setImageBitmap(ImageUtils.decodeFromBase64(image))
         }
     }
     class OtherImageViewHolder(view: View) : SelfImageViewHolder(view){
+        private val tvNombre:TextView = view.findViewById(R.id.tvUser)
         override fun extraContent(message: Message) {
             val image = message.getContent()
-            //TODO: CARGAR LA IMAGEN PER SE
+            ivImage.setImageBitmap(ImageUtils.decodeFromBase64(image))
+            tvNombre.text = message.getUser().username
         }
     }
 
