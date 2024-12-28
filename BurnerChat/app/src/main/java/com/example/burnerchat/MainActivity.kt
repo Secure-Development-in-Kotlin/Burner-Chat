@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
@@ -30,9 +31,9 @@ class MainActivity : AppCompatActivity() {
     // Firebase button
     private lateinit var btFirebase : Button
 
-    init {
-        BurnerChatApp.appModule.protocolHandler.setScope(lifecycleScope)
-    }
+//    init {
+//        BurnerChatApp.appModule.protocolHandler.setScope(lifecycleScope)
+//    }
 
     /**
      * Initalizes all components
@@ -79,6 +80,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Forzar el modo oscuro al inicio de la aplicación -> no funciona, hace crashear la app
+        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         initComponents()

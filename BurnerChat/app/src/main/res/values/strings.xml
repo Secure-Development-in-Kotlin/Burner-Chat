@@ -6,4 +6,5 @@
     <string name="cancelar">Cancelar</string>
     <string name="aceptar">Aceptar</string>
     <string name="quiero_hablar_nano">Quiero hablar nano</string>
+    <string name="theme_toggle">Cambiar tema</string>
 </resources>

@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="green">#42f55a</color>
-    <color name="blue">#03A9F4</color>
+<!--    <color name="purple_200">#FFBB86FC</color>-->
+<!--    <color name="purple_500">#FF6200EE</color>-->
+<!--    <color name="purple_700">#FF3700B3</color>-->
+<!--    <color name="teal_200">#FF03DAC5</color>-->
+<!--    <color name="teal_700">#FF018786</color>-->
+<!--    <color name="black">#FF000000</color>-->
+<!--    <color name="white">#FFFFFFFF</color>-->
+<!--    <color name="green">#42f55a</color>-->
+<!--    <color name="blue">#03A9F4</color>-->
+    <color name="button1">#42f55a</color>
+    <color name="button2">#03A9F4</color>
+    <color name="buttonText">#FF000000</color>
+    <color name="messageText">#FF000000</color>
+    <color name="messageUser">#1A1A1A</color>
+    <color name="messageDate">#2F2F2F</color>
+    <color name="background">#FFFFFFFF</color>
+    <color name="textColor">#FF000000</color>
+    <color name="myMessage">#42f55a</color>
+    <color name="otherMessage">#03A9F4</color>
+
 </resources>

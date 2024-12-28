@@ -5,15 +5,15 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    tools:context=".views.chats.MessagesActivity">
+    android:background="@color/background"
+    tools:context=".webRTC.views.MessagesActivity">
 
     <TextView
         android:id="@+id/tvSample"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Mensajes (PLACEHOLDER)"
-        android:textColor="@color/white"
+        android:textColor="@color/textColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,9 +22,9 @@
         android:id="@+id/btBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/green"
+        android:backgroundTint="@color/button1"
         android:text="Volver"
-        android:textColor="@color/black"
+        android:textColor="@color/buttonText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
