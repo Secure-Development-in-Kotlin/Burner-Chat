@@ -13,7 +13,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.burnerchat.R
+import com.example.burnerchat.preferences.ThemePreferences
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class UserProfileActivity : AppCompatActivity() {
     companion object {
@@ -30,12 +34,30 @@ class UserProfileActivity : AppCompatActivity() {
 
     private lateinit var btnToggleTheme: ImageButton
 
+    // Tema guardado
+    private lateinit var themePreferences: ThemePreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_user_profile)
 
+        // Inicializa ThemePreferences antes de usarlo
+        themePreferences = ThemePreferences(this)
+
         initComponents()
+
+        // Aplica el tema al inicio de la actividad
+        lifecycleScope.launch {
+            themePreferences.isNightMode.collect { isNightMode ->
+                if (isNightMode) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+            }
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -59,42 +81,42 @@ class UserProfileActivity : AppCompatActivity() {
     }
 
     private fun initThemeToggleButton() {
-        // Configura el icono inicial basado en el tema actual
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-//        var isNightMode = currentNightMode == Configuration.UI_MODE_NIGHT_YES
-        btnToggleTheme.setImageResource(
-            if (currentNightMode == Configuration.UI_MODE_NIGHT_YES)
-            // Si está en modo oscuro, muestra el icono de modo claro
-                R.drawable.light_mode
-            else
-            // Si está en modo claro, muestra el icono de modo oscuro
-                R.drawable.dark_mode
-        )
-
-        btnToggleTheme.setOnClickListener {
-            // Cambia entre modo claro y oscuro
-            val newThemeMode =
-                if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
-                    // Si está en modo oscuro, cambia a modo claro
-                    AppCompatDelegate.MODE_NIGHT_NO
+        // Recolectamos el valor de night_mode y aplicamos el tema
+        lifecycleScope.launch{
+            themePreferences.isNightMode.collect { isNightMode ->
+                // Aplica el modo de tema al inicio
+                if (isNightMode) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                 } else {
-                    // Si está en modo claro, cambia a modo oscuro
-                    AppCompatDelegate.MODE_NIGHT_YES
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 }
 
-            Log.d("Tema", "El nuevo modo es oscuro? $newThemeMode")
+                // Configura el icono del botón según el tema
+                btnToggleTheme.setImageResource(
+                    if (isNightMode) R.drawable.light_mode else R.drawable.dark_mode
+                )
+            }
+        }
 
-            // Aplica el nuevo modo de tema
+        // Cambia el tema cuando el usuario haga clic en el botón
+        btnToggleTheme.setOnClickListener {
+            val newThemeMode = if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+                AppCompatDelegate.MODE_NIGHT_NO
+            } else {
+                AppCompatDelegate.MODE_NIGHT_YES
+            }
+
+            // Aplica el nuevo tema
             AppCompatDelegate.setDefaultNightMode(newThemeMode)
+
+            // Guarda la preferencia del tema en DataStore
+            lifecycleScope.launch {
+                themePreferences.saveNightMode(newThemeMode == AppCompatDelegate.MODE_NIGHT_YES)
+            }
 
             // Actualiza el icono después del cambio
             btnToggleTheme.setImageResource(
-                if (currentNightMode == Configuration.UI_MODE_NIGHT_YES)
-                // Si está en modo oscuro, muestra el icono de modo claro
-                    R.drawable.light_mode
-                else
-                // Si está en modo claro, muestra el icono de modo oscuro
-                    R.drawable.dark_mode
+                if (newThemeMode == AppCompatDelegate.MODE_NIGHT_YES) R.drawable.light_mode else R.drawable.dark_mode
             )
 
             // Reinicia la actividad para aplicar el cambio de tema correctamente

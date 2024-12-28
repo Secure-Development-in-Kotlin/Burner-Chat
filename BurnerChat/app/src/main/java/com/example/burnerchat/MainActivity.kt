@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.burnerchat.firebase.FirebaseAuthView
+import com.example.burnerchat.preferences.ThemePreferences
 import com.example.burnerchat.webRTC.views.chats.ChatsView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,6 +31,9 @@ class MainActivity : AppCompatActivity() {
 
     // Firebase button
     private lateinit var btFirebase : Button
+
+    // Tema guardado
+    private lateinit var themePreferences: ThemePreferences
 
 //    init {
 //        BurnerChatApp.appModule.protocolHandler.setScope(lifecycleScope)
@@ -84,13 +88,32 @@ class MainActivity : AppCompatActivity() {
         // Forzar el modo oscuro al inicio de la aplicación -> no funciona, hace crashear la app
         //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
+        // Función para aplicar el tema guardado en DataStore
+        applyStoredTheme()
+
         enableEdgeToEdge()
+
         setContentView(R.layout.activity_main)
         initComponents()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+    }
+
+    private fun applyStoredTheme() {
+        themePreferences = ThemePreferences(this)
+
+        // Aplica el tema guardado al inicio
+        lifecycleScope.launch {
+            themePreferences.isNightMode.collect { isNightMode ->
+                if (isNightMode) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+            }
         }
     }
 }
