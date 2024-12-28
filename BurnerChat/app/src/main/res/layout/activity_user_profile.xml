@@ -5,17 +5,18 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    android:backgroundTint="@color/black"
+    android:background="@color/background"
+    android:backgroundTint="@color/background"
     android:padding="16sp"
-    tools:context=".views.users.UserProfileActivity">
+    tools:context=".webRTC.views.users.UserProfileActivity">
 
     <TextView
         android:id="@+id/tvProfileName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nombre"
-        android:textColor="@color/white"
+        android:layout_marginTop="32dp"
+        android:text="@string/textName"
+        android:textColor="@color/textColor"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,8 +28,8 @@
         android:id="@+id/tvLogo2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Burner Chat"
-        android:textColor="@color/white"
+        android:text="@string/app_name"
+        android:textColor="@color/textColor"
         android:textSize="34sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,93 +46,31 @@
         app:layout_constraintTop_toBottomOf="@+id/tvProfileName"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <TextView
-        android:id="@+id/tvPersonalKey"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16sp"
-        android:text="Clave Personal"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivProfileIcon" />
-
-    <EditText
-        android:id="@+id/etPublicKey"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16sp"
-        android:backgroundTint="@color/white"
-        android:ems="10"
-        android:hint="Clave personal"
-        android:inputType="text"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvPersonalKey" />
-
-    <TextView
-        android:id="@+id/tvEditName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16sp"
-        android:layout_marginTop="20sp"
-        android:text="Cambiar Nombre"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etPublicKey" />
-
     <EditText
         android:id="@+id/etEditName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16sp"
-        android:backgroundTint="@color/white"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/textColor"
         android:ems="10"
-        android:hint="Nuevo nombre"
+        android:hint="@string/textNewName"
         android:inputType="text"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvEditName" />
-
-    <TextView
-        android:id="@+id/tvEditIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16sp"
-        android:layout_marginTop="20sp"
-        android:text="Cambiar Foto"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etEditName" />
-
-    <Button
-        android:id="@+id/btEditIcon"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16sp"
-        android:backgroundTint="@color/blue"
-        android:text="Elegir foto"
-        android:textColor="@color/black"
-        android:textStyle="bold"
+        android:textColor="@color/textColor"
+        android:textColorHint="@color/textColor"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvEditIcon" />
+        app:layout_constraintTop_toBottomOf="@+id/ivProfileIcon" />
 
     <Button
         android:id="@+id/btProfileGoBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16sp"
-        android:backgroundTint="@color/blue"
-        android:text="Volver"
-        android:textColor="@color/black"
+        android:backgroundTint="@color/button2"
+        android:text="@string/textGoBack"
+        android:textColor="@color/buttonText"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -141,10 +80,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16sp"
-        android:backgroundTint="@color/green"
-        android:text="Confirmar"
-        android:textColor="@color/black"
+        android:backgroundTint="@color/button1"
+        android:text="@string/textConfirm"
+        android:textColor="@color/buttonText"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btToggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|top"
+        android:layout_marginTop="24dp"
+        android:background="?attr/selectableItemBackground"
+        android:contentDescription="@string/textThemeToggle"
+        android:padding="8dp"
+        android:src="@drawable/dark_mode"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etEditName" />
+
+    <Spinner
+        android:id="@+id/spinnerLanguage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btToggleButton"/>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

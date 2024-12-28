@@ -79,5 +79,8 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.auth)
 
+    // Para las preferencias (DataStore)
+    implementation(libs.androidx.datastore.preferences)
+
 
 }

@@ -8,13 +8,16 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.burnerchat.firebase.FirebaseAuthView
+import com.example.burnerchat.preferences.AppPreferences
 import com.example.burnerchat.webRTC.views.chats.ChatsView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainActivityViewModel by viewModels()
@@ -28,11 +31,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var etUserName: EditText
 
     // Firebase button
-    private lateinit var btFirebase : Button
+    private lateinit var btFirebase: Button
 
-    init {
-        BurnerChatApp.appModule.protocolHandler.setScope(lifecycleScope)
-    }
+    // Preferencias del usuario
+    private lateinit var appPreferences: AppPreferences
+
+//    init {
+//        BurnerChatApp.appModule.protocolHandler.setScope(lifecycleScope)
+//    }
 
     /**
      * Initalizes all components
@@ -79,7 +85,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Forzar el modo oscuro al inicio de la aplicación -> no funciona, hace crashear la app
+        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
+        // Función para aplicar el tema guardado en DataStore
+        // Inicializar AppPreferences
+        appPreferences = AppPreferences(this)
+
+        // Aplica el tema y el idioma guardado
+        applyStoredPreferences()
+
         enableEdgeToEdge()
+
         setContentView(R.layout.activity_main)
         initComponents()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -87,5 +105,39 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+    private fun applyStoredPreferences() {
+        // Aplicar el tema y el idioma guardados al inicio
+        lifecycleScope.launch {
+            appPreferences.preferencesDataClass.collect { preferences ->
+                // Aplica el tema
+                if (preferences.nightMode) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+
+                // Aplica el idioma
+                setLocale(preferences.language)
+            }
+        }
+    }
+
+    private fun setLocale(languageCode: String) {
+        val locale = Locale(languageCode)
+        Locale.setDefault(locale)
+        val config = resources.configuration
+        config.setLocale(locale)
+        resources.updateConfiguration(config, resources.displayMetrics)
+
+        // Actualiza los textos de la vista si es necesario
+        updateTextsInView()
+    }
+
+    // Método para actualizar los textos de la vista según el idioma seleccionado
+    private fun updateTextsInView() {
+        btLogIn.text = getString(R.string.textLogin)
+        btFirebase.text = getString(R.string.textFirebase)
     }
 }

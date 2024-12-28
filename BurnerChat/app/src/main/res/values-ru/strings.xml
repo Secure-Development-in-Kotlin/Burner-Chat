@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Burner Chat</string>
+    <string name="server">Сервер</string>
+    <string name="hintMessage">Сообщение…</string>
+    <string name="chat">Чат</string>
+    <string name="textCancel">Отменить</string>
+    <string name="textAccept">Принять</string>
+    <string name="textIncomingRequest">Хочу подключиться</string>
+    <string name="textThemeToggle">Изменить тему</string>
+    <string name="addContact">Добавить контакт</string>
+    <string name="usingKey">Через ключ</string>
+    <string name="introduceKey">Введите ваш ключ</string>
+    <string name="byQR">Через QR</string>
+    <string name="scanQR">Сканировать QR</string>
+    <string name="textName">Имя</string>
+    <string name="textAdd">Добавить</string>
+    <string name="textGoBack">Назад</string>
+    <string name="textChats">Чаты</string>
+    <string name="textFirebase">Firebase</string>
+    <string name="hintIntroduceMail">Введите ваш электронная почта</string>
+    <string name="hintIntroducePassword">Введите ваш пароль</string>
+    <string name="textPassword">Пароль:</string>
+    <string name="textEmail">электронная почта:</string>
+    <string name="textLogin">Войти</string>
+    <string name="textSignup">Зарегистрироваться</string>
+    <string name="textWebRTC">WebRTC</string>
+    <string name="chooseBackend">Выберите бэкэнд</string>
+    <string name="textMessagesPLC">Сообщения (PLACEHOLDER)</string>
+    <string name="textUsername">Пользователь</string>
+    <string name="textPhoto">Фото</string>
+    <string name="textNewName">Новое имя…</string>
+    <string name="textConfirm">Подтвердить</string>
+    <string name="textLastMessageSent">Последнее отправленное сообщение</string>
+    <string name="textDate">Дата</string>
+</resources>

@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Burner Chat</string>
+    <string name="server">Server</string>
+    <string name="hintMessage">Message…</string>
+    <string name="chat">Chat</string>
+    <string name="textCancel">Cancel</string>
+    <string name="textAccept">Accept</string>
+    <string name="textIncomingRequest">I want to connect</string>
+    <string name="textThemeToggle">Change theme</string>
+    <string name="addContact">Add Contact</string>
+    <string name="usingKey">By key</string>
+    <string name="introduceKey">Enter your key</string>
+    <string name="byQR">By QR</string>
+    <string name="scanQR">Scan QR</string>
+    <string name="textName">Name</string>
+    <string name="textAdd">Add</string>
+    <string name="textGoBack">Go back</string>
+    <string name="textChats">Chats</string>
+    <string name="textFirebase">Firebase</string>
+    <string name="hintIntroduceMail">Enter your email</string>
+    <string name="hintIntroducePassword">Enter your password</string>
+    <string name="textPassword">Password:</string>
+    <string name="textEmail">Email:</string>
+    <string name="textLogin">Log In</string>
+    <string name="textSignup">Sign Up</string>
+    <string name="textWebRTC">WebRTC</string>
+    <string name="chooseBackend">Choose a backend</string>
+    <string name="textMessagesPLC">Messages (PLACEHOLDER)</string>
+    <string name="textUsername">Username</string>
+    <string name="textPhoto">Photo</string>
+    <string name="textNewName">New name…</string>
+    <string name="textConfirm">Confirm</string>
+    <string name="textLastMessageSent">Last message sent</string>
+    <string name="textDate">Date</string>
+</resources>
