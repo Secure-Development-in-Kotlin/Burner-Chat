@@ -13,10 +13,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.burnerchat.firebase.FirebaseAuthView
-import com.example.burnerchat.preferences.ThemePreferences
+import com.example.burnerchat.preferences.AppPreferences
 import com.example.burnerchat.webRTC.views.chats.ChatsView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainActivityViewModel by viewModels()
@@ -30,10 +31,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var etUserName: EditText
 
     // Firebase button
-    private lateinit var btFirebase : Button
+    private lateinit var btFirebase: Button
 
-    // Tema guardado
-    private lateinit var themePreferences: ThemePreferences
+    // Preferencias del usuario
+    private lateinit var appPreferences: AppPreferences
 
 //    init {
 //        BurnerChatApp.appModule.protocolHandler.setScope(lifecycleScope)
@@ -89,7 +90,11 @@ class MainActivity : AppCompatActivity() {
         //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
         // Función para aplicar el tema guardado en DataStore
-        applyStoredTheme()
+        // Inicializar AppPreferences
+        appPreferences = AppPreferences(this)
+
+        // Aplica el tema y el idioma guardado
+        applyStoredPreferences()
 
         enableEdgeToEdge()
 
@@ -102,18 +107,37 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun applyStoredTheme() {
-        themePreferences = ThemePreferences(this)
-
-        // Aplica el tema guardado al inicio
+    private fun applyStoredPreferences() {
+        // Aplicar el tema y el idioma guardados al inicio
         lifecycleScope.launch {
-            themePreferences.isNightMode.collect { isNightMode ->
-                if (isNightMode) {
+            appPreferences.preferencesDataClass.collect { preferences ->
+                // Aplica el tema
+                if (preferences.nightMode) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                 } else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 }
+
+                // Aplica el idioma
+                setLocale(preferences.language)
             }
         }
+    }
+
+    private fun setLocale(languageCode: String) {
+        val locale = Locale(languageCode)
+        Locale.setDefault(locale)
+        val config = resources.configuration
+        config.setLocale(locale)
+        resources.updateConfiguration(config, resources.displayMetrics)
+
+        // Actualiza los textos de la vista si es necesario
+        updateTextsInView()
+    }
+
+    // Método para actualizar los textos de la vista según el idioma seleccionado
+    private fun updateTextsInView() {
+        btLogIn.text = getString(R.string.textLogin)
+        btFirebase.text = getString(R.string.textFirebase)
     }
 }

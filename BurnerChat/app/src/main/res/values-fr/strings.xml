@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Burner Chat</string>
+    <string name="server">Serveur</string>
+    <string name="hintMessage">Message…</string>
+    <string name="chat">Chat</string>
+    <string name="textCancel">Annuler</string>
+    <string name="textAccept">Accepter</string>
+    <string name="textIncomingRequest">Je veux me connecter</string>
+    <string name="textThemeToggle">Changer de thème</string>
+    <string name="addContact">Ajouter un contact</string>
+    <string name="usingKey">Par clé</string>
+    <string name="introduceKey">Entrez votre clé</string>
+    <string name="byQR">Par QR</string>
+    <string name="scanQR">Scanner le QR</string>
+    <string name="textName">Nom</string>
+    <string name="textAdd">Ajouter</string>
+    <string name="textGoBack">Retour</string>
+    <string name="textChats">Chats</string>
+    <string name="textFirebase">Firebase</string>
+    <string name="hintIntroduceMail">Entrez votre email</string>
+    <string name="hintIntroducePassword">Entrez votre mot de passe</string>
+    <string name="textPassword">Mot de passe :</string>
+    <string name="textEmail">Email :</string>
+    <string name="textLogin">Se connecter</string>
+    <string name="textSignup">S\'inscrire</string>
+    <string name="textWebRTC">WebRTC</string>
+    <string name="chooseBackend">Choisir un backend</string>
+    <string name="textMessagesPLC">Messages (PLACEHOLDER)</string>
+    <string name="textUsername">Utilisateur</string>
+    <string name="textPhoto">Photo</string>
+    <string name="textNewName">Nouveau nom…</string>
+    <string name="textConfirm">Confirmer</string>
+    <string name="textLastMessageSent">Dernier message envoyé</string>
+    <string name="textDate">Date</string>
+</resources>
