@@ -9,6 +9,18 @@
     android:padding="16sp"
     tools:context=".webRTC.views.users.UserProfileActivity">
 
+    <ImageButton
+        android:id="@+id/ibGoBackFromAddChat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="#00FFFFFF"
+        android:src="@drawable/baseline_arrow_back_ios_24"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tvLogo"
         android:layout_width="wrap_content"
@@ -111,23 +123,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16sp"
+        android:layout_marginStart="289dp"
         android:layout_marginBottom="72dp"
         android:backgroundTint="@color/button1"
         android:text="@string/textAdd"
         android:textColor="@color/buttonText"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
-        android:id="@+id/btGoBackChat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16sp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/button2"
-        android:text="@string/textGoBack"
-        android:textColor="@color/buttonText"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvNameNewChat" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

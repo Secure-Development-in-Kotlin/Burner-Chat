@@ -1,5 +1,6 @@
 package com.example.burnerchat.webRTC.views.chats
 
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,12 +53,12 @@ class ChatsAdapter(
             tvLastMessage = view.findViewById(R.id.tvLastMessage)
         }
 
-        fun setImage(user: User){
+        fun setImage(user: User) {
             val icon = user.getIcon()
 
-            if(icon.isBlank()){
+            if (icon.isBlank()) {
                 ivIcon.setImageResource(R.drawable.baseline_person_24)
-            }else
+            } else
                 ivIcon.setImageBitmap(ImageUtils.decodeFromBase64(icon))
         }
 
@@ -68,9 +69,20 @@ class ChatsAdapter(
             setImage(chat.getTarget())
 
 
-            if (!chatActual.isEmpty())
-                tvLastMessage.text = chatActual.getLastMessage().getLastContent()
-            else
+            if (!chatActual.isEmpty()) {
+//                tvLastMessage.text = chatActual.getLastMessage().getLastContent()
+                val maxLength = 20 // Número máximo de caracteres
+
+                tvLastMessage.apply {
+                    // Limita el texto a un número máximo de caracteres y agrega "..." si es necesario
+                    val message = chatActual.getLastMessage().getLastContent()
+                    text = if (message.length > maxLength) {
+                        message.take(maxLength) + "..." // Agrega "..." si el texto excede el límite
+                    } else {
+                        message
+                    }
+                }
+            } else
                 tvLastMessage.text = ""
         }
     }

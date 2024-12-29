@@ -1,13 +1,6 @@
 package com.example.burnerchat.webRTC.views.users
 
-import android.content.ContentResolver
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
-import android.provider.MediaStore
-import android.content.Context
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -15,7 +8,6 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Spinner
@@ -29,11 +21,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.webRTC.business.ImageUtils
-import java.io.IOException
 import androidx.lifecycle.lifecycleScope
 import com.example.burnerchat.R
 import com.example.burnerchat.preferences.AppPreferences
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -43,13 +33,13 @@ class UserProfileActivity : AppCompatActivity() {
         const val CLAVE_CLAVE_PUBLICA: String = "clavePublica"
     }
 
-    private val viewModel:UserProfileViewModel by viewModels()
+    private val viewModel: UserProfileViewModel by viewModels()
 
     private val usersRepository = BurnerChatApp.appModule.usersRepository
     private lateinit var tvName: TextView
 
     private lateinit var ivIcon: ImageView
-    private lateinit var btGoBack: Button
+    private lateinit var btGoBack: ImageButton
     private lateinit var btConfirm: Button
 
     private lateinit var btnToggleTheme: ImageButton
@@ -77,12 +67,12 @@ class UserProfileActivity : AppCompatActivity() {
         }
     }
 
-    private var galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()){
+    private var galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
         val galleryURI = it
-        try{
+        try {
             val bitmap = ImageUtils.loadBitmapFromURI(galleryURI!!, contentResolver)
             viewModel.setIcon(bitmap!!)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -91,7 +81,7 @@ class UserProfileActivity : AppCompatActivity() {
     fun initComponents() {
         tvName = findViewById(R.id.tvProfileName)
         ivIcon = findViewById(R.id.ivProfileIcon)
-        btGoBack = findViewById(R.id.btProfileGoBack)
+        btGoBack = findViewById(R.id.ibGoBackUserProfile)
         btConfirm = findViewById(R.id.btEditConfirm)
         btnToggleTheme = findViewById(R.id.btToggleButton)
         spinnerLanguage = findViewById(R.id.spinnerLanguage)
@@ -103,9 +93,9 @@ class UserProfileActivity : AppCompatActivity() {
         val user = viewModel.user.value!!
         val icon = user.getIcon()
 
-        if(icon.isBlank()){
+        if (icon.isBlank()) {
             ivIcon.setImageResource(R.drawable.default_icon_128)
-        }else
+        } else
             ivIcon.setImageBitmap(ImageUtils.decodeFromBase64(icon))
 
 
@@ -113,16 +103,15 @@ class UserProfileActivity : AppCompatActivity() {
         initGoBack()
         initEditIcon()
 
-        viewModel.user.observe(this){
-            newUser->
+        viewModel.user.observe(this) { newUser ->
             val icono = newUser.getIcon()
-                if(icono.isNotBlank() && icono.isNotEmpty()){
-                    val bitmap = ImageUtils.decodeFromBase64(icono)
-                    ivIcon.setImageBitmap(bitmap)
-                }
+            if (icono.isNotBlank() && icono.isNotEmpty()) {
+                val bitmap = ImageUtils.decodeFromBase64(icono)
+                ivIcon.setImageBitmap(bitmap)
+            }
         }
-        
-    
+
+
         initAvailableLanguages()
         initThemeToggleButton()
 
@@ -143,6 +132,11 @@ class UserProfileActivity : AppCompatActivity() {
                 // Aplicar el idioma y el tema
                 setLocale(selectedLanguage)
                 applyTheme(isNightMode)
+
+                // Enviar resultado a la actividad anterior para aplicar el cambio de idioma correctamente
+                val resultIntent = Intent()
+                resultIntent.putExtra("languageChanged", true)
+                setResult(RESULT_OK, resultIntent)
 
                 // Se vuelve atrás
                 finish()
@@ -204,7 +198,6 @@ class UserProfileActivity : AppCompatActivity() {
 
     // Método para actualizar los textos de la vista según el idioma seleccionado
     private fun updateTextsInView() {
-        btGoBack.text = getString(R.string.textGoBack)
         btConfirm.text = getString(R.string.textConfirm)
     }
 
@@ -267,20 +260,21 @@ class UserProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun initEditIcon(){
-        ivIcon.setOnClickListener{
+    private fun initEditIcon() {
+        ivIcon.setOnClickListener {
             galleryLauncher.launch("image/*")
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode== RESULT_OK && data!= null){
+        if (resultCode == RESULT_OK && data != null) {
             var selectedImage = data.data
 
             ivIcon
         }
     }
+
     private fun initGoBack() {
         btGoBack.setOnClickListener {
             finish()

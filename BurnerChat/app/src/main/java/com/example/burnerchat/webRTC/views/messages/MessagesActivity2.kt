@@ -28,9 +28,10 @@ class MessagesActivity2 : AppCompatActivity() {
     private lateinit var tvChatName: TextView
     private lateinit var tvServerState: TextView
     private lateinit var etMessage: EditText
-    private lateinit var btSendMessage: Button
-    private lateinit var btSendFoto: Button
+    private lateinit var btSendMessage: ImageButton
+    private lateinit var btSendFoto: ImageButton
     private lateinit var currentImage: Bitmap
+    private lateinit var ibGoBackFromChat : ImageButton
 
     private var galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()){
         val galleryURI = it
@@ -107,6 +108,10 @@ class MessagesActivity2 : AppCompatActivity() {
                 etMessage.text.clear()
 
             }
+        }
+        ibGoBackFromChat = findViewById(R.id.ibGoBackFromChats)
+        ibGoBackFromChat.setOnClickListener {
+            finish()
         }
         initBtFoto()
     }

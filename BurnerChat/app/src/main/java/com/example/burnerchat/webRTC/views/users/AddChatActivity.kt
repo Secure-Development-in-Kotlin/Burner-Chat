@@ -3,6 +3,7 @@ package com.example.burnerchat.webRTC.views.users
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -17,13 +18,13 @@ class AddChatActivity : AppCompatActivity() {
     private lateinit var etPublicKey: EditText
     private lateinit var ivIcon: ImageView
     private lateinit var btQR: Button
-    private lateinit var btGoBack: Button
+    private lateinit var btGoBack: ImageButton
     private lateinit var btConfirm: Button
 
     private fun initComponents() {
         etPublicKey = findViewById(R.id.etAddKey)
         ivIcon = findViewById(R.id.ivNewChat)
-        btGoBack = findViewById(R.id.btGoBackChat)
+        btGoBack = findViewById(R.id.ibGoBackFromAddChat)
         btConfirm = findViewById(R.id.btAddChat)
         btQR = findViewById(R.id.btAddQR)
         initGoBack()

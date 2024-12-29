@@ -10,6 +10,19 @@
     android:padding="16sp"
     tools:context=".webRTC.views.users.UserProfileActivity">
 
+    <ImageButton
+        android:id="@+id/ibGoBackUserProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="#00FFFFFF"
+        android:src="@drawable/baseline_arrow_back_ios_24"
+        app:layout_constraintEnd_toStartOf="@+id/tvLogo2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tvProfileName"
         android:layout_width="wrap_content"
@@ -47,28 +60,20 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <Button
-        android:id="@+id/btProfileGoBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16sp"
-        android:backgroundTint="@color/button2"
-        android:text="@string/textGoBack"
-        android:textColor="@color/buttonText"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
         android:id="@+id/btEditConfirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16sp"
+        android:layout_marginStart="282dp"
+        android:layout_marginEnd="265dp"
         android:backgroundTint="@color/button1"
         android:text="@string/textConfirm"
         android:textColor="@color/buttonText"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerLanguage" />
 
     <ImageButton
         android:id="@+id/btToggleButton"

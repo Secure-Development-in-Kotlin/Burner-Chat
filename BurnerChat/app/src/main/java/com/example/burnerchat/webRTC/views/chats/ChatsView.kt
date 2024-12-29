@@ -46,6 +46,11 @@ class ChatsView : AppCompatActivity() {
     //Chats list
     private var chatsList: List<Chat> = mutableListOf()
 
+    // Para la correcta actualización del idioma
+    companion object {
+        private const val REQUEST_CODE_PROFILE = 1001
+    }
+
     override fun onResume() {
         super.onResume()
         chatsList = viewModel.getChats()
