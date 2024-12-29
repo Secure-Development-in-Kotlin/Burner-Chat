@@ -33,9 +33,6 @@ class UserProfileActivity : AppCompatActivity() {
 
     private val usersRepository = BurnerChatApp.appModule.usersRepository
     private lateinit var tvName: TextView
-    private lateinit var etPublicKey: EditText
-    private lateinit var etEditName: EditText
-    private lateinit var btEditIcon: Button
     private lateinit var ivIcon: ImageView
     private lateinit var btGoBack: Button
     private lateinit var btConfirm: Button
@@ -54,18 +51,21 @@ class UserProfileActivity : AppCompatActivity() {
 
     fun initComponents() {
         tvName = findViewById(R.id.tvProfileName)
-        etPublicKey = findViewById(R.id.etPublicKey)
-        etEditName = findViewById(R.id.etEditName)
-        btEditIcon = findViewById(R.id.btEditIcon)
         ivIcon = findViewById(R.id.ivProfileIcon)
         btGoBack = findViewById(R.id.btProfileGoBack)
         btConfirm = findViewById(R.id.btEditConfirm)
 
         tvName.setText(intent.getStringExtra(CLAVE_NOMBRE_USUARIO))
-        etEditName.setText(intent.getStringExtra(CLAVE_NOMBRE_USUARIO))
-        etPublicKey.setText(intent.getStringExtra(CLAVE_CLAVE_PUBLICA))
 
-        viewModel.setUser(usersRepository.getUser())
+        val user0 = usersRepository.getUser()
+        viewModel.setUser(user0)
+        val user = viewModel.user.value!!
+        val icon = user.getIcon()
+
+        if(icon.isBlank()){
+            ivIcon.setImageResource(R.drawable.default_icon_128)
+        }else
+            ivIcon.setImageBitmap(ImageUtils.decodeFromBase64(icon))
 
         initGoBack()
         initEditIcon()
@@ -81,7 +81,7 @@ class UserProfileActivity : AppCompatActivity() {
     }
 
     private fun initEditIcon(){
-        btEditIcon.setOnClickListener{
+        ivIcon.setOnClickListener{
             galleryLauncher.launch("image/*")
         }
     }

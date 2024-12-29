@@ -13,10 +13,10 @@ class UserProfileViewModel : ViewModel() {
         get() = _user
 
     fun setUser(user: User){
-        _user.postValue(user)
+        _user.value = (user)
     }
     fun setIcon(bitmap: Bitmap){
         _user.value?.setIcon(bitmap)
-        _user.postValue(_user.value)
+        _user.value = (_user.value)
     }
 }
