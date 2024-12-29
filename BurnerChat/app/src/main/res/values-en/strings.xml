@@ -32,4 +32,5 @@
     <string name="textConfirm">Confirm</string>
     <string name="textLastMessageSent">Last message sent</string>
     <string name="textDate">Date</string>
+    <string name="textLanguageChanged">The changes will be applied shortly…</string>
 </resources>

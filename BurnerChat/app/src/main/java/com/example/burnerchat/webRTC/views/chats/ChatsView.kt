@@ -64,7 +64,8 @@ class ChatsView : AppCompatActivity() {
         if(icon.isBlank()){
             ivIcon.setImageResource(R.drawable.baseline_person_24)
         }else
-            ivIcon.setImageBitmap(ImageUtils.decodeFromBase64(icon))
+        // Adaptar la imagen al tamaño máximo de 46dp
+            ImageUtils.setImageWithRoundedBorder(this, icon, ivIcon, 128)
     }
 
     /**

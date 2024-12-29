@@ -1,7 +1,9 @@
 package com.example.burnerchat.webRTC.views.users
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,6 +14,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -24,6 +27,7 @@ import com.example.burnerchat.webRTC.business.ImageUtils
 import androidx.lifecycle.lifecycleScope
 import com.example.burnerchat.R
 import com.example.burnerchat.preferences.AppPreferences
+import com.example.burnerchat.preferences.PreferenciasDataClass
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -40,12 +44,12 @@ class UserProfileActivity : AppCompatActivity() {
 
     private lateinit var ivIcon: ImageView
     private lateinit var btGoBack: ImageButton
-    private lateinit var btConfirm: Button
 
     private lateinit var btnToggleTheme: ImageButton
 
     // Tema guardado
     private lateinit var appPreferences: AppPreferences
+    private lateinit var preferencias: PreferenciasDataClass
 
     // Idioma
     private lateinit var spinnerLanguage: Spinner
@@ -57,6 +61,12 @@ class UserProfileActivity : AppCompatActivity() {
 
         // Inicializa ThemePreferences antes de usarlo
         appPreferences = AppPreferences(this)
+//        lifecycleScope.launch {
+//            // Recolectamos las preferencias del usuario y las guardamos
+//            appPreferences.preferencesDataClass.collect { preferences ->
+//                preferencias = preferences //aquí las cargamos para disponer de ellas más tarde
+//            }
+//        }
 
         initComponents()
 
@@ -82,7 +92,6 @@ class UserProfileActivity : AppCompatActivity() {
         tvName = findViewById(R.id.tvProfileName)
         ivIcon = findViewById(R.id.ivProfileIcon)
         btGoBack = findViewById(R.id.ibGoBackUserProfile)
-        btConfirm = findViewById(R.id.btEditConfirm)
         btnToggleTheme = findViewById(R.id.btToggleButton)
         spinnerLanguage = findViewById(R.id.spinnerLanguage)
 
@@ -95,9 +104,10 @@ class UserProfileActivity : AppCompatActivity() {
 
         if (icon.isBlank()) {
             ivIcon.setImageResource(R.drawable.default_icon_128)
-        } else
-            ivIcon.setImageBitmap(ImageUtils.decodeFromBase64(icon))
-
+        } else {
+            // Adaptar la imagen al tamaño máximo de 128dp
+            ImageUtils.setImageWithRoundedBorder(this, icon, ivIcon, 46)
+        }
 
         // Initialize buttons and spinner
         initGoBack()
@@ -111,38 +121,10 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
 
-
         initAvailableLanguages()
         initThemeToggleButton()
-
-        // Cuando se haga click en confirmar se guardarán las preferencias del usuario
-        btConfirm.setOnClickListener {
-            // Obtener el idioma seleccionado del Spinner
-            val selectedLanguage = getSelectedLanguage()
-
-            // Obtener el estado del tema (claro u oscuro)
-            val isNightMode =
-                resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-
-            Log.d("Tema", "¿El modo oscuro está puesto?: $isNightMode")
-
-            // Guardar el idioma y el tema seleccionados
-            lifecycleScope.launch {
-                appPreferences.savePreferences(isNightMode, selectedLanguage)
-                // Aplicar el idioma y el tema
-                setLocale(selectedLanguage)
-                applyTheme(isNightMode)
-
-                // Enviar resultado a la actividad anterior para aplicar el cambio de idioma correctamente
-                val resultIntent = Intent()
-                resultIntent.putExtra("languageChanged", true)
-                setResult(RESULT_OK, resultIntent)
-
-                // Se vuelve atrás
-                finish()
-            }
-        }
     }
+
 
     private fun initAvailableLanguages() {
         // Idiomas disponibles
@@ -173,13 +155,27 @@ class UserProfileActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                // Se guarda cuando se pulse confirmar
+                // Cambiar el idioma inmediatamente
+                val selectedLanguage = getSelectedLanguage()
+                setLocale(selectedLanguage)
+                // Guardar el idioma seleccionado en las preferencias
+                lifecycleScope.launch {
+                    appPreferences.savePreferences(
+                        isNightMode(),
+                        selectedLanguage
+                    )
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 // No hacer nada
             }
         }
+    }
+
+    // Función para saber si el modo oscuro está activado
+    private fun isNightMode(): Boolean {
+        return resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
     }
 
     private fun setLocale(languageCode: String) {
@@ -191,28 +187,6 @@ class UserProfileActivity : AppCompatActivity() {
 //        resources.updateConfiguration(config, resources.displayMetrics)
         config.setLocale(locale)
         baseContext.createConfigurationContext(config)
-
-        // Actualiza los textos de la vista
-        updateTextsInView()
-    }
-
-    // Método para actualizar los textos de la vista según el idioma seleccionado
-    private fun updateTextsInView() {
-        btConfirm.text = getString(R.string.textConfirm)
-    }
-
-    private fun applyTheme(isNightMode: Boolean) {
-        // Aplica el tema
-        if (isNightMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
-
-        // Actualiza el icono después del cambio de tema
-        btnToggleTheme.setImageResource(
-            if (isNightMode) R.drawable.light_mode else R.drawable.dark_mode
-        )
     }
 
     private fun initThemeToggleButton() {
@@ -225,20 +199,20 @@ class UserProfileActivity : AppCompatActivity() {
                 )
             }
         }
-
         // Cambiar el tema cuando el usuario haga clic en el botón
         btnToggleTheme.setOnClickListener {
+            // Determina el nuevo modo de tema
             val newThemeMode =
-                if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+                if (isNightMode()) {
                     AppCompatDelegate.MODE_NIGHT_NO
                 } else {
                     AppCompatDelegate.MODE_NIGHT_YES
                 }
 
-            // Aplica el nuevo tema
+            // Aplica el nuevo tema inmediatamente
             AppCompatDelegate.setDefaultNightMode(newThemeMode)
 
-            // Guarda la preferencia del tema en DataStore
+            // Guarda las preferencias del tema en DataStore
             lifecycleScope.launch {
                 appPreferences.savePreferences(
                     newThemeMode == AppCompatDelegate.MODE_NIGHT_YES,
@@ -246,7 +220,7 @@ class UserProfileActivity : AppCompatActivity() {
                 )
             }
 
-            // Actualiza el icono después del cambio
+            // Actualiza el icono del botón después de cambiar el tema
             btnToggleTheme.setImageResource(
                 if (newThemeMode == AppCompatDelegate.MODE_NIGHT_YES)
                     R.drawable.light_mode
@@ -254,24 +228,15 @@ class UserProfileActivity : AppCompatActivity() {
                     R.drawable.dark_mode
             )
 
-            // Reinicia la actividad para aplicar el cambio de tema correctamente
-            recreate()
-
+            // Evitar llamar a recreate() inmediatamente
+            // Si realmente necesitas reiniciar la actividad, hazlo con una transición controlada
+            // recreate()
         }
     }
 
     private fun initEditIcon() {
         ivIcon.setOnClickListener {
             galleryLauncher.launch("image/*")
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK && data != null) {
-            var selectedImage = data.data
-
-            ivIcon
         }
     }
 
