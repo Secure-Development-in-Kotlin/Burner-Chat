@@ -28,7 +28,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.burnerchat.BurnerChatApp
-import com.example.burnerchat.R
 import com.example.burnerchat.webRTC.business.ImageUtils
 import java.io.IOException
 import androidx.lifecycle.lifecycleScope
@@ -205,7 +204,6 @@ class UserProfileActivity : AppCompatActivity() {
 
     // Método para actualizar los textos de la vista según el idioma seleccionado
     private fun updateTextsInView() {
-        etEditName.hint = getString(R.string.textNewName)
         btGoBack.text = getString(R.string.textGoBack)
         btConfirm.text = getString(R.string.textConfirm)
     }
