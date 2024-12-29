@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     private fun initComponents() {
         btLogIn = findViewById(R.id.btLogin)
 
-        // FIrebase button
+        // Firebase button
         btFirebase = findViewById(R.id.btFirebase)
         btFirebase.setOnClickListener {
             val intent = Intent(applicationContext, FirebaseAuthView::class.java)
@@ -97,10 +97,11 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
+        initComponents()
+
         // Aplica el tema y el idioma guardado
         applyStoredPreferences()
 
-        initComponents()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -131,14 +132,5 @@ class MainActivity : AppCompatActivity() {
         val config = resources.configuration
         config.setLocale(locale)
         resources.updateConfiguration(config, resources.displayMetrics)
-
-        // Actualiza los textos de la vista si es necesario
-        updateTextsInView()
-    }
-
-    // Método para actualizar los textos de la vista según el idioma seleccionado
-    private fun updateTextsInView() {
-        btLogIn.text = getString(R.string.textLogin)
-        btFirebase.text = getString(R.string.textFirebase)
     }
 }

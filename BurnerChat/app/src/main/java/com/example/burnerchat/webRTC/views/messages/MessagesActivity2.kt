@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -47,9 +48,9 @@ class MessagesActivity2 : AppCompatActivity() {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.picture_text_dialog_view)
         val etMessage:EditText = dialog.findViewById(R.id.etSendDialog)
-        val btSend:Button = dialog.findViewById(R.id.btSendDialog)
+        val btSend:ImageButton = dialog.findViewById(R.id.btSendDialog)
         val ivImage: ImageView = dialog.findViewById(R.id.ivImageDialog)
-        val btCancel:Button = dialog.findViewById(R.id.btCancelDialog)
+        val btCancel:ImageButton = dialog.findViewById(R.id.btCancelDialog)
         ivImage.setImageBitmap(currentImage)
         btSend.setOnClickListener{
             val text = etMessage.text.toString()

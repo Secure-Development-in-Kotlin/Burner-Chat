@@ -10,4 +10,5 @@
     <color name="textColor">#FFFFFFFF</color>
     <color name="myMessage">#42f55a</color>
     <color name="otherMessage">#03A9F4</color>
+    <color name="colorHint">#A0A0A0</color>
 </resources>

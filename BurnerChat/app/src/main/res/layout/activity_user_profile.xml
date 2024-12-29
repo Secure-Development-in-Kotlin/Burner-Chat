@@ -81,8 +81,9 @@
         android:padding="8dp"
         android:src="@drawable/dark_mode"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etEditName" />
+        app:layout_constraintTop_toBottomOf="@+id/ivProfileIcon" />
 
     <Spinner
         android:id="@+id/spinnerLanguage"

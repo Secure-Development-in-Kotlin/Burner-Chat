@@ -13,16 +13,15 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chatsLayout">
+        app:layout_constraintStart_toStartOf="parent">
 
-        <Button
+        <ImageButton
             android:id="@+id/btCancelDialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="10"
-            android:backgroundTint="@color/button2"
-            android:text="X"
+            android:background="@drawable/custom_image_button2"
+            android:padding="12sp"
+            android:src="@drawable/baseline_cancel_24"
             android:textColor="@color/buttonText"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -34,19 +33,19 @@
             android:layout_weight="10"
             android:backgroundTint="@color/background"
             android:ems="10"
-            android:hint="Texto del mensaje"
+            android:hint="@string/hintMessage"
             android:inputType="text"
             android:textColor="@color/textColor"
-            android:textColorHint="@color/textColor"
+            android:textColorHint="@color/colorHint"
             android:textSize="20sp" />
 
-        <Button
+        <ImageButton
             android:id="@+id/btSendDialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:backgroundTint="@color/button1"
-            android:text=">"
+            android:background="@drawable/custom_image_button1"
+            android:padding="12dp"
+            android:src="@drawable/baseline_send_24"
             android:textColor="@color/buttonText"
             android:textSize="24sp"
             android:textStyle="bold" />
