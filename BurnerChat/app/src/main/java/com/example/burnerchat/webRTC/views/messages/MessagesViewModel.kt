@@ -67,6 +67,17 @@ class MessagesViewModel : ViewModel() {
         _messages.value = BurnerChatApp.appModule.chatsRepository.getMessages(target)
     }
 
+    fun sendImageMessage(bitmap: Bitmap, text:String){
+        val chatObject = chatsRepository.getChat(target)
+        val messageObject = ImageMessage(
+            ImageUtils.convertToBase64(bitmap),
+            chatObject!!,
+            userRepository.getUser())
+        messageObject.textContent = text
+        chatsRepository.addMessage(target,
+            messageObject)
+        _messages.value = BurnerChatApp.appModule.chatsRepository.getMessages(target)
+    }
     // Método para establecer conexión con el otro usuario
     fun establishConnection() {
         viewModelScope.launch {

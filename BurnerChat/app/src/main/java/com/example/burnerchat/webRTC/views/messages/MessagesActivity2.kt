@@ -1,8 +1,12 @@
 package com.example.burnerchat.webRTC.views.messages
 
+import android.app.Dialog
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.Window
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,15 +29,38 @@ class MessagesActivity2 : AppCompatActivity() {
     private lateinit var etMessage: EditText
     private lateinit var btSendMessage: Button
     private lateinit var btSendFoto: Button
+    private lateinit var currentImage: Bitmap
 
     private var galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()){
         val galleryURI = it
         try{
             val bitmap = ImageUtils.loadBitmapFromURI(galleryURI!!, contentResolver)
-            viewModel.sendImageMessage(bitmap!!)
+            currentImage = bitmap!!
+            initDialog()
         }catch (e:Exception){
             e.printStackTrace()
         }
+    }
+
+    private fun initDialog(){
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.picture_text_dialog_view)
+        val etMessage:EditText = dialog.findViewById(R.id.etSendDialog)
+        val btSend:Button = dialog.findViewById(R.id.btSendDialog)
+        val ivImage: ImageView = dialog.findViewById(R.id.ivImageDialog)
+        val btCancel:Button = dialog.findViewById(R.id.btCancelDialog)
+        ivImage.setImageBitmap(currentImage)
+        btSend.setOnClickListener{
+            val text = etMessage.text.toString()
+            viewModel.sendImageMessage(currentImage,text)
+            dialog.dismiss()
+        }
+        btCancel.setOnClickListener{
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
