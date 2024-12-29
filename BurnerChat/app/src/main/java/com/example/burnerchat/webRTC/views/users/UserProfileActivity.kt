@@ -140,14 +140,13 @@ class UserProfileActivity : AppCompatActivity() {
             // Guardar el idioma y el tema seleccionados
             lifecycleScope.launch {
                 appPreferences.savePreferences(isNightMode, selectedLanguage)
+                // Aplicar el idioma y el tema
+                setLocale(selectedLanguage)
+                applyTheme(isNightMode)
+
+                // Se vuelve atrás
+                finish()
             }
-
-            // Aplicar el idioma y el tema
-            setLocale(selectedLanguage)
-            applyTheme(isNightMode)
-
-            // Se vuelve atrás
-            finish()
         }
     }
 
@@ -162,10 +161,11 @@ class UserProfileActivity : AppCompatActivity() {
         lifecycleScope.launch {
             appPreferences.preferencesDataClass.collect { preferences ->
                 val position = when (preferences.language) {
+                    "es" -> 0
                     "en" -> 1
                     "fr" -> 2
                     "ru" -> 3
-                    else -> 0  // Por defecto, español
+                    else -> 1  // Por defecto, Inglés
                 }
                 spinnerLanguage.setSelection(position)
             }
@@ -255,7 +255,10 @@ class UserProfileActivity : AppCompatActivity() {
 
             // Actualiza el icono después del cambio
             btnToggleTheme.setImageResource(
-                if (newThemeMode == AppCompatDelegate.MODE_NIGHT_YES) R.drawable.light_mode else R.drawable.dark_mode
+                if (newThemeMode == AppCompatDelegate.MODE_NIGHT_YES)
+                    R.drawable.light_mode
+                else
+                    R.drawable.dark_mode
             )
 
             // Reinicia la actividad para aplicar el cambio de tema correctamente
@@ -290,7 +293,7 @@ class UserProfileActivity : AppCompatActivity() {
             1 -> "en" // Inglés
             2 -> "fr" // Francés
             3 -> "ru" // Ruso
-            else -> "es" // Español por defecto
+            else -> "en" // Ingés por defecto
         }
     }
 }
