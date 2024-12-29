@@ -7,12 +7,14 @@ import com.example.burnerchat.webRTC.model.users.User
 
 
 class ImageMessage(private val path: String, chat: Chat, user: User) : MessageImpl(user, chat) {
+    var textContent:String =""
+
     override fun getConcreteContent(): String {
         return path;
     }
 
     override fun getLastContent(): String {
-        return "Image message"
+        return "Image message "+textContent
     }
 
     override fun getMessageTypeCode(user: User): Int {

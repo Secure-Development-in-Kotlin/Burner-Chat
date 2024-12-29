@@ -1,16 +1,16 @@
 package com.example.burnerchat.webRTC.views.messages
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.R
+import com.example.burnerchat.webRTC.business.ImageUtils
 import com.example.burnerchat.webRTC.model.messages.Message
+import com.example.burnerchat.webRTC.model.messages.messageImpls.ImageMessage
 
 class MessagesAdapter(
     private val messagesList: List<Message>,
@@ -53,16 +53,25 @@ class MessagesAdapter(
         }
     }
     open class SelfImageViewHolder(view: View) : ViewHolder(view){
-        private val ivImage: ImageView = view.findViewById(R.id.ivImage)
+        protected val ivImage: ImageView = view.findViewById(R.id.ivImage)
+        protected val tvText: TextView = view.findViewById(R.id.tvMessage)
         override fun extraContent(message: Message) {
-            val image = message.getContent()
-            //TODO: CARGAR LA IMAGEN PER SE
+            val messageCast = message as ImageMessage
+            val image = messageCast.getContent()
+            val text = messageCast.textContent
+            ivImage.setImageBitmap(ImageUtils.decodeFromBase64(image))
+            tvText.text = text
         }
     }
     class OtherImageViewHolder(view: View) : SelfImageViewHolder(view){
+        private val tvNombre:TextView = view.findViewById(R.id.tvUser)
         override fun extraContent(message: Message) {
-            val image = message.getContent()
-            //TODO: CARGAR LA IMAGEN PER SE
+            val messageCast = message as ImageMessage
+            val image = messageCast.getContent()
+            val text = messageCast.textContent
+            ivImage.setImageBitmap(ImageUtils.decodeFromBase64(image))
+            tvText.text = text
+            tvNombre.text = message.getUser().username
         }
     }
 

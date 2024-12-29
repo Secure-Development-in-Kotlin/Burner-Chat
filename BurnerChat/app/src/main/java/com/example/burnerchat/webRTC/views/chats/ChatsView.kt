@@ -15,8 +15,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.MainActivity
 import com.example.burnerchat.R
+import com.example.burnerchat.webRTC.business.ImageUtils
 import com.example.burnerchat.webRTC.business.MainOneTimeEvents
 import com.example.burnerchat.webRTC.model.chats.Chat
 import com.example.burnerchat.webRTC.model.users.KeyPair
@@ -29,6 +31,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ChatsView : AppCompatActivity() {
     private val viewModel: ChatsViewViewModel by viewModels()
+
+    private val userRepository = BurnerChatApp.appModule.usersRepository
 
     //Main recyclerView
     private lateinit var rvChats: RecyclerView;
@@ -45,6 +49,17 @@ class ChatsView : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         chatsList = viewModel.getChats()
+        resetImage()
+    }
+
+    fun resetImage(){
+        val user = userRepository.getUser()
+        val icon = user.getIcon()
+
+        if(icon.isBlank()){
+            ivIcon.setImageResource(R.drawable.baseline_person_24)
+        }else
+            ivIcon.setImageBitmap(ImageUtils.decodeFromBase64(icon))
     }
 
     /**
@@ -97,6 +112,9 @@ class ChatsView : AppCompatActivity() {
     }
 
     private fun initIcon() {
+
+        resetImage()
+
         ivIcon.setOnClickListener {
             val intent = Intent(this, UserProfileActivity::class.java)
             var loggedUser = viewModel.loggedUser.value

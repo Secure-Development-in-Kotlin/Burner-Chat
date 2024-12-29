@@ -7,7 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.R
+import com.example.burnerchat.webRTC.business.ImageUtils
 import com.example.burnerchat.webRTC.model.chats.Chat
+import com.example.burnerchat.webRTC.model.users.User
 
 class ChatsAdapter(
 
@@ -50,10 +52,21 @@ class ChatsAdapter(
             tvLastMessage = view.findViewById(R.id.tvLastMessage)
         }
 
+        fun setImage(user: User){
+            val icon = user.getIcon()
+
+            if(icon.isBlank()){
+                ivIcon.setImageResource(R.drawable.baseline_person_24)
+            }else
+                ivIcon.setImageBitmap(ImageUtils.decodeFromBase64(icon))
+        }
 
         fun bind(chat: Chat) {
             chatActual = chat
             tvName.text = chatActual.getTarget().username
+
+            setImage(chat.getTarget())
+
 
             if (!chatActual.isEmpty())
                 tvLastMessage.text = chatActual.getLastMessage().getLastContent()

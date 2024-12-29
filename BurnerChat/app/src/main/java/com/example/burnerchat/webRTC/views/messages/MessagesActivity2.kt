@@ -1,10 +1,15 @@
 package com.example.burnerchat.webRTC.views.messages
 
+import android.app.Dialog
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.Window
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -12,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.R
+import com.example.burnerchat.webRTC.business.ImageUtils
 
 class MessagesActivity2 : AppCompatActivity() {
     private val viewModel: MessagesViewModel by viewModels()
@@ -23,7 +29,39 @@ class MessagesActivity2 : AppCompatActivity() {
     private lateinit var etMessage: EditText
     private lateinit var btSendMessage: Button
     private lateinit var btSendFoto: Button
+    private lateinit var currentImage: Bitmap
 
+    private var galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()){
+        val galleryURI = it
+        try{
+            val bitmap = ImageUtils.loadBitmapFromURI(galleryURI!!, contentResolver)
+            currentImage = bitmap!!
+            initDialog()
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+    }
+
+    private fun initDialog(){
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.picture_text_dialog_view)
+        val etMessage:EditText = dialog.findViewById(R.id.etSendDialog)
+        val btSend:Button = dialog.findViewById(R.id.btSendDialog)
+        val ivImage: ImageView = dialog.findViewById(R.id.ivImageDialog)
+        val btCancel:Button = dialog.findViewById(R.id.btCancelDialog)
+        ivImage.setImageBitmap(currentImage)
+        btSend.setOnClickListener{
+            val text = etMessage.text.toString()
+            viewModel.sendImageMessage(currentImage,text)
+            dialog.dismiss()
+        }
+        btCancel.setOnClickListener{
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +112,7 @@ class MessagesActivity2 : AppCompatActivity() {
 
     private fun initBtFoto(){
         btSendFoto.setOnClickListener{
-            //TODO: AQUÍ VA EL CÓDIGO DE SUBIR LA FOTO
+            galleryLauncher.launch("image/*")
         }
     }
 
