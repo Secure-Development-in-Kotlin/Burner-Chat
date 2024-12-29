@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="button1">#42f55a</color>
+    <color name="button2">#03A9F4</color>
+    <color name="buttonText">#FF000000</color>
+    <color name="messageText">#FF000000</color>
+    <color name="messageUser">#1A1A1A</color>
+    <color name="messageDate">#2F2F2F</color>
+    <color name="background">#FF000000</color>
+    <color name="textColor">#FFFFFFFF</color>
+    <color name="myMessage">#42f55a</color>
+    <color name="otherMessage">#03A9F4</color>
+</resources>

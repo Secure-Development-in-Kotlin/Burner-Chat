@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Base.Theme.BurnerChat" parent="Theme.MaterialComponents.Light.NoActionBar">
+<!--    <style name="Base.Theme.BurnerChat" parent="Theme.MaterialComponents.Light.NoActionBar">-->
+<!--    </style>-->
+    <style name="Base.Theme.BurnerChat" parent="Theme.Material3.Light.NoActionBar">
+        <item name="background">@color/background</item>
     </style>
+
+<!--    <style name="Base.Theme.BurnerChat.Dark" parent="Theme.Material3.Dark.NoActionBar">-->
+<!--        <item name="background">@color/background</item>-->
+<!--    </style>-->
 </resources>

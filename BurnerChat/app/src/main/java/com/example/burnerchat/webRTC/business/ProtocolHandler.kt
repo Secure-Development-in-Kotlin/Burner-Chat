@@ -20,7 +20,7 @@ class ProtocolHandler {
     private lateinit var socketHandler: SocketHandler
     private val socketConnection = com.example.burnerchat.webRTC.backend.socket.SocketConnection()
 
-    private lateinit var scope: LifecycleCoroutineScope
+    //private lateinit var scope: LifecycleCoroutineScope
 
     init {
         initializeSocketHandler()
@@ -122,8 +122,8 @@ class ProtocolHandler {
     }
 
     // Función para establecer el scope del ciclo de vida del socket
-    fun setScope(newScope: LifecycleCoroutineScope) {
-        scope = newScope
-        socketHandler.startListening(scope)
-    }
+//    fun setScope(newScope: LifecycleCoroutineScope) {
+//        scope = newScope
+//        socketHandler.startListening(scope)
+//    }
 }
