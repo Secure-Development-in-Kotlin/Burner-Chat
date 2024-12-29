@@ -10,17 +10,6 @@
     tools:context=".firebase.FirebaseAuthView">
 
     <TextView
-        android:id="@+id/tvAddContact2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/textFirebase"
-        android:textColor="@color/textColor"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvLogo3" />
-
-    <TextView
         android:id="@+id/tvLogo3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,89 +21,100 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/etEmail"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/textColor"
-        android:ems="10"
-        android:hint="@string/hintIntroduceMail"
-        android:inputType="textEmailAddress"
-        android:lineSpacingExtra="8sp"
-        android:paddingLeft="16sp"
-        android:shadowColor="@color/textColor"
-        android:textColor="@color/textColor"
-        android:textColorHint="@color/textColor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvEmail" />
-
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/textColor"
-        android:ems="10"
-        android:hint="@string/hintIntroducePassword"
-        android:inputType="textPassword"
-        android:lineSpacingExtra="8sp"
-        android:paddingLeft="16sp"
-        android:shadowColor="@color/textColor"
-        android:textColor="@color/textColor"
-        android:textColorHint="@color/textColor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvPassword" />
-
-    <TextView
-        android:id="@+id/tvPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16sp"
-        android:text="@string/textPassword"
-        android:textColor="@color/textColor"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etEmail" />
-
-    <TextView
-        android:id="@+id/tvEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="16sp"
-        android:text="@string/textEmail"
-        android:textColor="@color/textColor"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvAddContact2" />
-
-    <Button
-        android:id="@+id/btLogIn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="117dp"
-        android:layout_marginBottom="32dp"
-        android:backgroundTint="@color/button1"
-        android:text="@string/textLogin"
-        android:textColor="@color/buttonText"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/custom_edittext"
+        android:padding="24dp"
+        android:paddingTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btSignUp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvLogo3">
 
-    <Button
-        android:id="@+id/btSignUp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:backgroundTint="@color/button2"
-        android:text="@string/textSignup"
-        android:textColor="@color/buttonText"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btLogIn"
-        app:layout_constraintHorizontal_bias="0.489"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/tvAddContact2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/textFirebase"
+            android:textColor="@color/textColor"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/custom_edittext"
+            android:drawableStart="@drawable/baseline_person_24"
+            android:ems="10"
+            android:hint="@string/hintIntroduceMail"
+            android:inputType="textEmailAddress"
+            android:lineSpacingExtra="8sp"
+            android:paddingLeft="16sp"
+            android:paddingTop="8sp"
+            android:paddingBottom="8sp"
+            android:shadowColor="@color/textColor"
+            android:textColor="@color/textColor"
+            android:textColorHint="@color/textColor"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvAddContact2" />
+
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/custom_edittext"
+            android:drawableStart="@drawable/baseline_lock_24"
+            android:ems="10"
+            android:hint="@string/hintIntroducePassword"
+            android:inputType="textPassword"
+            android:lineSpacingExtra="8sp"
+            android:paddingLeft="16sp"
+            android:paddingTop="8sp"
+            android:paddingBottom="8sp"
+            android:shadowColor="@color/textColor"
+            android:textColor="@color/textColor"
+            android:textColorHint="@color/textColor"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.516"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etEmail" />
+
+        <Button
+            android:id="@+id/btSignUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/button2"
+            android:text="@string/textSignup"
+            android:textColor="@color/buttonText"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etPassword" />
+
+        <Button
+            android:id="@+id/btLogIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/button1"
+            android:text="@string/textLogin"
+            android:textColor="@color/buttonText"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etPassword" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

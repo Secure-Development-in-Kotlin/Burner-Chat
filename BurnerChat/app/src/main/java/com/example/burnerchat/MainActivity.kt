@@ -93,12 +93,13 @@ class MainActivity : AppCompatActivity() {
         // Inicializar AppPreferences
         appPreferences = AppPreferences(this)
 
-        // Aplica el tema y el idioma guardado
-        applyStoredPreferences()
-
         enableEdgeToEdge()
 
         setContentView(R.layout.activity_main)
+
+        // Aplica el tema y el idioma guardado
+        applyStoredPreferences()
+
         initComponents()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
