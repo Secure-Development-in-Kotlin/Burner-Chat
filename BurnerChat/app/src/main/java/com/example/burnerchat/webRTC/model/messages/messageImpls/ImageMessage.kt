@@ -3,10 +3,10 @@ package com.example.burnerchat.webRTC.model.messages.messageImpls
 import com.example.burnerchat.webRTC.model.chats.Chat
 import com.example.burnerchat.webRTC.model.messages.Message
 import com.example.burnerchat.webRTC.model.messages.MessageImpl
-import com.example.burnerchat.webRTC.model.users.User
+import com.google.firebase.auth.FirebaseUser
 
 
-class ImageMessage(private val path: String, chat: Chat, user: User) : MessageImpl(user, chat) {
+class ImageMessage(private val path: String, chat: Chat, user: FirebaseUser) : MessageImpl(user, chat) {
     var textContent:String =""
 
     override fun getConcreteContent(): String {
@@ -17,8 +17,8 @@ class ImageMessage(private val path: String, chat: Chat, user: User) : MessageIm
         return "Image message "+textContent
     }
 
-    override fun getMessageTypeCode(user: User): Int {
-        if(user.username!== this.getUser().username){
+    override fun getMessageTypeCode(user: FirebaseUser): Int {
+        if(user.email !== this.getUser().email){
             return Message.LayoutType.ImagenAjena.ordinal
         } else
             return Message.LayoutType.ImagenPropia.ordinal

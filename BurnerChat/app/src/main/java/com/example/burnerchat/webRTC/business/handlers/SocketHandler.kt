@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.webRTC.business.State
 import com.example.burnerchat.webRTC.model.users.KeyPair
-import com.example.burnerchat.webRTC.model.users.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -23,7 +22,7 @@ class SocketHandler(
                         if (!event.isConnected) {
                             Log.d(TAG, "Socket ConnectionChange: ${event.isConnected}")
                             State.isConnectedToServer = false
-                            State.connectedAs = User(KeyPair("", ""), "")
+//                            State.connectedAs = User("")
                         }
                     }
 

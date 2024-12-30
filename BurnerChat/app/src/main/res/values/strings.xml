@@ -33,4 +33,6 @@
     <string name="textLastMessageSent">Último mensaje enviado</string>
     <string name="textDate">Fecha</string>
     <string name="textLanguageChanged">Los cambios se aplicarán en breve…</string>
+    <string name="a_adir_chat_grupal">Añadir Chat Grupal</string>
+    <string name="a_adir_chat_individual">Añadir Chat Individual</string>
 </resources>

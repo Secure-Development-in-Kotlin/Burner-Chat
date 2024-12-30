@@ -12,13 +12,15 @@ import com.example.burnerchat.webRTC.business.MainOneTimeEvents
 import com.example.burnerchat.webRTC.model.chats.Chat
 import com.example.burnerchat.webRTC.model.messages.messageImpls.TextMessage
 import com.example.burnerchat.webRTC.model.users.KeyPair
-import com.example.burnerchat.webRTC.model.users.User
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.launch
 
 class ChatsViewViewModel : ViewModel() {
     private val dataBase = ChatsPersistenceManager
     private val _chatsList = MutableLiveData(listOf<Chat>())
-    private val _loggedUser = MutableLiveData(User(KeyPair("a", "b"), "userName"))
+    private val _loggedUser = MutableLiveData<FirebaseUser>(null)
 
     // WebRTC connection variables
     //private val socketConnection = BurnerChatApp.appModule.socketConnection
@@ -29,9 +31,8 @@ class ChatsViewViewModel : ViewModel() {
         get() = _oneTimeEvents
 
 
-    private fun addChat(userName: String) {
-        val otherUser = User(KeyPair("aa", "bb"), userName)
-        val chat = Chat(otherUser)
+    private fun addChat(name: String, participants: Array<String>) {
+        val chat = Chat(name, participants)
         BurnerChatApp.appModule.chatsRepository.addChat(chat)
 
         // Update the chats from the view
@@ -80,7 +81,8 @@ class ChatsViewViewModel : ViewModel() {
     val chatsList: LiveData<List<Chat>>
         get() = _chatsList
 
-    val loggedUser: LiveData<User>
+    // TODO: quitar, tenemos el usuario loggeado por firebase siempre accesible
+    val loggedUser: LiveData<FirebaseUser>
         get() = _loggedUser
 
     fun getChats(): List<Chat> {
@@ -88,42 +90,25 @@ class ChatsViewViewModel : ViewModel() {
         return dataBase.getChats()
     }
 
-    fun logIn(userName: String) {
-        val user = User(KeyPair("a", "b"), userName)
-        logIn(user)
-    }
-
-    fun logIn(user: User) {
+    // TODO: quitar
+    fun logIn(user: FirebaseUser) {
         _loggedUser.value = user
         //TODO Aquí irá el MainActions.ConnectAs(user.userName)
     }
 
-
-    private fun generateUsers(number: Int): List<User> {
-        var usersList = mutableListOf<User>()
-        for (i in (0..number)) {
-            usersList.add(User(KeyPair("sample$i", "sampleb$i"), "SampleUser$i"))
-        }
-        return usersList
-    }
-
     fun init() {
-        // Por ahora los quiero vacíos, no hardcodeados
-        // N O
-        var users = generateUsers(25)
-        initChats(users)
+        initChats()
         _chatsList.value = dataBase.getChats()
     }
 
-    private fun initChats(usersList: List<User>) {
-        for (otherUser in usersList) {
-            val chat = Chat(otherUser)
-            addMessagesToAChat(chat, otherUser, 12)
-            dataBase.addChat(chat)
+    private fun initChats() {
+        val chats = dataBase.getChats()
+        if (chats.isEmpty()) {
+            _chatsList.value = chats
         }
     }
 
-    private fun addMessagesToAChat(chat: Chat, user: User, number: Int) {
+    private fun addMessagesToAChat(chat: Chat, user: FirebaseUser, number: Int) {
         for (i in (0..number)) {
             if (i % 2 == 0)
                 chat.addMessage(TextMessage("Text Message $i", user, chat))

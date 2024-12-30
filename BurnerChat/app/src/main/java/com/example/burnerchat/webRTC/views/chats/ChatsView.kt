@@ -1,11 +1,9 @@
 package com.example.burnerchat.webRTC.views.chats
 
-import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
-import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -16,13 +14,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.BurnerChatApp
-import com.example.burnerchat.MainActivity
 import com.example.burnerchat.R
+import com.example.burnerchat.firebase.FirebaseAuthView
 import com.example.burnerchat.webRTC.business.ImageUtils
-import com.example.burnerchat.webRTC.business.MainOneTimeEvents
 import com.example.burnerchat.webRTC.model.chats.Chat
-import com.example.burnerchat.webRTC.model.users.KeyPair
-import com.example.burnerchat.webRTC.model.users.User
 import com.example.burnerchat.webRTC.views.messages.MessagesActivity2
 import com.example.burnerchat.webRTC.views.users.AddChatActivity
 import com.example.burnerchat.webRTC.views.users.UserProfileActivity
@@ -57,15 +52,22 @@ class ChatsView : AppCompatActivity() {
         resetImage()
     }
 
-    fun resetImage(){
-        val user = userRepository.getUser()
-        val icon = user.getIcon()
+    fun resetImage() {
+        val user = userRepository.getLoggedUser()
+        if (user == null) {
+            val intent = Intent(applicationContext, FirebaseAuthView::class.java)
+            startActivity(intent)
+        } else {
+            val icon = user.photoUrl
 
-        if(icon.isBlank()){
-            ivIcon.setImageResource(R.drawable.baseline_person_24)
-        }else
-        // Adaptar la imagen al tamaño máximo de 46dp
-            ImageUtils.setImageWithRoundedBorder(this, icon, ivIcon, 128)
+            if (icon == null || TextUtils.isEmpty(icon.toString())) {
+                ivIcon.setImageResource(R.drawable.baseline_person_24)
+            } else {
+                // Adaptar la imagen al tamaño máximo de 46dp
+                ImageUtils.setImageWithRoundedBorder(this, icon.toString(), ivIcon, 128)
+            }
+        }
+
     }
 
     /**
@@ -85,36 +87,6 @@ class ChatsView : AppCompatActivity() {
             rvChats.adapter?.notifyDataSetChanged()
         }
 
-        /*
-        viewModel.oneTimeEvents.observe(this) {
-            Log.d("INVITATION", "Got invite")
-            when (it) {
-                is MainOneTimeEvents.GotInvite -> {
-                    val dialog = Dialog(this)
-                    dialog.setContentView(R.layout.incomming_dialog)
-                    dialog.window?.setLayout(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                    )
-                    dialog.setCancelable(false)
-
-                    // TODO: comportamiento de los botones
-                    dialog.findViewById<Button>(R.id.btAccept).setOnClickListener {
-//                        viewModel.dispatchAction (
-//                            MainActions.AcceptIncomingConnection
-//                        )
-                        viewModel.acceptIncomingConnection()
-                        dialog.dismiss()
-                    }
-
-                    dialog.findViewById<Button>(R.id.btCancel).setOnClickListener {
-                        dialog.dismiss()
-                    }
-
-                    dialog.show()
-                }
-            }
-        }*/
     }
 
     private fun initIcon() {
@@ -123,16 +95,12 @@ class ChatsView : AppCompatActivity() {
 
         ivIcon.setOnClickListener {
             val intent = Intent(this, UserProfileActivity::class.java)
-            var loggedUser = viewModel.loggedUser.value
+            val loggedUser = viewModel.loggedUser.value
             intent.putExtra(
                 UserProfileActivity.CLAVE_NOMBRE_USUARIO,
-                loggedUser?.username.toString()
+                loggedUser?.email.toString()
             )
-            Log.d("chat", loggedUser?.username!!)
-            intent.putExtra(
-                UserProfileActivity.CLAVE_CLAVE_PUBLICA,
-                loggedUser.keyPair.publicKey.toString()
-            )
+            Log.d("chat", loggedUser?.email!!)
             startActivity(intent)
         }
     }
@@ -147,10 +115,10 @@ class ChatsView : AppCompatActivity() {
     private fun initChatRecycler() {
         val customAdapter = ChatsAdapter(
             viewModel.getChats(),
-            viewModel.loggedUser.value?.keyPair?.publicKey!!
+            viewModel.loggedUser.value?.email!!
         ) { chat ->
             val intent = Intent(this, MessagesActivity2::class.java)
-            intent.putExtra("target", chat?.getTarget()?.username)
+            intent.putExtra("chatId", chat?.uid)
             if (chat != null) {
                 startActivity(intent)
             } else {
@@ -163,12 +131,15 @@ class ChatsView : AppCompatActivity() {
     }
 
     private fun initUser() {
-        var loggedUser = User(
-            KeyPair("a", "b"),
-            intent.getStringExtra(MainActivity.CLAVE_NOMBRE_USUARIO).toString()
-        )
-        viewModel.logIn(loggedUser)
-        Log.d("debug", loggedUser.username)
+        val loggedUser = userRepository.getLoggedUser()
+        if (loggedUser == null) {
+            val intent = Intent(applicationContext, FirebaseAuthView::class.java)
+            startActivity(intent)
+        } else {
+            viewModel.logIn(loggedUser)
+            Log.d("debug", loggedUser.email.toString())
+        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

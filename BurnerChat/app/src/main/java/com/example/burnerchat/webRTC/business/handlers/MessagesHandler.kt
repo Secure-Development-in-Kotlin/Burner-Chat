@@ -3,7 +3,7 @@ package com.example.burnerchat.webRTC.business.handlers
 import android.util.Log
 import com.example.burnerchat.webRTC.backend.webrtc.MessageType
 import com.example.burnerchat.webRTC.business.State
-import com.example.burnerchat.webRTC.model.users.User
+import com.google.firebase.auth.FirebaseUser
 import org.webrtc.SessionDescription
 
 class MessageHandler(
@@ -27,10 +27,7 @@ class MessageHandler(
             "user_stored" -> {
                 Log.d(TAG, "User stored in socket as ${message.data.toString()}")
                 currentState.isConnectedToServer = true
-                currentState.connectedAs = User(
-                    keyPair = currentState.connectedAs.keyPair,
-                    username = message.data.toString()
-                )
+//                currentState.connectedAs = ,// TOOD: el User
                 currentState.messagesFromServer += MessageType.Info("User stored in socket as ${message.data.toString()}")
 
             }
@@ -42,7 +39,8 @@ class MessageHandler(
                     currentState.messagesFromServer += MessageType.Info("User is not available")
                 } else {
                     rtcManagerHandler.initializeRTCManager(
-                        userName = currentState.connectedAs.username,
+                        userName = currentState.connectedAs.toString(),
+//                        userName = currentState.connectedAs.username,
                         target = message.data.toString()
                     )
                     currentState.isConnectToPeer = message.data.toString()
@@ -61,7 +59,8 @@ class MessageHandler(
             "answer_received" -> {
                 Log.d(TAG, "Answer received")
                 rtcManagerHandler.answerToOffer(
-                    userName = currentState.connectedAs.username,
+                    userName = currentState.connectedAs.toString(),
+//                    userName = currentState.connectedAs.username,
                     session = SessionDescription(
                         SessionDescription.Type.ANSWER,
                         message.data.toString()

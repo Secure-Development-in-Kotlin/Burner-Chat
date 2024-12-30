@@ -9,6 +9,20 @@
     android:padding="16sp"
     tools:context=".webRTC.views.users.UserProfileActivity">
 
+    <Button
+        android:id="@+id/btSingleChat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="@color/button1"
+        android:text="Chat individual"
+        android:textColor="@color/buttonText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btGroupChat"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <ImageButton
         android:id="@+id/ibGoBackFromAddChat"
         android:layout_width="wrap_content"
@@ -45,32 +59,6 @@
         app:layout_constraintTop_toBottomOf="@+id/tvLogo" />
 
     <TextView
-        android:id="@+id/tvAddKey"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16sp"
-        android:text="@string/usingKey"
-        android:textColor="@color/textColor"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvAddContact" />
-
-    <EditText
-        android:id="@+id/etAddKey"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16sp"
-        android:backgroundTint="@color/textColor"
-        android:ems="10"
-        android:hint="@string/introduceKey"
-        android:inputType="text"
-        android:textColor="@color/textColor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvAddKey"
-        tools:textColorHint="@color/textColor" />
-
-    <TextView
         android:id="@+id/tvAddQR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -80,7 +68,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etAddKey" />
+        app:layout_constraintTop_toBottomOf="@+id/tvAddContact" />
 
     <Button
         android:id="@+id/btAddQR"
@@ -105,32 +93,17 @@
         app:layout_constraintTop_toBottomOf="@+id/btAddQR"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <TextView
-        android:id="@+id/tvNameNewChat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16sp"
-        android:text="@string/textName"
-        android:textColor="@color/textColor"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivNewChat" />
-
     <Button
-        android:id="@+id/btAddChat"
+        android:id="@+id/btGroupChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16sp"
-        android:layout_marginStart="289dp"
-        android:layout_marginBottom="72dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="32dp"
         android:backgroundTint="@color/button1"
-        android:text="@string/textAdd"
+        android:text="Chat grupal"
         android:textColor="@color/buttonText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvNameNewChat" />
+        app:layout_constraintStart_toEndOf="@+id/btSingleChat" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

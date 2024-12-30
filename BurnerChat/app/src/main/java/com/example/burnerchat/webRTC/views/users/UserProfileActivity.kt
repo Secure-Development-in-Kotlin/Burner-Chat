@@ -61,12 +61,6 @@ class UserProfileActivity : AppCompatActivity() {
 
         // Inicializa ThemePreferences antes de usarlo
         appPreferences = AppPreferences(this)
-//        lifecycleScope.launch {
-//            // Recolectamos las preferencias del usuario y las guardamos
-//            appPreferences.preferencesDataClass.collect { preferences ->
-//                preferencias = preferences //aquí las cargamos para disponer de ellas más tarde
-//            }
-//        }
 
         initComponents()
 
@@ -97,16 +91,15 @@ class UserProfileActivity : AppCompatActivity() {
 
         tvName.setText(intent.getStringExtra(CLAVE_NOMBRE_USUARIO))
 
-        val user0 = usersRepository.getUser()
-        viewModel.setUser(user0)
+        val user0 = usersRepository.getLoggedUser()
         val user = viewModel.user.value!!
-        val icon = user.getIcon()
+        val icon = user.photoUrl
 
-        if (icon.isBlank()) {
+        if (icon == null) {
             ivIcon.setImageResource(R.drawable.default_icon_128)
         } else {
             // Adaptar la imagen al tamaño máximo de 128dp
-            ImageUtils.setImageWithRoundedBorder(this, icon, ivIcon, 46)
+            ImageUtils.setImageWithRoundedBorder(this, icon.toString(), ivIcon, 46)
         }
 
         // Initialize buttons and spinner
@@ -114,9 +107,9 @@ class UserProfileActivity : AppCompatActivity() {
         initEditIcon()
 
         viewModel.user.observe(this) { newUser ->
-            val icono = newUser.getIcon()
-            if (icono.isNotBlank() && icono.isNotEmpty()) {
-                val bitmap = ImageUtils.decodeFromBase64(icono)
+            val icono = newUser.photoUrl
+            if (icono != null) {
+                val bitmap = ImageUtils.decodeFromBase64(icono.toString())
                 ivIcon.setImageBitmap(bitmap)
             }
         }

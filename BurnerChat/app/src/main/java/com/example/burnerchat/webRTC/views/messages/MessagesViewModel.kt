@@ -21,32 +21,29 @@ class MessagesViewModel : ViewModel() {
 
     private val userRepository = BurnerChatApp.appModule.usersRepository
     private val chatsRepository = BurnerChatApp.appModule.chatsRepository
-    //private lateinit var chat: Chat
+    private lateinit var chat: Chat
 
-    private var target = ""
-
-
-//    private var rtcManager = BurnerChatApp.appModule.rtcManager
-    //private val socketConnection = BurnerChatApp.appModule.socketConnection
 
     private val _messages = MutableLiveData(listOf<Message>())
     val messages: LiveData<List<Message>>
         get() = _messages
 
     fun getMessages(): List<Message> {
-        _messages.value = chatsRepository.getMessages(target)
+        _messages.value = chatsRepository.getMessages(chat)
         val messages = _messages.value
         return messages!!
     }
 
     fun sendMessage(message: String) {
-        val chatObject = chatsRepository.getChat(target)
-        val messageObject = TextMessage(message,
-            userRepository.getUser(),chatObject!!)
+        val messageObject = TextMessage(
+            message,
+            userRepository.getLoggedUser()!!, chat
+        )
         chatsRepository.addMessage(
-            target,
-            messageObject)
-        _messages.value = BurnerChatApp.appModule.chatsRepository.getMessages(target)
+            chat,
+            messageObject
+        )
+        _messages.value = BurnerChatApp.appModule.chatsRepository.getMessages(chat)
         /*_chat.value?.addMessage(TextMessage(message,
             BurnerChatApp.appModule.usersRepository.getUser(), _chat.value!!))
 
@@ -56,50 +53,35 @@ class MessagesViewModel : ViewModel() {
         //dispatchAction(MainActions.SendChatMessage(message));
     }
 
-    fun sendImageMessage(bitmap: Bitmap){
-        val chatObject = chatsRepository.getChat(target)
+    fun sendImageMessage(bitmap: Bitmap) {
         val messageObject = ImageMessage(
             ImageUtils.convertToBase64(bitmap),
-            chatObject!!,
-            userRepository.getUser())
-        chatsRepository.addMessage(target,
-            messageObject)
-        _messages.value = BurnerChatApp.appModule.chatsRepository.getMessages(target)
+            chat,
+            userRepository.getLoggedUser()!!
+        )
+        chatsRepository.addMessage(
+            chat,
+            messageObject
+        )
+        _messages.value = BurnerChatApp.appModule.chatsRepository.getMessages(chat)
     }
 
-    fun sendImageMessage(bitmap: Bitmap, text:String){
-        val chatObject = chatsRepository.getChat(target)
+    fun sendImageMessage(bitmap: Bitmap, text: String) {
         val messageObject = ImageMessage(
             ImageUtils.convertToBase64(bitmap),
-            chatObject!!,
-            userRepository.getUser())
+            chat,
+            userRepository.getLoggedUser()!!
+        )
         messageObject.textContent = text
-        chatsRepository.addMessage(target,
-            messageObject)
-        _messages.value = BurnerChatApp.appModule.chatsRepository.getMessages(target)
-    }
-    // Método para establecer conexión con el otro usuario
-    fun establishConnection() {
-        viewModelScope.launch {
-            BurnerChatApp.appModule.protocolHandler.dispatchAction(
-                MainActions.ConnectToUser(
-                    target
-                )
-            )
-        }
+        chatsRepository.addMessage(
+            chat,
+            messageObject
+        )
+        _messages.value = BurnerChatApp.appModule.chatsRepository.getMessages(chat)
     }
 
-    fun setTarget(target: String) {
-        this.target = target
-        val chat: Chat = ChatsPersistenceManager.getChat(target)!!
-        if (chat != null) {
-            /*
-            _chat.value = (chat)
-            var c = this.chat.value
-            */
-        } else {
-            Log.d(TAG, "Chat not found")
-        }
+    fun setChat(chatId: String) {
+        this.chat = ChatsPersistenceManager.getChat(chatId)!!
     }
 
 //    private fun dispatchAction(actions: MainActions) {

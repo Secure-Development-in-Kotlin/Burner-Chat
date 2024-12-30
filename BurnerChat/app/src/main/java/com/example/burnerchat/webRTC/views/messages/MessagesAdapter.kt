@@ -48,7 +48,7 @@ class MessagesAdapter(
     class NameTextViewHolder(view: View) : TextViewHolder(view) {
         private val tvNombre:TextView = view.findViewById(R.id.tvUser)
         override fun extraContent(message: Message) {
-            tvNombre.text = message.getUser().username
+            tvNombre.text = message.getUser().email
             tvMessage.text = message.getContent()
         }
     }
@@ -71,13 +71,13 @@ class MessagesAdapter(
             val text = messageCast.textContent
             ivImage.setImageBitmap(ImageUtils.decodeFromBase64(image))
             tvText.text = text
-            tvNombre.text = message.getUser().username
+            tvNombre.text = message.getUser().email
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         val message = messagesList[position]
-        return message.getMessageTypeCode(BurnerChatApp.appModule.usersRepository.getUser())
+        return message.getMessageTypeCode(BurnerChatApp.appModule.usersRepository.getLoggedUser()!!)
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 

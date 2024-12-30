@@ -1,5 +1,6 @@
 package com.example.burnerchat.webRTC.views.users
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -11,41 +12,37 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.burnerchat.R
+import com.example.burnerchat.webRTC.views.chats.CreateGroupChatView
+import com.example.burnerchat.webRTC.views.chats.CreateSingleChatView
 
 class AddChatActivity : AppCompatActivity() {
-    private val viewModel: AddChatViewModel by viewModels()
-
-    private lateinit var etPublicKey: EditText
+    private lateinit var btSingleChat: Button
+    private lateinit var btGroupChat: Button
     private lateinit var ivIcon: ImageView
     private lateinit var btQR: Button
     private lateinit var btGoBack: ImageButton
-    private lateinit var btConfirm: Button
 
     private fun initComponents() {
-        etPublicKey = findViewById(R.id.etAddKey)
+        btSingleChat = findViewById(R.id.btSingleChat)
+        btGroupChat = findViewById(R.id.btGroupChat)
         ivIcon = findViewById(R.id.ivNewChat)
         btGoBack = findViewById(R.id.ibGoBackFromAddChat)
-        btConfirm = findViewById(R.id.btAddChat)
         btQR = findViewById(R.id.btAddQR)
-        initGoBack()
-        initAddChat()
 
-    }
-
-    private fun initGoBack() {
         btGoBack.setOnClickListener {
             finish()
         }
-    }
 
-    private fun initAddChat() {
-        btConfirm.setOnClickListener {
-            val userName = etPublicKey.text.toString()
-            viewModel.connectToChat(userName)
-            finish()
+        btSingleChat.setOnClickListener {
+            val intent = Intent(this, CreateSingleChatView::class.java)
+            startActivity(intent)
+        }
+
+        btGroupChat.setOnClickListener {
+            val intent = Intent(this, CreateGroupChatView::class.java)
+            startActivity(intent)
         }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

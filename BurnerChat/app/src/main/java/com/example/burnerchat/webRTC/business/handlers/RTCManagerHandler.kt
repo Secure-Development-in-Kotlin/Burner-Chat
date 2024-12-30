@@ -7,7 +7,6 @@ import com.example.burnerchat.webRTC.backend.webrtc.WebRTCManager
 import com.example.burnerchat.webRTC.business.MainActions
 import com.example.burnerchat.webRTC.business.State
 import com.example.burnerchat.webRTC.model.users.KeyPair
-import com.example.burnerchat.webRTC.model.users.User
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
@@ -114,7 +113,7 @@ class RTCManagerHandler(
                 // Se inicializa el socket
                 socketHandler.getSocketConnection().initSocket(actions.name)
                 // Se cambia el nombre de conexión por el del usuario
-                currentState.connectedAs = User(KeyPair("a", "b"), actions.name)
+//                currentState.connectedAs = User(actions.name)
                 // Se indica que está conectado al servidor
                 currentState.isConnectedToServer = true
                 Log.d(TAG, "Connected as ${actions.name}")
@@ -128,7 +127,8 @@ class RTCManagerHandler(
                 if (!::rtcManager.isInitialized) {
                     rtcManager = WebRTCManager(
                         socketConnection = socketHandler.getSocketConnection(),
-                        userName = currentState.connectedAs.username,
+                        userName = currentState.connectedAs.toString(),
+//                        userName = currentState.connectedAs.username,
                         target = currentState.inComingRequestFrom
                     )
                     // Consumimos los eventos relacionados con WebRTC
@@ -137,7 +137,8 @@ class RTCManagerHandler(
                     )
                 }
                 answerToOffer(
-                    userName = currentState.connectedAs.username,
+                    userName = currentState.connectedAs.toString(),
+//                        userName = currentState.connectedAs.username,
                     session = SessionDescription(
                         SessionDescription.Type.OFFER,
                         currentState.inComingRequestFrom
@@ -152,7 +153,8 @@ class RTCManagerHandler(
                 socketHandler.getSocketConnection().sendMessageToSocket(
                     com.example.burnerchat.webRTC.backend.socket.MessageModel(
                         type = "start_transfer",
-                        name = currentState.connectedAs.username,
+                        name = currentState.connectedAs.toString(),
+//                        name = currentState.connectedAs.username,
                         target = actions.name,
                         data = null
                     )

@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     //LogIn button
-    private lateinit var btLogIn: Button
+    private lateinit var btWebRTC: Button
     private lateinit var etUserName: EditText
 
     // Firebase button
@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
      * Initalizes all components
      */
     private fun initComponents() {
-        btLogIn = findViewById(R.id.btLogin)
+        btWebRTC = findViewById(R.id.btWebRTC)
 
         // Firebase button
         btFirebase = findViewById(R.id.btFirebase)
@@ -53,28 +53,29 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        btLogIn.setOnClickListener {
+        btWebRTC.setOnClickListener {
 
-            val userName = etUserName.text.toString()
-            viewModel.setName(userName) // TODO: refactor a un onchange del editText
-            if (!(userName.isBlank() || userName.isEmpty())) {
+            // TODO: this should not be necessary
+//            val userName = etUserName.text.toString()
+//            viewModel.setName(userName) // TODO: refactor a un onchange del editText
+//            if (!(userName.isBlank() || userName.isEmpty())) {
 
                 lifecycleScope.launch(Dispatchers.IO) {
 
                     val intent = Intent(applicationContext, ChatsView::class.java)
-                    intent.putExtra(CLAVE_NOMBRE_USUARIO, userName)
-                    login(userName)
+//                    intent.putExtra(CLAVE_NOMBRE_USUARIO, userName)
+//                    login(userName)
                     startActivity(intent)
 
                 }
 
-            } else {
-                Toast.makeText(
-                    this,
-                    "El nombre de usuario no puede estar vacío",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+//            } else {
+//                Toast.makeText(
+//                    this,
+//                    "El nombre de usuario no puede estar vacío",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
 
         }
     }

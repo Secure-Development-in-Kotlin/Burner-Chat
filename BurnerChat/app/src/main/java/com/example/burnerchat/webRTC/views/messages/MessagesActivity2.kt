@@ -75,7 +75,7 @@ class MessagesActivity2 : AppCompatActivity() {
             insets
         }
 
-        viewModel.setTarget(intent.getStringExtra("target")!!)
+        viewModel.setChat(intent.getStringExtra("chatId")!!)
 
         initComponents()
         initChatRecycler()
@@ -86,12 +86,6 @@ class MessagesActivity2 : AppCompatActivity() {
                 rvMessages.scrollToPosition(newList.size - 1)
         }
 
-        establishConnection()
-    }
-
-    // Método para establecer conexión con el otro usuario
-    private fun establishConnection() {
-        viewModel.establishConnection()
     }
 
     private fun initComponents() {

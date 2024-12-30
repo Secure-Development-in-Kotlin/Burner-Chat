@@ -7,7 +7,7 @@ import com.example.burnerchat.webRTC.business.handlers.MessageHandler
 import com.example.burnerchat.webRTC.business.handlers.RTCManagerHandler
 import com.example.burnerchat.webRTC.business.handlers.SocketHandler
 import com.example.burnerchat.webRTC.model.users.KeyPair
-import com.example.burnerchat.webRTC.model.users.User
+import com.google.firebase.auth.FirebaseUser
 
 // Esta es la clase a la que hay que llamar desde los viewmodels para comunicarnos con el protocolo WebRTC
 
@@ -63,7 +63,7 @@ class ProtocolHandler {
         Log.d(TAG, "Connection Change: $isConnected")
         State.isConnectedToServer = isConnected
         State.connectedAs =
-            if (isConnected) State.connectedAs else User(KeyPair("", ""), "")
+            if (isConnected) State.connectedAs else TODO()
         // Aquí deberías definir el nombre si está conectado
     }
 

@@ -1,11 +1,10 @@
 package com.example.burnerchat.webRTC.model.messages
 
 import com.example.burnerchat.webRTC.model.chats.Chat
-import com.example.burnerchat.webRTC.model.users.User
-import java.time.LocalDate
+import com.google.firebase.auth.FirebaseUser
 import java.time.LocalDateTime
 
-abstract class MessageImpl(private val user: User, private val chat: Chat) : Message {
+abstract class MessageImpl(private val user: FirebaseUser, private val chat: Chat) : Message {
     private val sentDate: LocalDateTime = LocalDateTime.now()
 
     override fun getSentDate(): LocalDateTime {
@@ -16,7 +15,7 @@ abstract class MessageImpl(private val user: User, private val chat: Chat) : Mes
         return getConcreteContent();
     }
 
-    override fun getUser(): User {
+    override fun getUser(): FirebaseUser {
         return user;
     }
 
@@ -26,18 +25,19 @@ abstract class MessageImpl(private val user: User, private val chat: Chat) : Mes
 
     abstract fun getConcreteContent(): String;
 
-    fun isYourMessage(user: User):Boolean{
-        val username = user.username.toString()
-        val messageUsername = this.getUser().username.toString()
+    fun isYourMessage(user: FirebaseUser): Boolean {
+        val username = user.email.toString()
+        val messageUsername = this.getUser().email.toString()
         return username == messageUsername
     }
 
-    override fun getMessageTypeCode(user: User): Int {
-        if(!isYourMessage(user)){
+    override fun getMessageTypeCode(user: FirebaseUser): Int {
+        if (!isYourMessage(user)) {
             return getOtherType()
         } else
             return getSelfType()
     }
-    protected abstract fun getSelfType():Int
-    protected abstract fun getOtherType():Int
+
+    protected abstract fun getSelfType(): Int
+    protected abstract fun getOtherType(): Int
 }
