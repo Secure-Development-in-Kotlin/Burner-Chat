@@ -82,6 +82,7 @@ dependencies {
 
     // Para las preferencias (DataStore)
     implementation(libs.androidx.datastore.preferences)
+    testImplementation("io.mockk:mockk:1.13.14")
 
 
 }
