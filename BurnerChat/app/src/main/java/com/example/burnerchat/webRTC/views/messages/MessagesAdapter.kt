@@ -16,43 +16,47 @@ class MessagesAdapter(
     private val messagesList: List<Message>,
 ) : RecyclerView.Adapter<MessagesAdapter.ViewHolder>() {
 
-    abstract class ViewHolder(view: View) : RecyclerView.ViewHolder(view){
+    abstract class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        protected var tvDate : TextView = view.findViewById(R.id.tvDate)
+        protected var tvDate: TextView = view.findViewById(R.id.tvDate)
         protected lateinit var message: Message
 
-        protected fun formatDate(message: Message):String{
+        protected fun formatDate(message: Message): String {
             var horas = message.getSentDate().hour
             var minutos = message.getSentDate().minute
-            var string1 = message.getSentDate().toLocalDate().atTime(horas,minutos).toString()
+            var string1 = message.getSentDate().toLocalDate().atTime(horas, minutos).toString()
             var string2 = string1.split("T")
-            return string2[1]+" "+string2[0]
+            return string2[1] + " " + string2[0]
 
         }
+
         fun bind(message: Message) {
             this.message = message
             tvDate.text = formatDate(message)
             extraContent(message)
 
         }
+
         abstract fun extraContent(message: Message)
     }
 
-     open class TextViewHolder(view: View) : ViewHolder(view) {
-         protected var tvMessage: TextView = view.findViewById(R.id.tvMessage)
-         override fun extraContent(message: Message) {
-             tvMessage.text = message.getContent()
-         }
+    open class TextViewHolder(view: View) : ViewHolder(view) {
+        protected var tvMessage: TextView = view.findViewById(R.id.tvMessage)
+        override fun extraContent(message: Message) {
+            tvMessage.text = message.getContent()
+        }
 
-     }
+    }
+
     class NameTextViewHolder(view: View) : TextViewHolder(view) {
-        private val tvNombre:TextView = view.findViewById(R.id.tvUser)
+        private val tvNombre: TextView = view.findViewById(R.id.tvUser)
         override fun extraContent(message: Message) {
             tvNombre.text = message.getUser().email
             tvMessage.text = message.getContent()
         }
     }
-    open class SelfImageViewHolder(view: View) : ViewHolder(view){
+
+    open class SelfImageViewHolder(view: View) : ViewHolder(view) {
         protected val ivImage: ImageView = view.findViewById(R.id.ivImage)
         protected val tvText: TextView = view.findViewById(R.id.tvMessage)
         override fun extraContent(message: Message) {
@@ -63,8 +67,9 @@ class MessagesAdapter(
             tvText.text = text
         }
     }
-    class OtherImageViewHolder(view: View) : SelfImageViewHolder(view){
-        private val tvNombre:TextView = view.findViewById(R.id.tvUser)
+
+    class OtherImageViewHolder(view: View) : SelfImageViewHolder(view) {
+        private val tvNombre: TextView = view.findViewById(R.id.tvUser)
         override fun extraContent(message: Message) {
             val messageCast = message as ImageMessage
             val image = messageCast.getContent()
@@ -79,30 +84,35 @@ class MessagesAdapter(
         val message = messagesList[position]
         return message.getMessageTypeCode(BurnerChatApp.appModule.usersRepository.getLoggedUser()!!)
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
-        return when(viewType){
-            Message.LayoutType.TextoAjeno.ordinal ->{
+        return when (viewType) {
+            Message.LayoutType.TextoAjeno.ordinal -> {
                 val layoutElement = R.layout.other_text_message_element_view
                 val view = LayoutInflater.from(parent.context).inflate(layoutElement, parent, false)
                 return NameTextViewHolder(view)
             }
-            Message.LayoutType.TextoPropio.ordinal ->{
+
+            Message.LayoutType.TextoPropio.ordinal -> {
                 val layoutElement = R.layout.self_text_message_element_view
                 val view = LayoutInflater.from(parent.context).inflate(layoutElement, parent, false)
                 return TextViewHolder(view)
             }
-            Message.LayoutType.ImagenAjena.ordinal->{
+
+            Message.LayoutType.ImagenAjena.ordinal -> {
                 val layoutElement = R.layout.other_image_message_element_view
                 val view = LayoutInflater.from(parent.context).inflate(layoutElement, parent, false)
                 return OtherImageViewHolder(view)
             }
-            Message.LayoutType.ImagenPropia.ordinal->{
+
+            Message.LayoutType.ImagenPropia.ordinal -> {
                 val layoutElement = R.layout.self_image_message_element_view
                 val view = LayoutInflater.from(parent.context).inflate(layoutElement, parent, false)
                 return SelfImageViewHolder(view)
             }
-            else->{
+
+            else -> {
                 val layoutElement = R.layout.self_text_message_element_view
                 val view = LayoutInflater.from(parent.context).inflate(layoutElement, parent, false)
                 return TextViewHolder(view)

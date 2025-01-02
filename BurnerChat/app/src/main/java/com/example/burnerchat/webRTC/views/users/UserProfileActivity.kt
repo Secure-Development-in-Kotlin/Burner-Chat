@@ -91,8 +91,7 @@ class UserProfileActivity : AppCompatActivity() {
 
         tvName.setText(intent.getStringExtra(CLAVE_NOMBRE_USUARIO))
 
-        val user0 = usersRepository.getLoggedUser()
-        val user = viewModel.user.value!!
+        val user = usersRepository.getLoggedUser()!!
         val icon = user.photoUrl
 
         if (icon == null) {

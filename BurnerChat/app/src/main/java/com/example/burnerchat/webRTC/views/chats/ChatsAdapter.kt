@@ -63,7 +63,7 @@ class ChatsAdapter(
             chatActual = chat
             tvName.text = chatActual.name
 
-            setImage(chat.getImageUrl())
+            setImage(chat.imageUrl)
 
             if (!chatActual.isEmpty()) {
 //                tvLastMessage.text = chatActual.getLastMessage().getLastContent()

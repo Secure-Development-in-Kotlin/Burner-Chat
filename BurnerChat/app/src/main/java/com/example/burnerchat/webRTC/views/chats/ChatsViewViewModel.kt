@@ -7,14 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.webRTC.backend.webrtc.WebRTCManager
 import com.example.burnerchat.webRTC.business.ChatsPersistenceManager
-import com.example.burnerchat.webRTC.business.MainActions
 import com.example.burnerchat.webRTC.business.MainOneTimeEvents
 import com.example.burnerchat.webRTC.model.chats.Chat
-import com.example.burnerchat.webRTC.model.messages.messageImpls.TextMessage
-import com.example.burnerchat.webRTC.model.users.KeyPair
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.launch
 
 class ChatsViewViewModel : ViewModel() {
@@ -36,47 +31,10 @@ class ChatsViewViewModel : ViewModel() {
         BurnerChatApp.appModule.chatsRepository.addChat(chat)
 
         // Update the chats from the view
-        _chatsList.value = dataBase.getChats()
+        viewModelScope.launch {
+            _chatsList.value = dataBase.getChats()
+        }
     }
-
-//    private fun consumeEventsFromRTC() {
-//        viewModelScope.launch {
-//            rtcManager.messageStream.collectLatest {
-//                if (it is MessageType.ConnectedToPeer) {
-//                    State.isRtcEstablished = true
-//                    State.peerConnectionString = "Is connected to peer ${State.isConnectToPeer}"
-//                }
-//                if (it is MessageType.MessageByMe) {
-//                    Log.d(TAG, "consumeEventsFromRTC: ${it.msg}")
-//                }
-//                // TODO: change to Toast?
-//                // or notification system
-//                Log.d(TAG, "$it")
-//            }
-//        }
-//    }
-//
-//    fun dispatchAction(actions: MainActions) {
-//        when (actions) {
-//            is MainActions.AcceptIncomingConnection -> {
-//                val session = SessionDescription(
-//                    SessionDescription.Type.OFFER,
-//                    newOfferMessage.data.toString()
-//                )
-//                // move to new place
-//                consumeEventsFromRTC()
-//                rtcManager.onRemoteSessionReceived(session)
-//                rtcManager.answerToOffer(newOfferMessage.name)
-//
-//                // Add chat to offer reciever db
-//                addChat(newOfferMessage.name.toString())
-//            }
-//
-//            else -> {
-//                Log.d(TAG, "dispatchAction not recognized: $actions")
-//            }
-//        }
-//    }
 
     val chatsList: LiveData<List<Chat>>
         get() = _chatsList
@@ -85,11 +43,6 @@ class ChatsViewViewModel : ViewModel() {
     val loggedUser: LiveData<FirebaseUser>
         get() = _loggedUser
 
-    fun getChats(): List<Chat> {
-        _chatsList.value = dataBase.getChats()
-        return dataBase.getChats()
-    }
-
     // TODO: quitar
     fun logIn(user: FirebaseUser) {
         _loggedUser.value = user
@@ -97,33 +50,13 @@ class ChatsViewViewModel : ViewModel() {
     }
 
     fun init() {
-        initChats()
-        _chatsList.value = dataBase.getChats()
-    }
-
-    private fun initChats() {
-        val chats = dataBase.getChats()
-        if (chats.isEmpty()) {
-            _chatsList.value = chats
-        }
-    }
-
-    private fun addMessagesToAChat(chat: Chat, user: FirebaseUser, number: Int) {
-        for (i in (0..number)) {
-            if (i % 2 == 0)
-                chat.addMessage(TextMessage("Text Message $i", user, chat))
-            else
-                chat.addMessage(TextMessage("Text Message $i", _loggedUser.value!!, chat))
-        }
-    }
-
-    // Método para aceptar una conexión entrante
-    fun acceptIncomingConnection() {
         viewModelScope.launch {
-            BurnerChatApp.appModule.protocolHandler.dispatchAction(
-                MainActions.AcceptIncomingConnection
-            )
+            _chatsList.value = dataBase.getChats()
         }
+    }
+
+    suspend fun getChats() {
+        _chatsList.value = dataBase.getChats()
     }
 
 }

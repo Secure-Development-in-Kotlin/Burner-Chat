@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.BurnerChatApp
@@ -22,6 +23,7 @@ import com.example.burnerchat.webRTC.views.messages.MessagesActivity2
 import com.example.burnerchat.webRTC.views.users.AddChatActivity
 import com.example.burnerchat.webRTC.views.users.UserProfileActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.launch
 
 
 class ChatsView : AppCompatActivity() {
@@ -38,9 +40,6 @@ class ChatsView : AppCompatActivity() {
     //FAB which opens the add chat menu
     private lateinit var fabAdd: FloatingActionButton
 
-    //Chats list
-    private var chatsList: List<Chat> = mutableListOf()
-
     // Para la correcta actualización del idioma
     companion object {
         private const val REQUEST_CODE_PROFILE = 1001
@@ -48,7 +47,9 @@ class ChatsView : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        chatsList = viewModel.getChats()
+        lifecycleScope.launch {
+            viewModel.getChats()
+        }
         resetImage()
     }
 
@@ -82,8 +83,7 @@ class ChatsView : AppCompatActivity() {
         initFAB()
         initIcon()
 
-        viewModel.chatsList.observe(this) { newChatsList ->
-            chatsList = newChatsList
+        viewModel.chatsList.observe(this) { _ ->
             rvChats.adapter?.notifyDataSetChanged()
         }
 
@@ -113,10 +113,7 @@ class ChatsView : AppCompatActivity() {
     }
 
     private fun initChatRecycler() {
-        val customAdapter = ChatsAdapter(
-            viewModel.getChats(),
-            viewModel.loggedUser.value?.email!!
-        ) { chat ->
+        val function = { chat: Chat? ->
             val intent = Intent(this, MessagesActivity2::class.java)
             intent.putExtra("chatId", chat?.uid)
             if (chat != null) {
@@ -126,8 +123,21 @@ class ChatsView : AppCompatActivity() {
             }
         }
 
-        rvChats.layoutManager = LinearLayoutManager(this)
-        rvChats.adapter = customAdapter
+        val context = this
+
+        lifecycleScope.launch {
+            viewModel.getChats()
+
+            val customAdapter = ChatsAdapter(
+                viewModel.chatsList.value!!,
+                viewModel.loggedUser.value?.email!!
+            ) { chat ->
+                function(chat)
+            }
+
+            rvChats.layoutManager = LinearLayoutManager(context)
+            rvChats.adapter = customAdapter
+        }
     }
 
     private fun initUser() {

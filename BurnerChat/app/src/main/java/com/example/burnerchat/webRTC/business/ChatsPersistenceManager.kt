@@ -1,12 +1,11 @@
 package com.example.burnerchat.webRTC.business
 
-import android.util.Log
 import com.example.burnerchat.webRTC.model.chats.Chat
 import com.example.burnerchat.webRTC.model.messages.Message
 import com.google.firebase.Firebase
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.SetOptions
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.tasks.await
 
 
 object ChatsPersistenceManager {
@@ -14,47 +13,27 @@ object ChatsPersistenceManager {
 
     private const val CHATS_COLLECTION_NAME = "chats"
 
-    fun getChats(): List<Chat> {
+    suspend fun getChats(): List<Chat> {
+        val result = db.collection(CHATS_COLLECTION_NAME).get().await()
         val chatsDataBase = mutableListOf<Chat>()
-        db.collection(CHATS_COLLECTION_NAME)
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
-//                    chatsDataBase.add(chat)
-                }
-            }
+        for (document in result) {
+            val participantsList = document.data["participants"] as? List<String> ?: emptyList()
+            val chat = Chat(
+                name = document.data["name"] as String,
+                participants = participantsList.toTypedArray(), // Convert List<String> to Array<String>
+                uid = document.id,
+                creationDate = document.data["createdAt"] as Timestamp,
+                messages = document.data["messages"] as MutableList<Message>,
+                imageUrl = if (document.data["imageUrl"] == null) null else document.data["imageUrl"] as String
+            )
+            chatsDataBase.add(chat)
+        }
         return chatsDataBase
     }
 
+
     fun addChat(chat: Chat) {
-        val chatId: String = chat.uid
-        val name: String = chat.name
-        val participants = chat.participants
-        val createdAt = FieldValue.serverTimestamp()
-        val lastMessage = chat.getLastMessage()
-        val messages = chat.getMessages()
-        val imageUrl = chat.getImageUrl()
-
-
-        // Prepare the user document
-        val chatData: MutableMap<String, Any?> = HashMap()
-        chatData["name"] = name
-        chatData["participants"] = participants
-        chatData["createdAt"] = createdAt
-        chatData["lastMessage"] = lastMessage
-        chatData["messages"] = messages
-        chatData["imageUrl"] = imageUrl
-
-
-        // Add chat in Firestore
-        db.collection(CHATS_COLLECTION_NAME).document(chatId).set(chatData)
-            .addOnSuccessListener { aVoid: Void? ->
-                Log.d("Firestore", "Chat data added successfully")
-            }
-            .addOnFailureListener { e: Exception? ->
-                Log.e("Firestore", "Error adding user data", e)
-            }
-
+        //TODO: refactor the viewModel to add the chats here
     }
 
     fun getMessages(chat: Chat): List<Message> {
