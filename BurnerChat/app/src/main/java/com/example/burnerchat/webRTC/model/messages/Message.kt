@@ -1,16 +1,13 @@
 package com.example.burnerchat.webRTC.model.messages
 
-import com.example.burnerchat.webRTC.model.chats.Chat
-import com.google.firebase.auth.FirebaseUser
-import java.time.LocalDateTime
+import com.google.firebase.Timestamp
 
 interface Message {
-    public fun getSentDate(): LocalDateTime
-    public fun getContent(): String
-    public fun getUser(): FirebaseUser
-    public fun getChat(): Chat
-    public fun getLastContent(): String
-    public fun getMessageTypeCode(user: FirebaseUser): Int
+    fun getSentDate(): Timestamp
+    fun getContent(): String
+    fun getUserId(): String
+    fun getLastContent(): String
+    fun getMessageTypeCode(userId: String): Int
     enum class LayoutType(value: Int){
         TextoPropio(0),
         TextoAjeno(1),

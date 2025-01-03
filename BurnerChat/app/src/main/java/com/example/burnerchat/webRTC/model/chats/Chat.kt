@@ -1,5 +1,6 @@
 package com.example.burnerchat.webRTC.model.chats
 
+import android.util.Log
 import com.example.burnerchat.webRTC.model.messages.Message
 import com.google.firebase.Timestamp
 import java.util.UUID

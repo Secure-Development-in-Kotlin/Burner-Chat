@@ -95,7 +95,7 @@ class ChatsView : AppCompatActivity() {
 
         ivIcon.setOnClickListener {
             val intent = Intent(this, UserProfileActivity::class.java)
-            val loggedUser = viewModel.loggedUser.value
+            val loggedUser = BurnerChatApp.appModule.usersRepository.getLoggedUser()
             intent.putExtra(
                 UserProfileActivity.CLAVE_NOMBRE_USUARIO,
                 loggedUser?.email.toString()
@@ -130,7 +130,7 @@ class ChatsView : AppCompatActivity() {
 
             val customAdapter = ChatsAdapter(
                 viewModel.chatsList.value!!,
-                viewModel.loggedUser.value?.email!!
+                BurnerChatApp.appModule.usersRepository.getLoggedUser()?.uid!!
             ) { chat ->
                 function(chat)
             }
@@ -146,7 +146,6 @@ class ChatsView : AppCompatActivity() {
             val intent = Intent(applicationContext, FirebaseAuthView::class.java)
             startActivity(intent)
         } else {
-            viewModel.logIn(loggedUser)
             Log.d("debug", loggedUser.email.toString())
         }
 

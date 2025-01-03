@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.Window
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -15,10 +14,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.R
 import com.example.burnerchat.webRTC.business.ImageUtils
+import kotlinx.coroutines.launch
 
 class MessagesActivity2 : AppCompatActivity() {
     private val viewModel: MessagesViewModel by viewModels()
@@ -31,34 +32,34 @@ class MessagesActivity2 : AppCompatActivity() {
     private lateinit var btSendMessage: ImageButton
     private lateinit var btSendFoto: ImageButton
     private lateinit var currentImage: Bitmap
-    private lateinit var ibGoBackFromChat : ImageButton
+    private lateinit var ibGoBackFromChat: ImageButton
 
-    private var galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()){
+    private var galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
         val galleryURI = it
-        try{
+        try {
             val bitmap = ImageUtils.loadBitmapFromURI(galleryURI!!, contentResolver)
             currentImage = bitmap!!
             initDialog()
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    private fun initDialog(){
+    private fun initDialog() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.picture_text_dialog_view)
-        val etMessage:EditText = dialog.findViewById(R.id.etSendDialog)
-        val btSend:ImageButton = dialog.findViewById(R.id.btSendDialog)
+        val etMessage: EditText = dialog.findViewById(R.id.etSendDialog)
+        val btSend: ImageButton = dialog.findViewById(R.id.btSendDialog)
         val ivImage: ImageView = dialog.findViewById(R.id.ivImageDialog)
-        val btCancel:ImageButton = dialog.findViewById(R.id.btCancelDialog)
+        val btCancel: ImageButton = dialog.findViewById(R.id.btCancelDialog)
         ivImage.setImageBitmap(currentImage)
-        btSend.setOnClickListener{
+        btSend.setOnClickListener {
             val text = etMessage.text.toString()
-            viewModel.sendImageMessage(currentImage,text)
+            viewModel.sendImageMessage(currentImage, text)
             dialog.dismiss()
         }
-        btCancel.setOnClickListener{
+        btCancel.setOnClickListener {
             dialog.dismiss()
         }
 
@@ -75,15 +76,17 @@ class MessagesActivity2 : AppCompatActivity() {
             insets
         }
 
-        viewModel.setChat(intent.getStringExtra("chatId")!!)
-
         initComponents()
-        initChatRecycler()
 
-        viewModel.messages.observe(this){
-            newList->
-                rvMessages.adapter?.notifyDataSetChanged()
-                rvMessages.scrollToPosition(newList.size - 1)
+        lifecycleScope.launch {
+            viewModel.setChat(intent.getStringExtra("chatId")!!)
+            initChatRecycler()
+        }
+
+        viewModel.chat.observe(this) { chat ->
+            rvMessages.adapter?.notifyDataSetChanged()
+            if (chat.messages.isNotEmpty())
+                rvMessages.scrollToPosition(chat.messages.size - 1)
         }
 
     }
@@ -97,7 +100,7 @@ class MessagesActivity2 : AppCompatActivity() {
         btSendFoto = findViewById(R.id.btFoto)
         btSendMessage.setOnClickListener {
             val text = etMessage.text.toString()
-            if(text.isNotBlank() && text.isNotEmpty()){
+            if (text.isNotBlank() && text.isNotEmpty()) {
                 viewModel.sendMessage(etMessage.text.toString())
                 etMessage.text.clear()
 
@@ -110,15 +113,14 @@ class MessagesActivity2 : AppCompatActivity() {
         initBtFoto()
     }
 
-    private fun initBtFoto(){
-        btSendFoto.setOnClickListener{
+    private fun initBtFoto() {
+        btSendFoto.setOnClickListener {
             galleryLauncher.launch("image/*")
         }
     }
 
     private fun initChatRecycler() {
-        val messages = viewModel.getMessages()
-        val customAdapter = MessagesAdapter(messages)
+        val customAdapter = MessagesAdapter(viewModel.chat.value!!.messages)
 
         rvMessages.layoutManager = LinearLayoutManager(this)
         rvMessages.adapter = customAdapter

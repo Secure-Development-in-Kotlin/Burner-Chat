@@ -1,8 +1,6 @@
 package com.example.burnerchat.model.chats
 
-import androidx.compose.foundation.Image
 import com.example.burnerchat.webRTC.model.chats.Chat
-import com.example.burnerchat.webRTC.model.messages.Message
 import com.example.burnerchat.webRTC.model.messages.messageImpls.ImageMessage
 import com.example.burnerchat.webRTC.model.messages.messageImpls.TextMessage
 import com.google.firebase.auth.FirebaseUser
@@ -16,14 +14,14 @@ import org.junit.Test
 class ChatsAddMessageUnitTest {
 
     @MockK
-    val userMock = mockk<FirebaseUser>()
+    val userIdMock = mockk<FirebaseUser>()
     @MockK
-    val userMock1 = mockk<FirebaseUser>()
+    val userIdMock1 = mockk<FirebaseUser>()
 
     @Before
     fun setUp(){
-        every { userMock.email } returns "You"
-        every { userMock1.email } returns "NotYou"
+        every { getUserIdMock.email } returns "You"
+        every { getUserIdMock1.email } returns "NotYou"
     }
 
     private fun createChat():Chat{
@@ -39,7 +37,7 @@ class ChatsAddMessageUnitTest {
     @Test
     fun addOneText(){
         val chat = createChat()
-        val message = TextMessage("Mensaje1",userMock1,chat)
+        val message = TextMessage("Mensaje1",getUserIdMock1,chat)
         chat.addMessage(message)
         assertEquals(1, chat.messages.count())
         assertEquals(message, chat.messages[0])
@@ -48,7 +46,7 @@ class ChatsAddMessageUnitTest {
     @Test
     fun addOneImage(){
         val chat = createChat()
-        val message = ImageMessage("Mensaje1",chat,userMock1)
+        val message = ImageMessage("Mensaje1",chat,getUserIdMock1)
         chat.addMessage(message)
         assertEquals(1, chat.messages.count())
         assertEquals(message, chat.messages[0])
@@ -58,8 +56,8 @@ class ChatsAddMessageUnitTest {
     @Test
     fun addTwo(){
         val chat = createChat()
-        val message = TextMessage("Mensaje1",userMock1,chat)
-        val message2 = TextMessage("Mensaje2",userMock1,chat)
+        val message = TextMessage("Mensaje1",getUserIdMock1,chat)
+        val message2 = TextMessage("Mensaje2",getUserIdMock1,chat)
 
         chat.addMessage(message)
         assertEquals(1, chat.messages.count())
@@ -73,9 +71,9 @@ class ChatsAddMessageUnitTest {
     @Test
     fun addThree(){
         val chat = createChat()
-        val message = TextMessage("Mensaje1",userMock1,chat)
-        val message2 = TextMessage("Mensaje2",userMock1,chat)
-        val message3 = TextMessage("Mensaje3",userMock1,chat)
+        val message = TextMessage("Mensaje1",getUserIdMock1,chat)
+        val message2 = TextMessage("Mensaje2",getUserIdMock1,chat)
+        val message3 = TextMessage("Mensaje3",getUserIdMock1,chat)
 
 
         chat.addMessage(message)
@@ -93,10 +91,10 @@ class ChatsAddMessageUnitTest {
     @Test
     fun addMixed(){
         val chat = createChat()
-        val message = TextMessage("Mensaje1",userMock1,chat)
-        val message2 = TextMessage("Mensaje2",userMock1,chat)
-        val message3 = TextMessage("Mensaje3",userMock1,chat)
-        val iMessage = ImageMessage("Mensaje1",chat,userMock1)
+        val message = TextMessage("Mensaje1",getUserIdMock1,chat)
+        val message2 = TextMessage("Mensaje2",getUserIdMock1,chat)
+        val message3 = TextMessage("Mensaje3",getUserIdMock1,chat)
+        val iMessage = ImageMessage("Mensaje1",chat,getUserIdMock1)
 
         chat.addMessage(message)
         assertEquals(1, chat.messages.count())

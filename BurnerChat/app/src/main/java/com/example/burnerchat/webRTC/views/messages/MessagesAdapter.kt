@@ -11,6 +11,7 @@ import com.example.burnerchat.R
 import com.example.burnerchat.webRTC.business.ImageUtils
 import com.example.burnerchat.webRTC.model.messages.Message
 import com.example.burnerchat.webRTC.model.messages.messageImpls.ImageMessage
+import java.time.ZoneId
 
 class MessagesAdapter(
     private val messagesList: List<Message>,
@@ -22,12 +23,16 @@ class MessagesAdapter(
         protected lateinit var message: Message
 
         protected fun formatDate(message: Message): String {
-            var horas = message.getSentDate().hour
-            var minutos = message.getSentDate().minute
-            var string1 = message.getSentDate().toLocalDate().atTime(horas, minutos).toString()
-            var string2 = string1.split("T")
-            return string2[1] + " " + string2[0]
+            val timestamp = message.getSentDate()
+            val localDateTime = timestamp.toDate().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime()
 
+            val horas = localDateTime.hour
+            val minutos = localDateTime.minute
+            val string1 = localDateTime.toLocalDate().atTime(horas, minutos).toString()
+            val string2 = string1.split("T")
+            return string2[1] + " " + string2[0]
         }
 
         fun bind(message: Message) {
@@ -51,7 +56,7 @@ class MessagesAdapter(
     class NameTextViewHolder(view: View) : TextViewHolder(view) {
         private val tvNombre: TextView = view.findViewById(R.id.tvUser)
         override fun extraContent(message: Message) {
-            tvNombre.text = message.getUser().email
+            tvNombre.text = message.getUserId()
             tvMessage.text = message.getContent()
         }
     }
@@ -76,13 +81,13 @@ class MessagesAdapter(
             val text = messageCast.textContent
             ivImage.setImageBitmap(ImageUtils.decodeFromBase64(image))
             tvText.text = text
-            tvNombre.text = message.getUser().email
+            tvNombre.text = message.getUserId()
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         val message = messagesList[position]
-        return message.getMessageTypeCode(BurnerChatApp.appModule.usersRepository.getLoggedUser()!!)
+        return message.getMessageTypeCode(BurnerChatApp.appModule.usersRepository.getLoggedUser()?.uid!!)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

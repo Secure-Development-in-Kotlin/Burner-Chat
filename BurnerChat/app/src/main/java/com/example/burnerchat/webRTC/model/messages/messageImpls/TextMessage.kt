@@ -1,11 +1,14 @@
 package com.example.burnerchat.webRTC.model.messages.messageImpls
 
-import com.example.burnerchat.webRTC.model.chats.Chat
 import com.example.burnerchat.webRTC.model.messages.Message
 import com.example.burnerchat.webRTC.model.messages.MessageImpl
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseUser
 
-class TextMessage(private val text: String, user: FirebaseUser, chat: Chat) : MessageImpl(user, chat) {
+class TextMessage(
+    private val text: String,
+    user: String,
+) : MessageImpl(user) {
     override fun getConcreteContent(): String {
         return text;
     }
@@ -13,7 +16,6 @@ class TextMessage(private val text: String, user: FirebaseUser, chat: Chat) : Me
     override fun getLastContent(): String {
         return text;
     }
-
 
     override fun getSelfType(): Int {
         return Message.LayoutType.TextoPropio.ordinal

@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.firestore
@@ -22,14 +23,15 @@ object UserPersistenceManager {
         }
     }
 
-    fun getUser(userName: String): FirebaseUser? {
-        var user: FirebaseUser? = null
-        db.collection("users").document(userName).get().addOnSuccessListener {
-            user = it.toObject(FirebaseUser::class.java)
-        }
+    fun getUser(userId: String): FirebaseUser? {
+//        var user: FirebaseUser? = null
+//        db.collection("users").document(userId).get().addOnSuccessListener {
+//            user = it.toObject(FirebaseUser::class.java)
+//        }
         // TODO: add onFailureListener
 
-        return user
+//        return user
+        return Firebase.auth.currentUser
     }
 
     fun addUser(currentUser: FirebaseUser) {

@@ -6,41 +6,38 @@ import com.google.firebase.auth.FirebaseUser
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
-import io.mockk.mockkStatic
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
 class MessagesIsYourMessageUnitTest {
     @MockK
-    val userMock = mockk<FirebaseUser>()
+    val userIdMock = mockk<FirebaseUser>()
     @MockK
-    val userMock1 = mockk<FirebaseUser>()
+    val userIdMock1 = mockk<FirebaseUser>()
 
     @Before
     fun setUp(){
-        every { userMock.email } returns "You"
-        every { userMock1.email } returns "NotYou"
+        every { getUserIdMock.email } returns "You"
+        every { getUserIdMock1.email } returns "NotYou"
     }
     @Test
     fun isYourMessageTest(){
         var list = Array<String>(2,{i->i.toString()})
-        var userResult = userMock
+        var userResult = getUserIdMock
         var chat = Chat("Chat1",list)
         var message = TextMessage("Texto",userResult,chat)
-        assertTrue(message.isYourMessage(userMock))
+        assertTrue(message.isYourMessage(getUserIdMock))
     }
 
     @Test
     fun isNotYourMessageTest(){
         var list = Array<String>(2,{i->i.toString()})
-        var userResult = userMock
+        var userResult = getUserIdMock
         var chat = Chat("Chat1",list)
         var message = TextMessage("Texto",userResult,chat)
-        assertFalse(message.isYourMessage(userMock1))
+        assertFalse(message.isYourMessage(getUserIdMock1))
     }
 
 }

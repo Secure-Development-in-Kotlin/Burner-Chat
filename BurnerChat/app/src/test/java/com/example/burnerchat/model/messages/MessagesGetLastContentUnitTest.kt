@@ -13,14 +13,14 @@ import org.junit.Test
 
 class MessagesGetLastContentUnitTest {
     @MockK
-    val userMock = mockk<FirebaseUser>()
+    val userIdMock = mockk<FirebaseUser>()
     @MockK
-    val userMock1 = mockk<FirebaseUser>()
+    val userIdMock1 = mockk<FirebaseUser>()
 
     @Before
     fun setUp(){
-        every { userMock.email } returns "You"
-        every { userMock1.email } returns "NotYou"
+        every { getUserIdMock.email } returns "You"
+        every { getUserIdMock1.email } returns "NotYou"
     }
 
     private fun createChat(): Chat {
@@ -36,7 +36,7 @@ class MessagesGetLastContentUnitTest {
     @Test
     fun isText(){
         val chat = createChat()
-        val message = TextMessage("Mensaje1",userMock1,chat)
+        val message = TextMessage("Mensaje1",getUserIdMock1,chat)
         chat.addMessage(message)
         assertEquals("Mensaje1", message.getLastContent())
 
@@ -44,7 +44,7 @@ class MessagesGetLastContentUnitTest {
     @Test
     fun isImage(){
         val chat = createChat()
-        val message = ImageMessage("Imagen1",chat,userMock1)
+        val message = ImageMessage("Imagen1",chat,getUserIdMock1)
         chat.addMessage(message)
         assertEquals("Image message ", message.getLastContent())
 
@@ -52,7 +52,7 @@ class MessagesGetLastContentUnitTest {
     @Test
     fun isImageAndText(){
         val chat = createChat()
-        val message = ImageMessage("Imagen1",chat,userMock1)
+        val message = ImageMessage("Imagen1",chat,getUserIdMock1)
         message.textContent = "Imagen1"
         chat.addMessage(message)
         assertEquals("Image message Imagen1", message.getLastContent())
