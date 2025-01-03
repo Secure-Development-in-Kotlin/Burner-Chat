@@ -39,4 +39,5 @@
     <string name="panic_mode">Режим тревоги</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
+    <string name="toggle_theme">Переключить тему</string>
 </resources>

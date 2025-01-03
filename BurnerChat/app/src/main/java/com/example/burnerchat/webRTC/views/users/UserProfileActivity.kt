@@ -29,6 +29,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.burnerchat.R
 import com.example.burnerchat.preferences.AppPreferences
 import com.example.burnerchat.preferences.PreferenciasDataClass
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -46,15 +47,13 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var ivIcon: ImageView
     private lateinit var btGoBack: ImageButton
 
-    private lateinit var btnToggleTheme: ImageButton
-
     // Tema guardado
     private lateinit var appPreferences: AppPreferences
-    private lateinit var preferencias: PreferenciasDataClass
+    private lateinit var btnToggleTheme: ImageButton
 
     // Idioma
     private lateinit var spinnerLanguage: Spinner
-    private lateinit var ivLanguage : ImageView
+    private lateinit var ivLanguage: ImageView
 
     // Panic button
     private lateinit var panicButton: ImageButton
@@ -120,7 +119,10 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
 
+        // Botón de idioma
         initAvailableLanguages()
+
+        // Botón de tema
         initThemeToggleButton()
 
         // Panic button
@@ -204,50 +206,53 @@ class UserProfileActivity : AppCompatActivity() {
         baseContext.createConfigurationContext(config)
     }
 
+    // Función para actualizar el icono del botón de tema
+    private fun updateThemeButtonIcon(isNightMode: Boolean) {
+        btnToggleTheme.setImageResource(
+            if (isNightMode) R.drawable.light_mode else R.drawable.dark_mode
+        )
+    }
+
     private fun initThemeToggleButton() {
-        // Configurar el botón de alternar tema
+        // Observar preferencias y configurar tema inicial
         lifecycleScope.launch {
             appPreferences.preferencesDataClass.collect { preferences ->
-                // Configura el icono del botón según el tema
-                btnToggleTheme.setImageResource(
-                    if (preferences.nightMode) R.drawable.light_mode else R.drawable.dark_mode
+                // Configurar el modo nocturno inicial
+                AppCompatDelegate.setDefaultNightMode(
+                    if (preferences.nightMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
                 )
+                // Actualizar el icono del botón
+                updateThemeButtonIcon(preferences.nightMode)
             }
         }
-        // Cambiar el tema cuando el usuario haga clic en el botón
+
+        // Configurar el clic del botón para alternar el tema
         btnToggleTheme.setOnClickListener {
-            // Determina el nuevo modo de tema
-            val newThemeMode =
-                if (isNightMode()) {
-                    AppCompatDelegate.MODE_NIGHT_NO
-                } else {
-                    AppCompatDelegate.MODE_NIGHT_YES
-                }
+            // Evitar múltiples cambios rápidos
+            btnToggleTheme.isEnabled = false
 
-            // Aplica el nuevo tema inmediatamente
-            AppCompatDelegate.setDefaultNightMode(newThemeMode)
-
-            // Guarda las preferencias del tema en DataStore
             lifecycleScope.launch {
-                appPreferences.savePreferences(
-                    newThemeMode == AppCompatDelegate.MODE_NIGHT_YES,
-                    getSelectedLanguage()
+                // Leer las preferencias actuales
+                val preferences = appPreferences.preferencesDataClass.first()
+                val newNightMode = !preferences.nightMode
+
+                // Actualizar el tema
+                AppCompatDelegate.setDefaultNightMode(
+                    if (newNightMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
                 )
+
+                // Guardar el nuevo estado del tema en las preferencias
+                appPreferences.savePreferences(newNightMode, getSelectedLanguage())
+
+                // Actualizar el icono del botón
+                updateThemeButtonIcon(newNightMode)
+
+                // Rehabilitar el botón después de un breve retraso
+                btnToggleTheme.postDelayed({ btnToggleTheme.isEnabled = true }, 500)
             }
-
-            // Actualiza el icono del botón después de cambiar el tema
-            btnToggleTheme.setImageResource(
-                if (newThemeMode == AppCompatDelegate.MODE_NIGHT_YES)
-                    R.drawable.light_mode
-                else
-                    R.drawable.dark_mode
-            )
-
-            // Evitar llamar a recreate() inmediatamente
-            // Si realmente necesitas reiniciar la actividad, hazlo con una transición controlada
-            // recreate()
         }
     }
+
 
     private fun initEditIcon() {
         ivIcon.setOnClickListener {

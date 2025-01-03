@@ -39,4 +39,5 @@
     <string name="panic_mode">Mode panique</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
+    <string name="toggle_theme">Basculer le thème</string>
 </resources>
