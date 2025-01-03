@@ -2,9 +2,14 @@ package com.example.burnerchat.webRTC.model.messages.messageImpls
 
 import com.example.burnerchat.webRTC.model.messages.Message
 import com.example.burnerchat.webRTC.model.messages.MessageImpl
+import com.google.firebase.Timestamp
 
 
-class ImageMessage(private val base64Path: String, userId: String) : MessageImpl(userId) {
+class ImageMessage(
+    private val base64Path: String,
+    userId: String,
+    sentDate: Timestamp = Timestamp.now()
+    ) : MessageImpl(userId, sentDate) {
     var textContent: String = ""
 
     override fun getConcreteContent(): String {

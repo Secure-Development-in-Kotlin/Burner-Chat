@@ -8,7 +8,8 @@ import com.google.firebase.auth.FirebaseUser
 class TextMessage(
     private val text: String,
     user: String,
-) : MessageImpl(user) {
+    sentDate: Timestamp = Timestamp.now()
+) : MessageImpl(user, sentDate) {
     override fun getConcreteContent(): String {
         return text;
     }

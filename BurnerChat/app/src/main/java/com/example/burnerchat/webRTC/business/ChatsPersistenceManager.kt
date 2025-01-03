@@ -186,6 +186,7 @@ object ChatsPersistenceManager {
                     val message = TextMessage(
                         msgData["content"] as String,
                         msgData["sender"] as String,
+                        msgData["createdAt"] as Timestamp
                     )
                     return message
                 }
@@ -194,6 +195,7 @@ object ChatsPersistenceManager {
                     val message = ImageMessage(
                         msgData["content"] as String,
                         msgData["sender"] as String,
+                        msgData["createdAt"] as Timestamp
                     )
                     message.textContent = msgData["textContent"] as String
                     return message
@@ -202,6 +204,7 @@ object ChatsPersistenceManager {
                     val message = TextMessage(
                         msgData["content"] as String,
                         msgData["sender"] as String,
+                        msgData["createdAt"] as Timestamp
                     )
                     return message
                 }
