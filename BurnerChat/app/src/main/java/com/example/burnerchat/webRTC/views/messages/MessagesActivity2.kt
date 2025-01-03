@@ -78,16 +78,20 @@ class MessagesActivity2 : AppCompatActivity() {
 
         initComponents()
 
+        val context = this
         lifecycleScope.launch {
             viewModel.setChat(intent.getStringExtra("chatId")!!)
             initChatRecycler()
+            viewModel.chat.observe(context) { chat ->
+                //rvMessages.adapter?.notifyDataSetChanged()
+                val adapter = rvMessages.adapter!! as MessagesAdapter
+                adapter.updateMessages(chat.messages)
+                if (chat.messages.isNotEmpty())
+                    rvMessages.scrollToPosition(chat.messages.size - 1)
+            }
         }
 
-        viewModel.chat.observe(this) { chat ->
-            rvMessages.adapter?.notifyDataSetChanged()
-            if (chat.messages.isNotEmpty())
-                rvMessages.scrollToPosition(chat.messages.size - 1)
-        }
+
 
     }
 

@@ -13,11 +13,16 @@ import com.example.burnerchat.webRTC.model.chats.Chat
 
 class ChatsAdapter(
 
-    private val chatsList: List<Chat>,
+    private var chatsList: List<Chat>,
     private val id: String,
     private val onClickListener: (Chat?) -> Unit
 
 ) : RecyclerView.Adapter<ChatsAdapter.ViewHolder>() {
+
+    fun updateChatsList(list:List<Chat>){
+        chatsList = list
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatsAdapter.ViewHolder {
         val layoutElement = R.layout.chat_element_view
