@@ -15,55 +15,47 @@ import org.junit.Before
 import org.junit.Test
 
 class MessagesGetMessageTypeCodeUnitTest {
-    @MockK
-    val userIdMock = mockk<FirebaseUser>()
-    @MockK
-    val userIdMock1 = mockk<FirebaseUser>()
-
-    @Before
-    fun setUp(){
-        every { getUserIdMock.email } returns "You"
-        every { getUserIdMock1.email } returns "NotYou"
-    }
+    val userIdMock = "You"
+    val userIdMock1 = "NotYou"
 
     @Test
     fun yourTextMessage(){
         var list = Array<String>(2,{i->i.toString()})
-        var userResult = getUserIdMock
+        var userResult = userIdMock
         var chat = Chat("Chat1",list)
-        var message = TextMessage("Texto",userResult,chat)
-        assertTrue(message.isYourMessage(getUserIdMock))
-        assertEquals(Message.LayoutType.TextoPropio.ordinal, message.getMessageTypeCode(getUserIdMock))
+        var message = TextMessage("Texto",userResult)
+        assertTrue(message.isYourMessage(userIdMock))
+        assertEquals(Message.LayoutType.TextoPropio.ordinal, message.getMessageTypeCode(userIdMock))
     }
 
     @Test
     fun otherTextMessage(){
         var list = Array<String>(2,{i->i.toString()})
-        var userResult = getUserIdMock1
+        var userResult = userIdMock1
         var chat = Chat("Chat1",list)
-        var message = TextMessage("Texto",userResult,chat)
-        assertFalse(message.isYourMessage(getUserIdMock))
-        assertEquals(Message.LayoutType.TextoAjeno.ordinal, message.getMessageTypeCode(getUserIdMock))
+        var message = TextMessage("Texto",userResult)
+        assertFalse(message.isYourMessage(userIdMock))
+        assertEquals(Message.LayoutType.TextoAjeno.ordinal, message.getMessageTypeCode(userIdMock))
     }
 
     @Test
     fun yourImageMessage(){
         var list = Array<String>(2,{i->i.toString()})
-        var userResult = getUserIdMock
+        var userResult = userIdMock
         var chat = Chat("Chat1",list)
-        var message = ImageMessage("Texto",chat,userResult)
-        assertTrue(message.isYourMessage(getUserIdMock))
-        assertEquals(Message.LayoutType.ImagenPropia.ordinal, message.getMessageTypeCode(getUserIdMock))
+        var message = ImageMessage("Texto",userResult)
+        assertTrue(message.isYourMessage(userIdMock))
+        assertEquals(Message.LayoutType.ImagenPropia.ordinal, message.getMessageTypeCode(userIdMock))
     }
 
     @Test
     fun otherImageMessage(){
         var list = Array<String>(2,{i->i.toString()})
-        var userResult = getUserIdMock1
+        var userResult = userIdMock1
         var chat = Chat("Chat1",list)
-        var message = ImageMessage("Texto",chat,userResult)
-        assertFalse(message.isYourMessage(getUserIdMock))
-        assertEquals(Message.LayoutType.ImagenAjena.ordinal, message.getMessageTypeCode(getUserIdMock))
+        var message = ImageMessage("Texto",userResult)
+        assertFalse(message.isYourMessage(userIdMock))
+        assertEquals(Message.LayoutType.ImagenAjena.ordinal, message.getMessageTypeCode(userIdMock))
     }
 
 }

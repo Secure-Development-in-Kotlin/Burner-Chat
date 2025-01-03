@@ -12,16 +12,8 @@ import org.junit.Before
 import org.junit.Test
 
 class ChatsIsEmptyUnitTest {
-    @MockK
-    val userMock = mockk<FirebaseUser>()
-    @MockK
-    val userMock1 = mockk<FirebaseUser>()
-
-    @Before
-    fun setUp(){
-        every { userMock.email } returns "You"
-        every { userMock1.email } returns "NotYou"
-    }
+    val userIdMock = "You"
+    val userIdMock1 = "NotYou"
 
     private fun createChat(): Chat {
         var list = Array<String>(2,{i->i.toString()})
@@ -40,7 +32,7 @@ class ChatsIsEmptyUnitTest {
     @Test
     fun itsNotEmpty(){
         val chat = createChat()
-        val message = TextMessage("Mensaje1",userMock1,chat)
+        val message = TextMessage("Mensaje1",userIdMock)
         chat.addMessage(message)
         assertFalse(chat.isEmpty())
     }

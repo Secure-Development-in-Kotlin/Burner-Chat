@@ -23,9 +23,8 @@ abstract class MessageImpl(
 
     abstract fun getConcreteContent(): String;
 
-    fun isYourMessage(userId: String): Boolean {
-        val messageUserId = BurnerChatApp.appModule.usersRepository.getLoggedUser()?.uid
-        return userId == messageUserId
+    fun isYourMessage(userToCheckId: String): Boolean {
+        return  userId == userToCheckId
     }
 
     override fun getMessageTypeCode(userId: String): Int {
@@ -37,4 +36,5 @@ abstract class MessageImpl(
 
     protected abstract fun getSelfType(): Int
     protected abstract fun getOtherType(): Int
+
 }

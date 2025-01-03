@@ -19,16 +19,8 @@ import org.junit.Test
 import java.util.UUID
 
 class ChatsConstructorUnitTest {
-    @MockK
-    val userMock = mockk<FirebaseUser>()
-    @MockK
-    val userMock1 = mockk<FirebaseUser>()
-
-    @Before
-    fun setUp(){
-        every { userMock.email } returns "You"
-        every { userMock1.email } returns "NotYou"
-    }
+    val userIdMock = "You"
+    val userIdMock1 = "NotYou"
     @Test
     fun baseConstructorTest(){
         var list = Array<String>(2,{i->i.toString()})
@@ -209,7 +201,7 @@ class ChatsConstructorUnitTest {
         val chat = Chat("a",Array<String>(2,{i->i.toString()}))
         val list = mutableListOf<Message>()
         for (i in 0..<amount){
-            val message = TextMessage("Texto"+i,userMock1,chat)
+            val message = TextMessage("Texto"+i,userIdMock1)
             list.add(message)
         }
         return list

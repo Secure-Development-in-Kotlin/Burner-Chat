@@ -12,32 +12,24 @@ import org.junit.Before
 import org.junit.Test
 
 class MessagesIsYourMessageUnitTest {
-    @MockK
-    val userIdMock = mockk<FirebaseUser>()
-    @MockK
-    val userIdMock1 = mockk<FirebaseUser>()
-
-    @Before
-    fun setUp(){
-        every { getUserIdMock.email } returns "You"
-        every { getUserIdMock1.email } returns "NotYou"
-    }
+    val userIdMock = "You"
+    val userIdMock1 = "NotYou"
     @Test
     fun isYourMessageTest(){
         var list = Array<String>(2,{i->i.toString()})
-        var userResult = getUserIdMock
+        var userResult = userIdMock
         var chat = Chat("Chat1",list)
-        var message = TextMessage("Texto",userResult,chat)
-        assertTrue(message.isYourMessage(getUserIdMock))
+        var message = TextMessage("Texto",userResult)
+        assertTrue(message.isYourMessage(userIdMock))
     }
 
     @Test
     fun isNotYourMessageTest(){
         var list = Array<String>(2,{i->i.toString()})
-        var userResult = getUserIdMock
+        var userResult = userIdMock
         var chat = Chat("Chat1",list)
-        var message = TextMessage("Texto",userResult,chat)
-        assertFalse(message.isYourMessage(getUserIdMock1))
+        var message = TextMessage("Texto",userResult)
+        assertFalse(message.isYourMessage(userIdMock1))
     }
 
 }
