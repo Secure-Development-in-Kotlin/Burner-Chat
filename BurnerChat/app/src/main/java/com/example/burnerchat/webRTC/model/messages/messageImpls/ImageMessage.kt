@@ -4,11 +4,11 @@ import com.example.burnerchat.webRTC.model.messages.Message
 import com.example.burnerchat.webRTC.model.messages.MessageImpl
 
 
-class ImageMessage(private val path: String, user: String) : MessageImpl(user) {
+class ImageMessage(private val base64Path: String, userId: String) : MessageImpl(userId) {
     var textContent: String = ""
 
     override fun getConcreteContent(): String {
-        return path;
+        return base64Path;
     }
 
     override fun getLastContent(): String {
@@ -16,7 +16,7 @@ class ImageMessage(private val path: String, user: String) : MessageImpl(user) {
     }
 
     override fun getMessageTypeCode(userId: String): Int {
-        return if (userId !== this.getUserId()) {
+        return if (userId != this.getUserId()) {
             Message.LayoutType.ImagenAjena.ordinal
         } else
             Message.LayoutType.ImagenPropia.ordinal

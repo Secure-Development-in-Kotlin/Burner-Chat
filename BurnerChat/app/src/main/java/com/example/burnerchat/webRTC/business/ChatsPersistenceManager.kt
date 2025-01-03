@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.webRTC.model.chats.Chat
 import com.example.burnerchat.webRTC.model.messages.Message
+import com.example.burnerchat.webRTC.model.messages.messageImpls.ImageMessage
 import com.example.burnerchat.webRTC.model.messages.messageImpls.TextMessage
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
@@ -75,14 +76,31 @@ object ChatsPersistenceManager {
             )
         }
 
-        updatedMessages.add(
-            mapOf(
-                "content" to message.getContent(),
-                "sender" to message.getUserId(),
-                "createdAt" to message.getSentDate(),
-                "messageType" to message.getMessageTypeCode(message.getUserId())
-            )
-        )
+        when (message.getMessageTypeCode(message.getUserId())) {
+            0, 1 -> {
+                // Text message
+                updatedMessages.add(
+                    mapOf(
+                        "content" to message.getContent(),
+                        "sender" to message.getUserId(),
+                        "createdAt" to message.getSentDate(),
+                        "messageType" to message.getMessageTypeCode(message.getUserId())
+                    )
+                )
+            }
+            2, 3 -> {
+                // Image message
+                updatedMessages.add(
+                    mapOf(
+                        "content" to message.getContent(),
+                        "sender" to message.getUserId(),
+                        "createdAt" to message.getSentDate(),
+                        "messageType" to message.getMessageTypeCode(message.getUserId()),
+                        "textContent" to (message as ImageMessage).textContent
+                    )
+                )
+            }
+        }
 
         return updatedMessages
     }
@@ -163,12 +181,21 @@ object ChatsPersistenceManager {
 
     private fun parseMessageData(msgData: Map<String, Any>): Message {
             when(msgData["messageType"]) {
-                0 -> {
+                0L, 1L -> {
                     // Text message
                     val message = TextMessage(
                         msgData["content"] as String,
                         msgData["sender"] as String,
                     )
+                    return message
+                }
+                2L, 3L -> {
+                    // Image message
+                    val message = ImageMessage(
+                        msgData["content"] as String,
+                        msgData["sender"] as String,
+                    )
+                    message.textContent = msgData["textContent"] as String
                     return message
                 }
                 else -> {
