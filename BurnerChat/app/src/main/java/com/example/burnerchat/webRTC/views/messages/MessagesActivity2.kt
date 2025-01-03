@@ -120,10 +120,8 @@ class MessagesActivity2 : AppCompatActivity() {
     }
 
     private fun initChatRecycler() {
-        val customAdapter = MessagesAdapter(viewModel.chat.value!!.messages)
-
         rvMessages.layoutManager = LinearLayoutManager(this)
-        rvMessages.adapter = customAdapter
+        rvMessages.adapter = MessagesAdapter(viewModel.chat.value!!.messages)
     }
 }
 

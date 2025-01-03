@@ -68,7 +68,9 @@ class MessagesViewModel : ViewModel() {
     suspend fun setChat(chatId: String) {
         _chat.value = chatsRepository.getChat(chatId)
         chatsRepository.listenForMessagesRealtime(_chat.value!!) {
-            _chat.value!!.messages = it.toMutableList()
+            viewModelScope.launch {
+                _chat.value = chatsRepository.getChat(chatId)
+            }
         }
     }
 }
