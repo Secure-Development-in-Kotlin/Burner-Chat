@@ -12,16 +12,14 @@ import org.junit.Test
 
 class MessagesConstructorUnitTest {
 
-    @MockK
-    val userIdMock = mockk<FirebaseUser>(relaxed=true)
 
 
     @Test
     fun constructorText(){
         var list = Array<String>(2,{i->i.toString()})
-        var userResult = getUserIdMock
+        var userResult = "User1"
         var chat = Chat("Chat1",list)
-        var message = TextMessage("Texto",userResult,chat)
+        var message = TextMessage("Texto",userResult)
         assertNotNull(message)
         assertEquals("Texto",message.getContent())
         assertNotNull(message.getUserId())
@@ -32,9 +30,9 @@ class MessagesConstructorUnitTest {
     @Test
     fun constructorImage(){
         var list = Array<String>(2,{i->i.toString()})
-        var userResult = getUserIdMock
+        var userResult = "User1"
         var chat = Chat("Chat1",list)
-        var message = ImageMessage("Imagen",chat,userResult)
+        var message = ImageMessage("Imagen",userResult)
         assertNotNull(message)
         assertEquals("Imagen",message.getContent())
         assertNotNull(message.getUserId())

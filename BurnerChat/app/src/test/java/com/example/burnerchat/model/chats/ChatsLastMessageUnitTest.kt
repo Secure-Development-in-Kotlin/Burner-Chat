@@ -13,16 +13,8 @@ import org.junit.Test
 
 class ChatsLastMessageUnitTest {
 
-    @MockK
-    val userIdMock = mockk<FirebaseUser>()
-    @MockK
-    val userIdMock1 = mockk<FirebaseUser>()
-
-    @Before
-    fun setUp(){
-        every { getUserIdMock.email } returns "You"
-        every { getUserIdMock1.email } returns "NotYou"
-    }
+    val userIdMock = "You"
+    val userIdMock1 = "NotYou"
 
     private fun createChat(): Chat {
         var list = Array<String>(2,{i->i.toString()})
@@ -37,7 +29,7 @@ class ChatsLastMessageUnitTest {
     @Test
     fun isText(){
         val chat = createChat()
-        val message = TextMessage("Mensaje1",getUserIdMock1,chat)
+        val message = TextMessage("Mensaje1",userIdMock1)
         chat.addMessage(message)
         assertEquals(message, chat.getLastMessage())
 
@@ -45,7 +37,7 @@ class ChatsLastMessageUnitTest {
     @Test
     fun isImage(){
         val chat = createChat()
-        val message = ImageMessage("Mensaje1",chat,getUserIdMock1)
+        val message = ImageMessage("Mensaje1",userIdMock1)
         chat.addMessage(message)
         assertEquals(message, chat.getLastMessage())
 

@@ -14,9 +14,13 @@ import com.example.burnerchat.webRTC.model.messages.messageImpls.ImageMessage
 import java.time.ZoneId
 
 class MessagesAdapter(
-    private val messagesList: List<Message>,
+    private var messagesList: List<Message>,
 ) : RecyclerView.Adapter<MessagesAdapter.ViewHolder>() {
 
+    fun updateMessages(messages : List<Message>){
+        messagesList = messages
+
+    }
     abstract class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         protected var tvDate: TextView = view.findViewById(R.id.tvDate)

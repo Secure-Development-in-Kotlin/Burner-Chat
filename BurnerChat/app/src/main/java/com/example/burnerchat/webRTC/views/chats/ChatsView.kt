@@ -49,8 +49,9 @@ class ChatsView : AppCompatActivity() {
         super.onResume()
         lifecycleScope.launch {
             viewModel.getChats()
+            resetImage()
         }
-        resetImage()
+
     }
 
     fun resetImage() {
@@ -83,9 +84,7 @@ class ChatsView : AppCompatActivity() {
         initFAB()
         initIcon()
 
-        viewModel.chatsList.observe(this) { _ ->
-            rvChats.adapter?.notifyDataSetChanged()
-        }
+
 
     }
 
@@ -137,6 +136,12 @@ class ChatsView : AppCompatActivity() {
 
             rvChats.layoutManager = LinearLayoutManager(context)
             rvChats.adapter = customAdapter
+
+            viewModel.chatsList.observe(context) { chatsList ->
+                //rvChats.adapter?.notifyDataSetChanged()
+                val adapter = rvChats.adapter!! as ChatsAdapter
+                adapter.updateChatsList(chatsList)
+            }
         }
     }
 
