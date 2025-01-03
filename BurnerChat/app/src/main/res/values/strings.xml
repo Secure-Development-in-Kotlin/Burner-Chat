@@ -35,4 +35,8 @@
     <string name="textLanguageChanged">Los cambios se aplicarán en breve…</string>
     <string name="a_adir_chat_grupal">Añadir Chat Grupal</string>
     <string name="a_adir_chat_individual">Añadir Chat Individual</string>
+    <string name="panic_message">¿Estás seguro de que deseas enviar la acción de pánico?</string>
+    <string name="panic_mode">Modo del pánico</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
 </resources>

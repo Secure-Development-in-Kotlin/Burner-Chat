@@ -11,9 +11,22 @@
     tools:context=".webRTC.views.users.UserProfileActivity">
 
     <ImageButton
-        android:id="@+id/ibGoBackUserProfile"
+        android:id="@+id/ibPanicButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@color/background"
+        android:padding="8dp"
+        android:src="@drawable/baseline_fire_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lyLanguage" />
+
+    <ImageButton
+        android:id="@+id/ibGoBackUserProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:background="#00FFFFFF"
@@ -54,9 +67,9 @@
         android:layout_width="128sp"
         android:layout_height="128sp"
         android:layout_margin="16sp"
+        android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:scaleType="centerCrop"
         app:layout_constraintTop_toBottomOf="@+id/tvProfileName"
         tools:srcCompat="@drawable/baseline_person_24" />
 
@@ -75,14 +88,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivProfileIcon" />
 
-    <Spinner
-        android:id="@+id/spinnerLanguage"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lyLanguage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btToggleButton"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btToggleButton">
+
+        <ImageView
+            android:id="@+id/ivLanguage"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="12dp"
+            android:src="@drawable/baseline_language_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/spinnerLanguage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/spinnerLanguage"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

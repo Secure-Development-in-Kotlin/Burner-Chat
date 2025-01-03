@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
@@ -53,6 +54,10 @@ class UserProfileActivity : AppCompatActivity() {
 
     // Idioma
     private lateinit var spinnerLanguage: Spinner
+    private lateinit var ivLanguage : ImageView
+
+    // Panic button
+    private lateinit var panicButton: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +93,8 @@ class UserProfileActivity : AppCompatActivity() {
         btGoBack = findViewById(R.id.ibGoBackUserProfile)
         btnToggleTheme = findViewById(R.id.btToggleButton)
         spinnerLanguage = findViewById(R.id.spinnerLanguage)
+        ivLanguage = findViewById(R.id.ivLanguage)
+        panicButton = findViewById(R.id.ibPanicButton)
 
         tvName.setText(intent.getStringExtra(CLAVE_NOMBRE_USUARIO))
 
@@ -115,6 +122,22 @@ class UserProfileActivity : AppCompatActivity() {
 
         initAvailableLanguages()
         initThemeToggleButton()
+
+        // Panic button
+        panicButton.setOnClickListener {
+            // Crear el diálogo
+            AlertDialog.Builder(this)
+                .setTitle(R.string.panic_mode)
+                .setMessage(R.string.panic_message)
+                .setPositiveButton(R.string.yes) { dialog, _ ->
+                    viewModel.sendPanic()
+                    dialog.dismiss() // Cierra el diálogo
+                }
+                .setNegativeButton(R.string.no) { dialog, _ ->
+                    dialog.dismiss() // Solo cierra el diálogo
+                }
+                .show()
+        }
     }
 
 

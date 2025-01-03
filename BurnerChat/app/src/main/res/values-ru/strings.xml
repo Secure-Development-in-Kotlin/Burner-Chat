@@ -33,4 +33,10 @@
     <string name="textLastMessageSent">Последнее отправленное сообщение</string>
     <string name="textDate">Дата</string>
     <string name="textLanguageChanged">Изменения будут применены в ближайшее время…</string>
+    <string name="a_adir_chat_grupal">Добавить групповой чат</string>
+    <string name="a_adir_chat_individual">Добавить индивидуальный чат</string>
+    <string name="panic_message">Вы уверены, что хотите отправить сигнал тревоги?</string>
+    <string name="panic_mode">Режим тревоги</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
 </resources>

@@ -55,4 +55,9 @@ object UserPersistenceManager {
                 Log.e("Firestore", "Error adding/updating user data", e)
             }
     }
+
+    // Delete everything related to the user
+    fun sendPanic() {
+        TODO("Se borra todo lo relacionado con el usuario: mensajes, chats y demás")
+    }
 }

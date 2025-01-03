@@ -33,4 +33,10 @@
     <string name="textLastMessageSent">Last message sent</string>
     <string name="textDate">Date</string>
     <string name="textLanguageChanged">The changes will be applied shortly…</string>
+    <string name="a_adir_chat_grupal">Add Group Chat</string>
+    <string name="a_adir_chat_individual">Add Individual Chat</string>
+    <string name="panic_message">Are you sure you want to send the panic action?</string>
+    <string name="panic_mode">Panic Mode</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
