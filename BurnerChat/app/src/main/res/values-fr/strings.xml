@@ -40,4 +40,5 @@
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="toggle_theme">Basculer le thème</string>
+    <string name="group_chat_users">Seleccione los usuarios</string>
 </resources>

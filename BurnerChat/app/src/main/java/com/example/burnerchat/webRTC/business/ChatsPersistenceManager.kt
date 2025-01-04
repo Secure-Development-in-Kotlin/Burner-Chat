@@ -21,6 +21,8 @@ object ChatsPersistenceManager {
         val result = db.collection(CHATS_COLLECTION_NAME).get().await()
         val chatsDataBase = mutableListOf<Chat>()
         for (document in result) {
+            val data = document.data
+            val image = data["imageUrl"]
             val participantsList = document.data["participants"] as? List<String> ?: emptyList()
             val chat = Chat(
                 name = document.data["name"] as String,
