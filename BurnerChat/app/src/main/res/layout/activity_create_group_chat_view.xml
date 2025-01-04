@@ -8,6 +8,16 @@
     android:padding="16dp"
     tools:context=".webRTC.views.chats.CreateGroupChatView">
 
+    <ImageButton
+        android:id="@+id/ibSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/button1"
+        android:src="@drawable/baseline_search_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/etSearch"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
     <TextView
         android:id="@+id/tvAddContact4"
         android:layout_width="wrap_content"
@@ -47,11 +57,11 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toTopOf="@+id/btGroupConfirm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/etSearch" />
 
     <Button
         android:id="@+id/btGroupConfirm"
@@ -97,5 +107,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivGroupChatIcon"
         tools:textColorHint="@color/colorHint" />
+
+    <EditText
+        android:id="@+id/etSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Buscar usuario"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

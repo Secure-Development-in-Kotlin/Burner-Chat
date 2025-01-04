@@ -91,4 +91,54 @@ object UserPersistenceManager {
         return usersDataBase
     }
 
+    suspend fun getUsersByEmail(emails:Array<String>):List<UserUIInfo>{
+        val result = ChatsPersistenceManager.db.collection(USER_COLLECTION_NAME).get().await()
+        val usersDataBase = mutableListOf<UserUIInfo>()
+        for (document in result) {
+            val data = document.data
+            val firebaseUserData = data as Map<String,Any>
+
+
+                if(emails.contains(firebaseUserData["email"])){
+                    var profilePicture = firebaseUserData["profilePicture"]
+                    if(profilePicture == null)
+                        profilePicture = " "
+                    else
+                        profilePicture = profilePicture.toString()
+
+                    val userData = UserUIInfo(firebaseUserData["email"].toString(),profilePicture)
+                    usersDataBase.add(userData)
+                }
+
+
+
+        }
+        return usersDataBase
+    }
+
+    suspend fun getUsersByString(string:String):List<UserUIInfo>{
+        val result = ChatsPersistenceManager.db.collection(USER_COLLECTION_NAME).get().await()
+        val usersDataBase = mutableListOf<UserUIInfo>()
+        for (document in result) {
+            val data = document.data
+            val firebaseUserData = data as Map<String,Any>
+
+            if(firebaseUserData["email"]!= getLoggedUser()?.email){
+                if((firebaseUserData["email"].toString().contains(string))){
+                    var profilePicture = firebaseUserData["profilePicture"]
+                    if(profilePicture == null)
+                        profilePicture = " "
+                    else
+                        profilePicture = profilePicture.toString()
+
+                    val userData = UserUIInfo(firebaseUserData["email"].toString(),profilePicture)
+                    usersDataBase.add(userData)
+                }
+
+            }
+
+        }
+        return usersDataBase
+    }
+
 }

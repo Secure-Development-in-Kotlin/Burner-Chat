@@ -56,6 +56,11 @@ class CreateGroupChatViewViewModel : ViewModel() {
         _dbUsersList.value = database.getUsers()
     }
 
+    suspend fun findUsers(string: String){
+        var users = database.getUsersByString(string)
+        _dbUsersList.value=users
+    }
+
     fun setIcon(image:Bitmap){
         _icon.value = ImageUtils.convertToBase64(image)
     }
@@ -101,5 +106,7 @@ class CreateGroupChatViewViewModel : ViewModel() {
     fun isSelected(email:String):Boolean{
         return _usersList.value!!.contains(email)
     }
+
+
 
 }

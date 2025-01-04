@@ -43,6 +43,14 @@
             android:textSize="26sp"
             android:textStyle="bold" />
 
+        <ImageButton
+            android:id="@+id/ibChatInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/button1"
+            android:src="@drawable/chat_info_icon" />
+
     </LinearLayout>
 
     <LinearLayout

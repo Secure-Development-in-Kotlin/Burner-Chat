@@ -27,6 +27,8 @@ class CreateGroupChatView : AppCompatActivity() {
     private lateinit var btGroupConfirm:Button
     private lateinit var ivGroupIcon:ImageView
     private lateinit var etChatName:EditText
+    private lateinit var ibSearch:ImageButton
+    private lateinit var etSearch:EditText
 
 
     private var galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
@@ -66,6 +68,8 @@ class CreateGroupChatView : AppCompatActivity() {
         btGroupConfirm = findViewById(R.id.btGroupConfirm)
         ivGroupIcon = findViewById(R.id.ivGroupChatIcon)
         etChatName = findViewById(R.id.etChatName)
+        etSearch = findViewById(R.id.etSearch)
+        ibSearch = findViewById(R.id.ibSearch)
 
         btGoBack.setOnClickListener {
             finish()
@@ -74,6 +78,7 @@ class CreateGroupChatView : AppCompatActivity() {
         initImageButton()
         initUsersRecyler()
         initConfirmButton()
+        initSearch()
 
         viewModel.createdChat.observe(this) {
             if (it) {
@@ -82,6 +87,21 @@ class CreateGroupChatView : AppCompatActivity() {
         }
 
 
+    }
+
+    private fun initSearch() {
+        ibSearch.setOnClickListener{
+            val string = etSearch.text.toString()
+            if(!string.isNullOrBlank()){
+                lifecycleScope.launch {
+                    viewModel.findUsers(string)
+                }
+            }else{
+                lifecycleScope.launch {
+                    viewModel.getUsers()
+                }
+            }
+        }
     }
 
     private fun initConfirmButton() {
