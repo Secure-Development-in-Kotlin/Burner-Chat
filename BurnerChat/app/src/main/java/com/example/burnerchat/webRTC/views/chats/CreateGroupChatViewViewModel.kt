@@ -1,45 +1,78 @@
 package com.example.burnerchat.webRTC.views.chats
 
 import android.graphics.Bitmap
-import android.os.Message
 import android.util.Log
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.webRTC.business.ImageUtils
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.launch
 
+class CreateGroupChatViewViewModel : ViewModel() {
 
-class CreateSingleChatViewModel : ViewModel() {
     private val db = Firebase.firestore
 
+    private val database = BurnerChatApp.appModule.usersRepository
+    private var _usersList = MutableLiveData<MutableList<String>>(mutableListOf())
 
+    val usersList :LiveData<MutableList<String>>
+        get() = _usersList
 
     private var _createdChat = MutableLiveData<Boolean>(false)
     val createdChat: LiveData<Boolean>
         get() = _createdChat
 
-    fun setIcon(image: Bitmap){
-        _icon.value = ImageUtils.convertToBase64(image)
-    }
+    private var _dbUsersList = MutableLiveData<List<UserUIInfo>>(mutableListOf())
+    val dbUsersList :LiveData<List<UserUIInfo>>
+        get() = _dbUsersList
 
     private var _icon = MutableLiveData<String>("")
     val icon:LiveData<String>
         get()=_icon
 
-    fun addChat(email: String) {
+    private var name = ""
+
+    fun addUser(userUIInfo: UserUIInfo){
+        _usersList.value!!.add(userUIInfo.email)
+        _usersList.value = _usersList.value
+    }
+
+    fun removeUser(userUIInfo: UserUIInfo){
+        _usersList.value!!.remove(userUIInfo.email)
+        _usersList.value = _usersList.value
+    }
+
+    fun setName(name:String){
+        this.name=name
+    }
+
+    suspend fun getUsers(){
+        var users = database.getUsers()
+        _dbUsersList.value = database.getUsers()
+    }
+
+    suspend fun findUsers(string: String){
+        var users = database.getUsersByString(string)
+        _dbUsersList.value=users
+    }
+
+    fun setIcon(image:Bitmap){
+        _icon.value = ImageUtils.convertToBase64(image)
+    }
+
+    fun addChat(email: String ) {
         // TODO: Check if the user exists in the db
         db.collection("users")
             .whereEqualTo("email", email)
             .get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val participants = mutableListOf<String>()
-                    participants.add(email)
+                    val participants = usersList.value!!
                     participants.add(BurnerChatApp.appModule.usersRepository.getLoggedUser()!!.email!!)
 
                     val chat = hashMapOf(
@@ -57,7 +90,7 @@ class CreateSingleChatViewModel : ViewModel() {
                         .add(chat)
                         .addOnSuccessListener { documentReference ->
                             Log.d("Firestore", "Chat document added with ID: ${documentReference.id}")
-                            _createdChat.value = true
+                           _createdChat.value = true
                         }
                         .addOnFailureListener { e ->
                             Log.e("Firestore", "Error adding chat document: ", e)
@@ -69,4 +102,11 @@ class CreateSingleChatViewModel : ViewModel() {
 
 
     }
+
+    fun isSelected(email:String):Boolean{
+        return _usersList.value!!.contains(email)
+    }
+
+
+
 }

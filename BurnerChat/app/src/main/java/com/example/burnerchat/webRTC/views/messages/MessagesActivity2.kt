@@ -1,6 +1,7 @@
 package com.example.burnerchat.webRTC.views.messages
 
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.Window
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.R
 import com.example.burnerchat.webRTC.business.ImageUtils
+import com.example.burnerchat.webRTC.views.chats.ChatInfoActivity
 import kotlinx.coroutines.launch
 
 class MessagesActivity2 : AppCompatActivity() {
@@ -33,6 +35,7 @@ class MessagesActivity2 : AppCompatActivity() {
     private lateinit var btSendFoto: ImageButton
     private lateinit var currentImage: Bitmap
     private lateinit var ibGoBackFromChat: ImageButton
+    private lateinit var ibChatInfo:ImageButton
 
     private var galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
         val galleryURI = it
@@ -102,6 +105,7 @@ class MessagesActivity2 : AppCompatActivity() {
         btSendMessage = findViewById(R.id.btSendMessage)
         rvMessages = findViewById(R.id.rvMessages)
         btSendFoto = findViewById(R.id.btFoto)
+        ibChatInfo = findViewById(R.id.ibChatInfo)
         btSendMessage.setOnClickListener {
             val text = etMessage.text.toString()
             if (text.isNotBlank() && text.isNotEmpty()) {
@@ -113,6 +117,16 @@ class MessagesActivity2 : AppCompatActivity() {
         ibGoBackFromChat = findViewById(R.id.ibGoBackFromChats)
         ibGoBackFromChat.setOnClickListener {
             finish()
+        }
+
+        ibChatInfo.setOnClickListener{
+            val chat = viewModel.chat.value!!
+            val intent = Intent(this, ChatInfoActivity::class.java)
+            intent.putExtra("chatId", chat?.uid)
+            if (chat != null) {
+                startActivity(intent)
+            }
+
         }
         initBtFoto()
     }
