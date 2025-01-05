@@ -1,32 +1,18 @@
-package com.example.burnerchat.webRTC.business
+package com.example.burnerchat.business
 
-import android.content.Context
 import com.example.burnerchat.webRTC.backend.webrtc.MessageType
 
 
-class MainScreenState(
-    var isConnectedToServer: Boolean = false,
-    var isConnectToPeer: String? = null,
-    var connectedAs: String = "",
-    var messagesFromServer: List<MessageType> = emptyList(),
-    var inComingRequestFrom: String = "",
-    var isRtcEstablished: Boolean = false,
-    var peerConnectionString: String = ""
+data class MainScreenState(
+    val isConnectedToServer: Boolean = false,
+    val isConnectToPeer: String? = null,
+    val connectedAs: String = "",
+    val messagesFromServer: List<MessageType> = emptyList(),
+    val inComingRequestFrom: String = "",
+    val isRtcEstablished: Boolean = false,
+    val peerConnectionString: String = "",
 ) {
     companion object {
-        @Volatile
-        private var SINGLETON: MainScreenState? = null
-
-        fun getInstance(context: Context?): MainScreenState {
-            return SINGLETON ?: synchronized(this) {
-                SINGLETON ?: MainScreenState().also { SINGLETON = it }
-            }
-        }
-
-        fun updateInstance(updater: MainScreenState.() -> Unit) {
-            SINGLETON?.apply(updater)
-        }
-
         fun forPreview(): MainScreenState {
             return MainScreenState(
                 isConnectedToServer = true,

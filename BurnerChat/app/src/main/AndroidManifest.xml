@@ -37,10 +37,11 @@
         <activity
             android:name=".webRTC.views.users.AddChatActivity"
             android:exported="false"
-            android:theme="@style/Base.Theme.BurnerChat" /> <!-- <activity -->
-        <!-- android:name=".views.MessagesActivity" -->
-        <!-- android:exported="false" -->
-        <!-- android:theme="@style/Base.Theme.BurnerChat" /> -->
+            android:theme="@style/Base.Theme.BurnerChat" />
+        <activity
+            android:name=".views.WebRTCActivity"
+            android:exported="false"
+            android:theme="@style/Base.Theme.BurnerChat" />
         <activity
             android:name=".webRTC.views.chats.ChatsView"
             android:exported="false"

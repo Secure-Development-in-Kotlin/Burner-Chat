@@ -12,8 +12,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.example.burnerchat.backend.WebRTCViewModel
 import com.example.burnerchat.firebase.FirebaseAuthView
 import com.example.burnerchat.preferences.AppPreferences
+import com.example.burnerchat.views.WebRTCActivity
 import com.example.burnerchat.webRTC.views.chats.ChatsView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -54,34 +56,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         btWebRTC.setOnClickListener {
-
-            // TODO: this should not be necessary
-//            val userName = etUserName.text.toString()
-//            viewModel.setName(userName) // TODO: refactor a un onchange del editText
-//            if (!(userName.isBlank() || userName.isEmpty())) {
-
-                lifecycleScope.launch(Dispatchers.IO) {
-
-                    val intent = Intent(applicationContext, ChatsView::class.java)
-//                    intent.putExtra(CLAVE_NOMBRE_USUARIO, userName)
-//                    login(userName)
-                    startActivity(intent)
-
-                }
-
-//            } else {
-//                Toast.makeText(
-//                    this,
-//                    "El nombre de usuario no puede estar vacío",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            }
-
+            val intent = Intent(applicationContext, WebRTCActivity::class.java)
+            startActivity(intent)
         }
-    }
-
-    private fun login(name: String) {
-        viewModel.login(name)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

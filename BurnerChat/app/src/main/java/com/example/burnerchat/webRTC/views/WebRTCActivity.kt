@@ -1,7 +1,6 @@
-package com.example.burnerchat.webRTC.views
+package com.example.burnerchat.views
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -36,20 +35,22 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.burnerchat.backend.WebRTCViewModel
+import com.example.burnerchat.business.MainActions
+import com.example.burnerchat.business.MainOneTimeEvents
+import com.example.burnerchat.business.MainScreenState
 import com.example.burnerchat.webRTC.backend.webrtc.MessageType
-import com.example.burnerchat.webRTC.business.MainActions
-import com.example.burnerchat.webRTC.business.MainOneTimeEvents
-import com.example.burnerchat.webRTC.business.MainScreenState
 import com.example.burnerchat.webRTC.views.theme.Black
 import com.example.burnerchat.webRTC.views.theme.BurnerChatTheme
 import com.example.burnerchat.webRTC.views.theme.Green
 import com.example.burnerchat.webRTC.views.theme.SoftRed
+
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
-const val TAG = "MainActivity"
+private const val TAG = "WebRTCActivity"
 
-class MessagesActivity : ComponentActivity() {
+class WebRTCActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -74,7 +75,7 @@ fun <T> rememberFlowWithLifecycle(
 
 @Composable
 fun MainScreen() {
-    val viewModel = viewModel(modelClass = MessagesActivityViewModel::class.java)
+    val viewModel = viewModel(modelClass = WebRTCViewModel::class.java)
     val state by viewModel.state.collectAsState()
     val events = rememberFlowWithLifecycle(flow = viewModel.oneTimeEvents)
     var showIncomingRequestDialog by remember {
@@ -98,10 +99,9 @@ fun MainScreen() {
                 showIncomingRequestDialog = false
             },
             onAccept = {
-//                viewModel.dispatchAction(
-//                    MainActions.AcceptIncomingConnection
-//                )
-                viewModel.acceptConnection()
+                viewModel.dispatchAction(
+                    MainActions.AcceptIncomingConnection
+                )
                 showIncomingRequestDialog = false
             },
             inviteFrom = state.inComingRequestFrom,
@@ -110,7 +110,9 @@ fun MainScreen() {
     HomeScreenContent(
         state = state,
         dispatchAction = {
-            viewModel.acceptConnection()
+            viewModel.dispatchAction(
+                it
+            )
         },
     )
 }
@@ -136,7 +138,7 @@ fun HomeScreenContent(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f) // Hace que el LazyColumn ocupe todo el espacio disponible
+                .weight(1f) // Hace que el LazyColumn ocupe all el espacio disponible
                 .padding(bottom = 8.dp), // Añade un pequeño margen inferior
             content = {
                 // Tu contenido de LazyColumn como antes
@@ -158,10 +160,7 @@ fun HomeScreenContent(
                                 Box(
                                     modifier = Modifier
                                         .padding(end = 16.dp, top = 8.dp)
-                                        .background(
-                                            color = if (state.isRtcEstablished) Green else SoftRed,
-                                            shape = RoundedCornerShape(8.dp)
-                                        )
+                                        .background(color = Green, shape = RoundedCornerShape(8.dp))
                                         .padding(10.dp)
                                 ) {
                                     Text(
@@ -307,9 +306,11 @@ fun HomeScreenContent(
                     )
                     Button(
                         onClick = {
-                            Log.d(TAG, "HomeScreenContent: $state")
-                            Log.d(TAG, "StetConnectedAs: ${state.connectedAs}")
-                            dispatchAction(MainActions.ConnectToUser(connectTo))
+                            if (state.connectedAs.isNotEmpty()) {
+                                dispatchAction(MainActions.ConnectToUser(connectTo))
+                            } else {
+                                dispatchAction(MainActions.ConnectAs(yourName))
+                            }
                         },
                         modifier = Modifier.padding(start = 10.dp, end = 10.dp),
                         colors = ButtonDefaults.buttonColors(
