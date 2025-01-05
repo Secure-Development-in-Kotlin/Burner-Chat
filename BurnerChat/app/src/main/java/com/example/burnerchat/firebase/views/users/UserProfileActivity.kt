@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Spinner
@@ -53,6 +54,9 @@ class UserProfileActivity : AppCompatActivity() {
     // Panic button
     private lateinit var panicButton: ImageButton
 
+    // Log out
+    private lateinit var btLogOut: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -89,8 +93,9 @@ class UserProfileActivity : AppCompatActivity() {
         spinnerLanguage = findViewById(R.id.spinnerLanguage)
         ivLanguage = findViewById(R.id.ivLanguage)
         panicButton = findViewById(R.id.ibPanicButton)
+        btLogOut = findViewById(R.id.btLogOut)
 
-        tvName.setText(intent.getStringExtra(CLAVE_NOMBRE_USUARIO))
+        tvName.text = intent.getStringExtra(CLAVE_NOMBRE_USUARIO)
 
         val user = usersRepository.getLoggedUser()!!
         val icon = user.photoUrl
@@ -142,6 +147,35 @@ class UserProfileActivity : AppCompatActivity() {
                     // Se envía al usuario a la pantalla de inicio
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
+                }
+                .setNegativeButton(R.string.no) { dialog, _ ->
+                    dialog.dismiss() // Solo cierra el diálogo
+                }
+                .show()
+        }
+
+        // Log out
+        btLogOut.setOnClickListener {
+            // Crear el diálogo
+            AlertDialog.Builder(this)
+                .setTitle(R.string.log_out)
+                .setMessage("¿Estás seguro de que deseas cerrar sesión?")
+                .setPositiveButton(R.string.yes) { dialog, _ ->
+                    val logoutStatus = viewModel.logOut()
+                    dialog.dismiss() // Cierra el diálogo
+
+                    if (logoutStatus) {
+                        // Se envía al usuario a la pantalla de inicio
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                    } else {
+                        // Mostrar un mensaje de error
+                        AlertDialog.Builder(this)
+                            .setTitle("Error")
+                            .setMessage("No se pudo cerrar sesión. Inténtalo de nuevo.")
+                            .setPositiveButton("Aceptar", null)
+                            .show()
+                    }
                 }
                 .setNegativeButton(R.string.no) { dialog, _ ->
                     dialog.dismiss() // Solo cierra el diálogo

@@ -29,17 +29,6 @@ object UsersRepository {
         }
     }
 
-    fun getUser(userId: String): FirebaseUser? {
-//        var user: FirebaseUser? = null
-//        db.collection("users").document(userId).get().addOnSuccessListener {
-//            user = it.toObject(FirebaseUser::class.java)
-//        }
-        // TODO: add onFailureListener
-
-//        return user
-        return Firebase.auth.currentUser
-    }
-
     suspend fun getUserData(): UserDTO? {
         val result = ChatsRepository.db.collection(USER_COLLECTION_NAME).get().await()
         for (document in result) {
@@ -50,7 +39,8 @@ object UsersRepository {
                 var profilePicture = firebaseUserData["profilePicture"]
                 profilePicture = profilePicture?.toString() ?: ""
 
-                val userData = UserDTO(firebaseUserData["email"].toString(), profilePicture.toString())
+                val userData =
+                    UserDTO(firebaseUserData["email"].toString(), profilePicture.toString())
                 return userData
             }
 
@@ -207,6 +197,16 @@ object UsersRepository {
 
         }
         return usersDataBase
+    }
+
+    fun logout(): Boolean {
+        FirebaseAuth.getInstance()
+            .signOut()
+        if (FirebaseAuth.getInstance().currentUser == null) {
+            return true
+        } else {
+            return false
+        }
     }
 
 }

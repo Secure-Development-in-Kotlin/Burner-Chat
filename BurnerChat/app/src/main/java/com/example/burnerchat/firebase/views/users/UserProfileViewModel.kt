@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class UserProfileViewModel : ViewModel() {
 
-    private val repository = BurnerChatApp.appModule.usersRepository
+    private val usersRepository = BurnerChatApp.appModule.usersRepository
     private val _user = MutableLiveData<UserDTO>()
 
     val user: LiveData<UserDTO>
@@ -24,17 +24,21 @@ class UserProfileViewModel : ViewModel() {
     }
 
     suspend fun fetchUser(){
-        _user.value = repository.getUserData()
+        _user.value = usersRepository.getUserData()
     }
 
     fun setIcon(bitmap: Bitmap) {
         _user.value = UserDTO(user.value?.email!!, ImageUtils.convertToBase64(bitmap))
-        repository.updateUser(repository.getLoggedUser()!!,_user.value!!)
+        usersRepository.updateUser(usersRepository.getLoggedUser()!!,_user.value!!)
     }
 
     fun sendPanic() {
         viewModelScope.launch(Dispatchers.IO) {
-            BurnerChatApp.appModule.usersRepository.sendPanic(repository.getLoggedUser()!!)
+            BurnerChatApp.appModule.usersRepository.sendPanic(usersRepository.getLoggedUser()!!)
         }
+    }
+
+    fun logOut(): Boolean {
+        return usersRepository.logout()
     }
 }

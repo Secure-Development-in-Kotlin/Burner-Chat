@@ -73,22 +73,6 @@
         app:layout_constraintTop_toBottomOf="@+id/tvProfileName"
         tools:srcCompat="@drawable/baseline_person_24" />
 
-    <!--    Así estaba antes-->
-    <!--    <ImageButton-->
-    <!--        android:id="@+id/btToggleButton"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_gravity="end|top"-->
-    <!--        android:layout_marginTop="24dp"-->
-    <!--        android:background="?attr/selectableItemBackground"-->
-    <!--        android:contentDescription="@string/textThemeToggle"-->
-    <!--        android:padding="8dp"-->
-    <!--        android:src="@drawable/dark_mode"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="0.498"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/ivProfileIcon" />-->
-
     <ImageButton
         android:id="@+id/btToggleButton"
         android:layout_width="wrap_content"
@@ -136,6 +120,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/btLogOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#CD4646"
+        android:text="@string/log_out"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ibPanicButton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

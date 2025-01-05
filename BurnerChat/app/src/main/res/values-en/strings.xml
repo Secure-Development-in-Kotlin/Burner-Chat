@@ -41,4 +41,5 @@
     <string name="no">No</string>
     <string name="toggle_theme">Toggle theme</string>
     <string name="group_chat_users">Seleccione los usuarios</string>
+    <string name="log_out">Log out</string>
 </resources>

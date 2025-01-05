@@ -14,8 +14,10 @@ import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.MainActivity.Companion.CLAVE_NOMBRE_USUARIO
 import com.example.burnerchat.R
 import com.example.burnerchat.firebase.views.chats.ChatsView
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import java.lang.Exception
 
 class FirebaseAuthView : AppCompatActivity() {
@@ -82,7 +84,7 @@ class FirebaseAuthView : AppCompatActivity() {
 
     private fun syncUserInDB(user: FirebaseUser) {
         val usersRepository = BurnerChatApp.appModule.usersRepository
-        val userDB = usersRepository.getUser(user.email!!)
+        val userDB = Firebase.auth.currentUser
         if (userDB == null) {
             usersRepository.addUser(user)
         } else {
@@ -93,8 +95,6 @@ class FirebaseAuthView : AppCompatActivity() {
     private fun showChats(email: String, provider: ProviderType) {
         val intent = Intent(applicationContext, ChatsView::class.java)
         intent.putExtra(CLAVE_NOMBRE_USUARIO, email)
-        //login(userName)
-        //startActivity(intent)
         intent.putExtra(EMAIL_KEY, email)
         intent.putExtra(PROVIDER_KEY, provider.toString())
         startActivity(intent)
@@ -109,11 +109,5 @@ class FirebaseAuthView : AppCompatActivity() {
         builder.setPositiveButton("Aceptar",null)
         val dialog: AlertDialog = builder.create()
         dialog.show()
-    }
-
-    private fun verifyCurrentUser() {
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser != null)
-            showChats(currentUser.email.toString(), ProviderType.BASIC)
     }
 }
