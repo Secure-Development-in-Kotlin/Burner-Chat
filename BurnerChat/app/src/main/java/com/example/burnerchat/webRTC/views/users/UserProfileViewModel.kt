@@ -9,6 +9,7 @@ import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.webRTC.business.ImageUtils
 import com.example.burnerchat.webRTC.views.chats.UserUIInfo
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class UserProfileViewModel : ViewModel() {
@@ -33,6 +34,8 @@ class UserProfileViewModel : ViewModel() {
     }
 
     fun sendPanic() {
-        repository.sendPanic()
+        viewModelScope.launch(Dispatchers.IO) {
+            BurnerChatApp.appModule.usersRepository.sendPanic(_user.value!!)
+        }
     }
 }
