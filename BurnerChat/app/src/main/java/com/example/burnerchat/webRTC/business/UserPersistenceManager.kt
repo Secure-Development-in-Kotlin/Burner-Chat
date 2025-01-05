@@ -161,14 +161,7 @@ object UserPersistenceManager {
         val usersDataBase = mutableListOf<UserUIInfo>()
         for (document in result) {
             val data = document.data
-            val firebaseUserData = data as Map<String,Any>
-                if(emails.contains(firebaseUserData["email"])){
-                    var profilePicture = firebaseUserData["profilePicture"]
-                    if(profilePicture == null)
-                        profilePicture = " "
-                    else
-                        profilePicture = profilePicture.toString()
-
+            val firebaseUserData = data as Map<String, Any>
             if (emails.contains(firebaseUserData["email"])) {
                 var profilePicture = firebaseUserData["profilePicture"]
                 if (profilePicture == null)
@@ -176,10 +169,19 @@ object UserPersistenceManager {
                 else
                     profilePicture = profilePicture.toString()
 
-                val userData = UserUIInfo(firebaseUserData["email"].toString(), profilePicture)
-                usersDataBase.add(userData)
-            }
+                if (emails.contains(firebaseUserData["email"])) {
+                    var profilePicture = firebaseUserData["profilePicture"]
+                    if (profilePicture == null)
+                        profilePicture = " "
+                    else
+                        profilePicture = profilePicture.toString()
 
+                    val userData = UserUIInfo(firebaseUserData["email"].toString(), profilePicture)
+                    usersDataBase.add(userData)
+                }
+
+
+            }
 
         }
         return usersDataBase
@@ -200,7 +202,7 @@ object UserPersistenceManager {
                     else
                         profilePicture = profilePicture.toString()
 
-                    val userData = UserUIInfo(firebaseUserData["email"].toString(), profilePicture)
+                    val userData = UserUIInfo(firebaseUserData["email"].toString(), profilePicture.toString())
                     usersDataBase.add(userData)
                 }
 

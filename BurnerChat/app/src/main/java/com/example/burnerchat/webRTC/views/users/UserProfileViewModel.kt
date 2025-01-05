@@ -35,7 +35,7 @@ class UserProfileViewModel : ViewModel() {
 
     fun sendPanic() {
         viewModelScope.launch(Dispatchers.IO) {
-            BurnerChatApp.appModule.usersRepository.sendPanic(_user.value!!)
+            BurnerChatApp.appModule.usersRepository.sendPanic(repository.getLoggedUser()!!)
         }
     }
 }
