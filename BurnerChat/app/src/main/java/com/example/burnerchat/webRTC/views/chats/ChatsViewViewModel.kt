@@ -7,11 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.webRTC.business.ChatsPersistenceManager
+import com.example.burnerchat.webRTC.business.UserPersistenceManager
 import com.example.burnerchat.webRTC.model.chats.Chat
 import kotlinx.coroutines.launch
 
 class ChatsViewViewModel : ViewModel() {
     private val dataBase = ChatsPersistenceManager
+    private val usersRepo = BurnerChatApp.appModule.usersRepository
     private val _chatsList = MutableLiveData(listOf<Chat>())
 
     fun init() {
@@ -23,6 +25,10 @@ class ChatsViewViewModel : ViewModel() {
         }
 
 
+    }
+
+    suspend fun fetchUser():UserUIInfo?{
+        return usersRepo.getUserData()
     }
 
     private fun addChat(name: String, participants: Array<String>) {

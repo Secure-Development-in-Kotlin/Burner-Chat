@@ -100,24 +100,34 @@ class UserProfileActivity : AppCompatActivity() {
         val user = usersRepository.getLoggedUser()!!
         val icon = user.photoUrl
 
-        if (icon == null) {
-            ivIcon.setImageResource(R.drawable.default_icon_128)
-        } else {
-            // Adaptar la imagen al tamaño máximo de 128dp
-            ImageUtils.setImageWithRoundedBorder(this, icon.toString(), ivIcon, 46)
+        val context = this
+        lifecycleScope.launch {
+            viewModel.fetchUser()
+            if (icon == null) {
+                ivIcon.setImageResource(R.drawable.default_icon_128)
+            } else {
+                // Adaptar la imagen al tamaño máximo de 128dp
+                ImageUtils.setImageWithRoundedBorder(context, icon.toString(), ivIcon, 46)
+            }
+
+            viewModel.user.observe(context) { newUser ->
+                val icono = newUser.icon
+                if (!icono.isNullOrBlank()) {
+                    val bitmap = ImageUtils.decodeFromBase64(icono)
+                    ivIcon.setImageBitmap(bitmap)
+                }else{
+                    ivIcon.setImageResource(R.drawable.default_icon_128)
+                }
+            }
         }
+
+
 
         // Initialize buttons and spinner
         initGoBack()
         initEditIcon()
 
-        viewModel.user.observe(this) { newUser ->
-            val icono = newUser.photoUrl
-            if (icono != null) {
-                val bitmap = ImageUtils.decodeFromBase64(icono.toString())
-                ivIcon.setImageBitmap(bitmap)
-            }
-        }
+
 
         // Botón de idioma
         initAvailableLanguages()

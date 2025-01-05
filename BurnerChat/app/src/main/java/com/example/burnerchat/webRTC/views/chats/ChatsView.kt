@@ -55,20 +55,24 @@ class ChatsView : AppCompatActivity() {
     }
 
     fun resetImage() {
-        val user = userRepository.getLoggedUser()
-        if (user == null) {
-            val intent = Intent(applicationContext, FirebaseAuthView::class.java)
-            startActivity(intent)
-        } else {
-            val icon = user.photoUrl
-
-            if (icon == null || TextUtils.isEmpty(icon.toString())) {
-                ivIcon.setImageResource(R.drawable.baseline_person_24)
+        val context = this
+        lifecycleScope.launch {
+            val user = viewModel.fetchUser()
+            if (user == null) {
+                val intent = Intent(applicationContext, FirebaseAuthView::class.java)
+                startActivity(intent)
             } else {
-                // Adaptar la imagen al tamaño máximo de 46dp
-                ImageUtils.setImageWithRoundedBorder(this, icon.toString(), ivIcon, 128)
+                val icon = user.icon
+
+                if (icon == null || TextUtils.isEmpty(icon.toString())) {
+                    ivIcon.setImageResource(R.drawable.baseline_person_24)
+                } else {
+                    // Adaptar la imagen al tamaño máximo de 46dp
+                    ImageUtils.setImageWithRoundedBorder(context, icon.toString(), ivIcon, 128)
+                }
             }
         }
+
 
     }
 
