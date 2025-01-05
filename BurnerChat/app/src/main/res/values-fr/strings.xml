@@ -49,4 +49,5 @@
     <string name="search_user">Rechercher un utilisateur</string>
     <string name="users">Utilisateurs</string>
     <string name="update">Mettre à jour</string>
+    <string name="log_out_confirmation">Êtes-vous sûr de vouloir vous déconnecter ?</string>
 </resources>

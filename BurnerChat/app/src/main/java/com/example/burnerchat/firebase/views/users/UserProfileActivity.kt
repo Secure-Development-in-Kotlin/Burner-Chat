@@ -115,18 +115,16 @@ class UserProfileActivity : AppCompatActivity() {
                 if (!icono.isNullOrBlank()) {
                     val bitmap = ImageUtils.decodeFromBase64(icono)
                     ivIcon.setImageBitmap(bitmap)
-                }else{
+                } else {
                     ivIcon.setImageResource(R.drawable.default_icon_128)
                 }
             }
         }
 
 
-
         // Initialize buttons and spinner
         initGoBack()
         initEditIcon()
-
 
 
         // Botón de idioma
@@ -159,7 +157,7 @@ class UserProfileActivity : AppCompatActivity() {
             // Crear el diálogo
             AlertDialog.Builder(this)
                 .setTitle(R.string.log_out)
-                .setMessage("¿Estás seguro de que deseas cerrar sesión?")
+                .setMessage(R.string.log_out_confirmation)
                 .setPositiveButton(R.string.yes) { dialog, _ ->
                     val logoutStatus = viewModel.logOut()
                     dialog.dismiss() // Cierra el diálogo
