@@ -19,12 +19,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.burnerchat.BurnerChatApp
-import com.example.burnerchat.firebase.repositories.ImageUtils
 import androidx.lifecycle.lifecycleScope
+import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.MainActivity
 import com.example.burnerchat.R
 import com.example.burnerchat.firebase.preferences.AppPreferences
+import com.example.burnerchat.firebase.repositories.ImageUtils
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -165,7 +165,9 @@ class UserProfileActivity : AppCompatActivity() {
                     if (logoutStatus) {
                         // Se envía al usuario a la pantalla de inicio
                         val intent = Intent(this, MainActivity::class.java)
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
+                        finish()
                     } else {
                         // Mostrar un mensaje de error
                         AlertDialog.Builder(this)
