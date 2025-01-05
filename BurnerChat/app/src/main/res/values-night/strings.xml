@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="group_chat_users">Seleccione los usuarios</string>
+<<<<<<< Updated upstream
     <string name="log_out">Log out</string>
+=======
+    <string name="chat_individual">Chat individual</string>
+    <string name="chat_grupal">Chat grupal</string>
+    <string name="nombre_del_chat">Nombre del chat</string>
+    <string name="users">Usuarios</string>
+    <string name="update">Actualizar</string>
+>>>>>>> Stashed changes
 </resources>

@@ -40,6 +40,13 @@
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="toggle_theme">Basculer le thème</string>
-    <string name="group_chat_users">Seleccione los usuarios</string>
-    <string name="log_out">Log out</string>
+    <string name="log_out">Se déconnecter</string>
+    <string name="group_chat_users">Sélectionnez les utilisateurs</string>
+    <string name="chat_individual">Chat individuel</string>
+    <string name="chat_grupal">Chat de groupe</string>
+    <string name="new_chat_name">Nouveau nom du chat</string>
+    <string name="nombre_del_chat">Nom du chat</string>
+    <string name="search_user">Rechercher un utilisateur</string>
+    <string name="users">Utilisateurs</string>
+    <string name="update">Mettre à jour</string>
 </resources>

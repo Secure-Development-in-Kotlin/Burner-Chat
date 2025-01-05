@@ -40,6 +40,13 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="toggle_theme">Переключить тему</string>
-    <string name="group_chat_users">Seleccione los usuarios</string>
-    <string name="log_out">Log out</string>
+    <string name="log_out">Выйти</string>
+    <string name="group_chat_users">Выберите пользователей</string>
+    <string name="chat_individual">Индивидуальный чат</string>
+    <string name="chat_grupal">Групповой чат</string>
+    <string name="new_chat_name">Новое имя чата</string>
+    <string name="nombre_del_chat">Имя чата</string>
+    <string name="search_user">Искать пользователя</string>
+    <string name="users">Пользователи</string>
+    <string name="update">Обновить</string>
 </resources>

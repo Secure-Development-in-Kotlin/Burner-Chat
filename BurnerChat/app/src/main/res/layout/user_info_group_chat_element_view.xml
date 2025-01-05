@@ -28,7 +28,7 @@
         android:id="@+id/ibAddUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/button1"
+        android:background="@drawable/custom_image_button1"
         app:layout_constraintStart_toEndOf="@+id/tvAddUserEmail"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/add_icon" />
