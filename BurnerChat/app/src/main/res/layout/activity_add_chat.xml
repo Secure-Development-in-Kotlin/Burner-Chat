@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/background"
     android:padding="16sp"
-    tools:context=".webRTC.views.users.UserProfileActivity">
+    tools:context=".firebase.views.users.UserProfileActivity">
 
     <Button
         android:id="@+id/btSingleChat"

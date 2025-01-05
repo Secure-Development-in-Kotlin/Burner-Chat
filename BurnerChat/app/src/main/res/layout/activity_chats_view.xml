@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:layout_margin="0sp"
     android:background="@color/background"
-    tools:context=".webRTC.views.users.UserProfileActivity">
+    tools:context=".firebase.views.users.UserProfileActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcChats"

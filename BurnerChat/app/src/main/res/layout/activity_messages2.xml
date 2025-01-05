@@ -8,7 +8,7 @@
     android:background="@color/background"
     android:backgroundTint="@color/background"
     android:padding="16sp"
-    tools:context=".webRTC.views.messages.MessagesActivity2">
+    tools:context=".firebase.views.messages.MessagesActivity">
 
     <LinearLayout
         android:id="@+id/topBarLayout"

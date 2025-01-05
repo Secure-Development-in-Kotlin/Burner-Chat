@@ -14,9 +14,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.burnerchat.backend.WebRTCViewModel
 import com.example.burnerchat.firebase.FirebaseAuthView
-import com.example.burnerchat.preferences.AppPreferences
+import com.example.burnerchat.firebase.preferences.AppPreferences
 import com.example.burnerchat.views.WebRTCActivity
-import com.example.burnerchat.webRTC.views.chats.ChatsView
+import com.example.burnerchat.firebase.views.chats.ChatsView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Locale

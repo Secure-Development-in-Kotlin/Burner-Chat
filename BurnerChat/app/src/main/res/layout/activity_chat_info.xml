@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/background"
     android:padding="16dp"
-    tools:context=".webRTC.views.chats.ChatInfoActivity">
+    tools:context=".firebase.views.chats.ChatInfoActivity">
 
     <ImageButton
         android:id="@+id/ibGoBackInfoChat"

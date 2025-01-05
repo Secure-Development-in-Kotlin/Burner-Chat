@@ -2,10 +2,8 @@ package com.example.burnerchat
 
 import android.app.Application
 import android.content.Context
-import com.example.burnerchat.webRTC.backend.webrtc.WebRTCManager
-import com.example.burnerchat.webRTC.business.ChatsPersistenceManager
-import com.example.burnerchat.webRTC.business.UserPersistenceManager
-import com.google.gson.Gson
+import com.example.burnerchat.firebase.repositories.ChatsRepository
+import com.example.burnerchat.firebase.repositories.UsersRepository
 
 class BurnerChatApp : Application() {
     companion object {
@@ -26,8 +24,8 @@ class BurnerChatApp : Application() {
 
 //¿Por qué utilizamos una interfaz?
 interface AppModule {
-    val chatsRepository: ChatsPersistenceManager
-    val usersRepository: UserPersistenceManager
+    val chatsRepository: ChatsRepository
+    val usersRepository: UsersRepository
     val contexto: Context
 }
 
@@ -37,11 +35,11 @@ class AppModuleImpl(
 ) : AppModule {
 
     // Repository
-    override val chatsRepository: ChatsPersistenceManager by lazy {
-        ChatsPersistenceManager
+    override val chatsRepository: ChatsRepository by lazy {
+        ChatsRepository
     }
-    override val usersRepository: UserPersistenceManager by lazy {
-        UserPersistenceManager
+    override val usersRepository: UsersRepository by lazy {
+        UsersRepository
     }
 
 }

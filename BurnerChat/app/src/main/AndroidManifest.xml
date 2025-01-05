@@ -16,26 +16,26 @@
         android:theme="@style/Base.Theme.BurnerChat"
         tools:targetApi="31">
         <activity
-            android:name=".webRTC.views.chats.ChatInfoActivity"
+            android:name=".firebase.views.chats.ChatInfoActivity"
             android:exported="false" />
         <activity
-            android:name=".webRTC.views.chats.CreateGroupChatView"
+            android:name=".firebase.views.chats.CreateGroupChatView"
             android:exported="false" />
         <activity
-            android:name=".webRTC.views.chats.CreateSingleChatView"
+            android:name=".firebase.views.chats.CreateSingleChatView"
             android:exported="false" />
         <activity
             android:name=".firebase.FirebaseAuthView"
             android:exported="false" />
         <activity
-            android:name=".webRTC.views.messages.MessagesActivity2"
+            android:name=".firebase.views.messages.MessagesActivity"
             android:exported="false" />
         <activity
-            android:name=".webRTC.views.users.UserProfileActivity"
+            android:name=".firebase.views.users.UserProfileActivity"
             android:exported="false"
             android:theme="@style/Base.Theme.BurnerChat" />
         <activity
-            android:name=".webRTC.views.users.AddChatActivity"
+            android:name=".firebase.views.users.AddChatActivity"
             android:exported="false"
             android:theme="@style/Base.Theme.BurnerChat" />
         <activity
@@ -43,7 +43,7 @@
             android:exported="false"
             android:theme="@style/Base.Theme.BurnerChat" />
         <activity
-            android:name=".webRTC.views.chats.ChatsView"
+            android:name=".firebase.views.chats.ChatsView"
             android:exported="false"
             android:theme="@style/Base.Theme.BurnerChat" />
         <activity

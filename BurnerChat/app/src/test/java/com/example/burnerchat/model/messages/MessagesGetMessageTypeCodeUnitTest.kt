@@ -1,9 +1,9 @@
 package com.example.burnerchat.model.messages
 
-import com.example.burnerchat.webRTC.model.chats.Chat
-import com.example.burnerchat.webRTC.model.messages.Message
-import com.example.burnerchat.webRTC.model.messages.messageImpls.ImageMessage
-import com.example.burnerchat.webRTC.model.messages.messageImpls.TextMessage
+import com.example.burnerchat.firebase.model.chats.Chat
+import com.example.burnerchat.firebase.model.messages.Message
+import com.example.burnerchat.firebase.model.messages.messageImpls.ImageMessage
+import com.example.burnerchat.firebase.model.messages.messageImpls.TextMessage
 import com.google.firebase.auth.FirebaseUser
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

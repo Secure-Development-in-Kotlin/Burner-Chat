@@ -8,7 +8,7 @@
     android:background="@color/background"
     android:backgroundTint="@color/background"
     android:padding="16sp"
-    tools:context=".webRTC.views.users.UserProfileActivity">
+    tools:context=".firebase.views.users.UserProfileActivity">
 
     <ImageButton
         android:id="@+id/ibPanicButton"

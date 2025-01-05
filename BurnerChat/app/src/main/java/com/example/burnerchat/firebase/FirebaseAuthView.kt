@@ -13,7 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.MainActivity.Companion.CLAVE_NOMBRE_USUARIO
 import com.example.burnerchat.R
-import com.example.burnerchat.webRTC.views.chats.ChatsView
+import com.example.burnerchat.firebase.views.chats.ChatsView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import java.lang.Exception
