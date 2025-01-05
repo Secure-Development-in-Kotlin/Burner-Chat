@@ -98,6 +98,10 @@ class CreateGroupChatViewViewModel : ViewModel() {
         return _usersList.value!!.contains(email)
     }
 
+    fun isGroup():Boolean{
+        return _usersList.value?.size!!>=2
+    }
+
 
 
 }

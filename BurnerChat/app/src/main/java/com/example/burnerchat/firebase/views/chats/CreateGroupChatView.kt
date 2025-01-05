@@ -5,6 +5,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -106,10 +107,15 @@ class CreateGroupChatView : AppCompatActivity() {
 
     private fun initConfirmButton() {
         btGroupConfirm.setOnClickListener {
-            val name = etChatName.text.toString()
-            if (name.isNotEmpty()) {
-                viewModel.addChat(name)
+            if(viewModel.isGroup()){
+                val name = etChatName.text.toString()
+                if (name.isNotEmpty()) {
+                    viewModel.addChat(name)
+                }
+            }else{
+                Toast.makeText(this, "Debe seleccionar un mínimo de dos usuarios", Toast.LENGTH_SHORT).show()
             }
+
         }
 
     }

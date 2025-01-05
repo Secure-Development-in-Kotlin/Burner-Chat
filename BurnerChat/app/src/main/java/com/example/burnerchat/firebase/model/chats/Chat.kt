@@ -7,12 +7,13 @@ import java.util.UUID
 
 class Chat(
     var name: String,
-    val participants: Array<String>,
+    var participants: Array<String>,
     val uid: String = UUID.randomUUID().toString(), // Generate a unique ID if not provided
     val creationDate: Timestamp = Timestamp.now(),
     var messages: MutableList<Message> = mutableListOf(),
     var imageUrl: String? = null
 ) {
+
 
     fun getLastMessage(): Message {
         return messages.last()
@@ -50,6 +51,10 @@ class Chat(
         result = 31 * result + messages.hashCode()
         result = 31 * result + (imageUrl?.hashCode() ?: 0)
         return result
+    }
+
+    fun isGroup() :Boolean{
+        return participants.size>2
     }
 
 
