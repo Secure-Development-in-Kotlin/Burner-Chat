@@ -8,6 +8,7 @@ import com.example.burnerchat.webRTC.model.messages.messageImpls.ImageMessage
 import com.example.burnerchat.webRTC.model.messages.messageImpls.TextMessage
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
 
@@ -42,6 +43,34 @@ object ChatsPersistenceManager {
         return chatsDataBase
     }
 
+    // Function to get all chats where a user is involved
+    suspend fun getChatsByUser(user: FirebaseUser): List<Chat> {
+        val result = db.collection(CHATS_COLLECTION_NAME).get().await()
+        val chatsDataBase = mutableListOf<Chat>()
+        for (document in result) {
+            val data = document.data
+            val image = data["imageUrl"]
+            val participantsList = document.data["participants"] as? List<String> ?: emptyList()
+            if (participantsList.contains(user.uid)) {
+                val chat = Chat(
+                    name = document.data["name"] as String,
+                    participants = participantsList.toTypedArray(), // Convert List<String> to Array<String>
+                    uid = document.id,
+                    creationDate = document.data["createdAt"] as Timestamp,
+                    imageUrl = if (document.data["imageUrl"] == null) null else document.data["imageUrl"] as String
+                )
+
+                val messagesData = document.data["messages"] as List<Map<String, Any>>
+                messagesData.forEach { msgData ->
+                    chat.messages.add(parseMessageData(msgData))
+                }
+
+                chatsDataBase.add(chat)
+            }
+        }
+        return chatsDataBase
+    }
+
 
     fun addChat(chat: Chat) {
         //TODO: refactor the viewModel to add the chats here
@@ -53,11 +82,9 @@ object ChatsPersistenceManager {
 
         try {
             db.collection(CHATS_COLLECTION_NAME).document(chat.uid)
-                .update("messages", updatedMessages)
-                .addOnSuccessListener {
+                .update("messages", updatedMessages).addOnSuccessListener {
                     Log.d("ChatsPersistenceManager", "Message added to chat")
-                }
-                .addOnFailureListener {
+                }.addOnFailureListener {
                     Log.e("ChatsPersistenceManager", "Error adding message to chat", it)
                 }
         } catch (e: Exception) {
@@ -65,9 +92,45 @@ object ChatsPersistenceManager {
         }
     }
 
-    private fun getUpdatedMapMessages(chat: Chat, message: Message): List<Map<String, Any>> {
+    // Function to delete all messages of a user in a chat (for Panic Mode)
+    fun deleteMessagesByUser(chat: Chat, user: FirebaseUser) {
+        // If the chat is a private chat, delete the chat
+        if (chat.participants.size == 2) {
+            db.collection(CHATS_COLLECTION_NAME).document(chat.uid).delete()
+            return
+        }
+        // If the chat is a group chat, delete all messages sent by the user
+        else {
+            val originalMessages = chat.messages
+            for (msg in chat.messages) {
+                if (msg.getUserId() == user.uid) {
+                    originalMessages.remove(msg)
+                }
+            }
+
+            // Updates the chat with the new messages list
+            updateChat(chat, convertMessagesToMap(originalMessages))
+        }
+    }
+
+    // Function to update a group chat (for Panic Mode)
+    private fun updateChat(chat: Chat, convertMessagesToMap: MutableList<Map<String, Any>>) {
+        try {
+            db.collection(CHATS_COLLECTION_NAME).document(chat.uid)
+                .update("messages", convertMessagesToMap).addOnSuccessListener {
+                    Log.d("ChatsPersistenceManager", "Chat updated")
+                }.addOnFailureListener {
+                    Log.e("ChatsPersistenceManager", "Error updating chat", it)
+                }
+        } catch (e: Exception) {
+            Log.e("ChatsPersistenceManager", "Error updating chat", e)
+        }
+    }
+
+    // Function to convert a list of firebase messages to a map
+    private fun convertMessagesToMap(messages: MutableList<Message>): MutableList<Map<String, Any>> {
         val updatedMessages = mutableListOf<Map<String, Any>>()
-        for (msg in chat.messages) {
+        for (msg in messages) {
             updatedMessages.add(
                 mapOf(
                     "content" to msg.getContent(),
@@ -77,6 +140,11 @@ object ChatsPersistenceManager {
                 )
             )
         }
+        return updatedMessages
+    }
+
+    private fun getUpdatedMapMessages(chat: Chat, message: Message): List<Map<String, Any>> {
+        val updatedMessages = convertMessagesToMap(chat.messages)
 
         when (message.getMessageTypeCode(message.getUserId())) {
             0, 1 -> {
@@ -90,6 +158,7 @@ object ChatsPersistenceManager {
                     )
                 )
             }
+
             2, 3 -> {
                 // Image message
                 updatedMessages.add(
@@ -134,31 +203,30 @@ object ChatsPersistenceManager {
     }
 
     fun listenToChatsRealtime(onChatsUpdated: (List<Chat>) -> Unit) {
-        db.collection(CHATS_COLLECTION_NAME)
-            .addSnapshotListener { snapshots, error ->
-                if (error != null) {
-                    return@addSnapshotListener
-                }
-
-                val chatsDataBase = mutableListOf<Chat>()
-                if (snapshots != null) {
-                    for (document in snapshots) {
-                        val participantsList =
-                            document.data["participants"] as? List<String> ?: emptyList()
-                        val chat = Chat(
-                            name = document.data["name"] as String,
-                            participants = participantsList.toTypedArray(), // Convert List<String> to Array<String>
-                            uid = document.id,
-                            creationDate = document.data["createdAt"] as? Timestamp
-                                ?: Timestamp.now(),
-                            imageUrl = document.data["imageUrl"] as? String,
-                            messages = mutableListOf()
-                        )
-                        chatsDataBase.add(chat)
-                    }
-                }
-                onChatsUpdated(chatsDataBase)
+        db.collection(CHATS_COLLECTION_NAME).addSnapshotListener { snapshots, error ->
+            if (error != null) {
+                return@addSnapshotListener
             }
+
+            val chatsDataBase = mutableListOf<Chat>()
+            if (snapshots != null) {
+                for (document in snapshots) {
+                    val participantsList =
+                        document.data["participants"] as? List<String> ?: emptyList()
+                    val chat = Chat(
+                        name = document.data["name"] as String,
+                        participants = participantsList.toTypedArray(), // Convert List<String> to Array<String>
+                        uid = document.id,
+                        creationDate = document.data["createdAt"] as? Timestamp
+                            ?: Timestamp.now(),
+                        imageUrl = document.data["imageUrl"] as? String,
+                        messages = mutableListOf()
+                    )
+                    chatsDataBase.add(chat)
+                }
+            }
+            onChatsUpdated(chatsDataBase)
+        }
     }
 
     fun listenForMessagesRealtime(chat: Chat, onMessagesUpdated: (List<Message>) -> Unit) {
@@ -182,35 +250,37 @@ object ChatsPersistenceManager {
     }
 
     private fun parseMessageData(msgData: Map<String, Any>): Message {
-            when(msgData["messageType"]) {
-                0L, 1L -> {
-                    // Text message
-                    val message = TextMessage(
-                        msgData["content"] as String,
-                        msgData["sender"] as String,
-                        msgData["createdAt"] as Timestamp
-                    )
-                    return message
-                }
-                2L, 3L -> {
-                    // Image message
-                    val message = ImageMessage(
-                        msgData["content"] as String,
-                        msgData["sender"] as String,
-                        msgData["createdAt"] as Timestamp
-                    )
-                    message.textContent = msgData["textContent"] as String
-                    return message
-                }
-                else -> {
-                    val message = TextMessage(
-                        msgData["content"] as String,
-                        msgData["sender"] as String,
-                        msgData["createdAt"] as Timestamp
-                    )
-                    return message
-                }
+        when (msgData["messageType"]) {
+            0L, 1L -> {
+                // Text message
+                val message = TextMessage(
+                    msgData["content"] as String,
+                    msgData["sender"] as String,
+                    msgData["createdAt"] as Timestamp
+                )
+                return message
             }
+
+            2L, 3L -> {
+                // Image message
+                val message = ImageMessage(
+                    msgData["content"] as String,
+                    msgData["sender"] as String,
+                    msgData["createdAt"] as Timestamp
+                )
+                message.textContent = msgData["textContent"] as String
+                return message
+            }
+
+            else -> {
+                val message = TextMessage(
+                    msgData["content"] as String,
+                    msgData["sender"] as String,
+                    msgData["createdAt"] as Timestamp
+                )
+                return message
+            }
+        }
     }
 
 }

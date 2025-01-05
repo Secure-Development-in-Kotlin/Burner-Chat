@@ -1,10 +1,8 @@
 package com.example.burnerchat.webRTC.business
 
 import android.util.Log
-import com.example.burnerchat.webRTC.model.chats.Chat
 import com.example.burnerchat.webRTC.views.chats.UserUIInfo
 import com.google.firebase.Firebase
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
@@ -17,6 +15,7 @@ import kotlinx.coroutines.tasks.await
 object UserPersistenceManager {
 
     private const val USER_COLLECTION_NAME = "users"
+
     val db = Firebase.firestore
 
     fun getLoggedUser(): FirebaseUser? {
@@ -65,25 +64,43 @@ object UserPersistenceManager {
     }
 
     // Delete everything related to the user
-    fun sendPanic() {
-        TODO("Se borra todo lo relacionado con el usuario: mensajes, chats y demás")
+    suspend fun sendPanic(currentUser: FirebaseUser) {
+        // Se borra lo relacionado con el usuario: mensajes, chats y demás
+        val chats = ChatsPersistenceManager.getChatsByUser(currentUser)
+        for (chat in chats) {
+            ChatsPersistenceManager.deleteMessagesByUser(chat, currentUser)
+            deleteUser(currentUser)
+        }
     }
 
-    suspend fun getUsers():List<UserUIInfo>{
+    // Delete the user from the database
+    private fun deleteUser(currentUser: FirebaseUser) {
+        db.collection(USER_COLLECTION_NAME).document(currentUser.uid).delete()
+            .addOnSuccessListener {
+                Log.d("Firestore", "User data deleted successfully")
+                // Deletes cached user
+                currentUser.delete()
+            }
+            .addOnFailureListener { e: Exception? ->
+                Log.e("Firestore", "Error deleting user data", e)
+            }
+    }
+
+    suspend fun getUsers(): List<UserUIInfo> {
         val result = ChatsPersistenceManager.db.collection(USER_COLLECTION_NAME).get().await()
         val usersDataBase = mutableListOf<UserUIInfo>()
         for (document in result) {
             val data = document.data
-            val firebaseUserData = data as Map<String,Any>
+            val firebaseUserData = data as Map<String, Any>
 
-            if(firebaseUserData["email"]!= getLoggedUser()?.email){
+            if (firebaseUserData["email"] != getLoggedUser()?.email) {
                 var profilePicture = firebaseUserData["profilePicture"]
-                if(profilePicture == null)
+                if (profilePicture == null)
                     profilePicture = " "
                 else
                     profilePicture = profilePicture.toString()
 
-                val userData = UserUIInfo(firebaseUserData["email"].toString(),profilePicture)
+                val userData = UserUIInfo(firebaseUserData["email"].toString(), profilePicture)
                 usersDataBase.add(userData)
             }
 
@@ -91,47 +108,46 @@ object UserPersistenceManager {
         return usersDataBase
     }
 
-    suspend fun getUsersByEmail(emails:Array<String>):List<UserUIInfo>{
+    suspend fun getUsersByEmail(emails: Array<String>): List<UserUIInfo> {
         val result = ChatsPersistenceManager.db.collection(USER_COLLECTION_NAME).get().await()
         val usersDataBase = mutableListOf<UserUIInfo>()
         for (document in result) {
             val data = document.data
-            val firebaseUserData = data as Map<String,Any>
+            val firebaseUserData = data as Map<String, Any>
 
 
-                if(emails.contains(firebaseUserData["email"])){
-                    var profilePicture = firebaseUserData["profilePicture"]
-                    if(profilePicture == null)
-                        profilePicture = " "
-                    else
-                        profilePicture = profilePicture.toString()
+            if (emails.contains(firebaseUserData["email"])) {
+                var profilePicture = firebaseUserData["profilePicture"]
+                if (profilePicture == null)
+                    profilePicture = " "
+                else
+                    profilePicture = profilePicture.toString()
 
-                    val userData = UserUIInfo(firebaseUserData["email"].toString(),profilePicture)
-                    usersDataBase.add(userData)
-                }
-
+                val userData = UserUIInfo(firebaseUserData["email"].toString(), profilePicture)
+                usersDataBase.add(userData)
+            }
 
 
         }
         return usersDataBase
     }
 
-    suspend fun getUsersByString(string:String):List<UserUIInfo>{
+    suspend fun getUsersByString(string: String): List<UserUIInfo> {
         val result = ChatsPersistenceManager.db.collection(USER_COLLECTION_NAME).get().await()
         val usersDataBase = mutableListOf<UserUIInfo>()
         for (document in result) {
             val data = document.data
-            val firebaseUserData = data as Map<String,Any>
+            val firebaseUserData = data as Map<String, Any>
 
-            if(firebaseUserData["email"]!= getLoggedUser()?.email){
-                if((firebaseUserData["email"].toString().contains(string))){
+            if (firebaseUserData["email"] != getLoggedUser()?.email) {
+                if ((firebaseUserData["email"].toString().contains(string))) {
                     var profilePicture = firebaseUserData["profilePicture"]
-                    if(profilePicture == null)
+                    if (profilePicture == null)
                         profilePicture = " "
                     else
                         profilePicture = profilePicture.toString()
 
-                    val userData = UserUIInfo(firebaseUserData["email"].toString(),profilePicture)
+                    val userData = UserUIInfo(firebaseUserData["email"].toString(), profilePicture)
                     usersDataBase.add(userData)
                 }
 

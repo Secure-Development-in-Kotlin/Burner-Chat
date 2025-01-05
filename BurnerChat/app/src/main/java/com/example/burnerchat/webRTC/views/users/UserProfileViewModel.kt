@@ -4,8 +4,11 @@ import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.burnerchat.BurnerChatApp
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class UserProfileViewModel : ViewModel() {
 
@@ -24,6 +27,8 @@ class UserProfileViewModel : ViewModel() {
     }
 
     fun sendPanic() {
-        BurnerChatApp.appModule.usersRepository.sendPanic()
+        viewModelScope.launch(Dispatchers.IO) {
+            BurnerChatApp.appModule.usersRepository.sendPanic(_user.value!!)
+        }
     }
 }

@@ -26,6 +26,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.webRTC.business.ImageUtils
 import androidx.lifecycle.lifecycleScope
+import com.example.burnerchat.MainActivity
 import com.example.burnerchat.R
 import com.example.burnerchat.preferences.AppPreferences
 import com.example.burnerchat.preferences.PreferenciasDataClass
@@ -134,6 +135,9 @@ class UserProfileActivity : AppCompatActivity() {
                 .setPositiveButton(R.string.yes) { dialog, _ ->
                     viewModel.sendPanic()
                     dialog.dismiss() // Cierra el diálogo
+                    // Se envía al usuario a la pantalla de inicio
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
                 }
                 .setNegativeButton(R.string.no) { dialog, _ ->
                     dialog.dismiss() // Solo cierra el diálogo
