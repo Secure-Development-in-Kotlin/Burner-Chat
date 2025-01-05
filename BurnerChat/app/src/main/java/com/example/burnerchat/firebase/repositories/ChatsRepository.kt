@@ -126,6 +126,28 @@ object ChatsRepository {
         }
     }
 
+    //Function to update a chat (In general)
+    fun updateChat(chat: Chat){
+        val messages = convertMessagesToMap(chat.messages)
+        val uid = chat.uid
+        val name = chat.name
+        val image = chat.imageUrl
+        val participants = chat.participants.toList()
+        try {
+            db.collection(CHATS_COLLECTION_NAME).document(uid)
+                .update("messages", messages,
+                    "name",name,
+                    "imageUrl",image,
+                    "participants", participants).addOnSuccessListener {
+                    Log.d("ChatsPersistenceManager", "Chat updated")
+                }.addOnFailureListener {
+                    Log.e("ChatsPersistenceManager", "Error updating chat", it)
+                }
+        } catch (e: Exception) {
+            Log.e("ChatsPersistenceManager", "Error updating chat", e)
+        }
+    }
+
     // Function to convert a list of firebase messages to a map
     private fun convertMessagesToMap(messages: MutableList<Message>): MutableList<Map<String, Any>> {
         val updatedMessages = mutableListOf<Map<String, Any>>()

@@ -6,6 +6,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -28,6 +29,16 @@ class ChatInfoActivity : AppCompatActivity() {
     private lateinit var rvUsers: RecyclerView
     private lateinit var btUpdate: Button
 
+    private var galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        val galleryURI = it
+        try {
+            val bitmap = ImageUtils.loadBitmapFromURI(galleryURI!!, contentResolver)
+            viewModel.setIcon(bitmap!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     private fun initComponents(){
         btGoBack = findViewById(R.id.ibGoBackInfoChat)
         ivIcon = findViewById(R.id.ivInfoChatIcon)
@@ -48,6 +59,18 @@ class ChatInfoActivity : AppCompatActivity() {
         btGoBack.setOnClickListener{
             finish()
         }
+
+        ivIcon.setOnClickListener{
+            galleryLauncher.launch("image/*")
+        }
+
+        btUpdate.setOnClickListener{
+            viewModel.setNombre(etName.text.toString())
+            viewModel.updateChat()
+            finish()
+        }
+
+
 
 
     }
