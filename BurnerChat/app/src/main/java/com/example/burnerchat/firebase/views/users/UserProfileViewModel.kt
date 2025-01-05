@@ -7,19 +7,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.firebase.repositories.ImageUtils
-import com.example.burnerchat.firebase.views.chats.UserUIInfo
+import com.example.burnerchat.firebase.views.chats.UserDTO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class UserProfileViewModel : ViewModel() {
 
     private val repository = BurnerChatApp.appModule.usersRepository
-    private val _user = MutableLiveData<UserUIInfo>()
+    private val _user = MutableLiveData<UserDTO>()
 
-    val user: LiveData<UserUIInfo>
+    val user: LiveData<UserDTO>
         get() = _user
 
-    fun setUser(user: UserUIInfo) {
+    fun setUser(user: UserDTO) {
         _user.value = (user)
     }
 
@@ -28,7 +28,7 @@ class UserProfileViewModel : ViewModel() {
     }
 
     fun setIcon(bitmap: Bitmap) {
-        _user.value = UserUIInfo(user.value?.email!!, ImageUtils.convertToBase64(bitmap))
+        _user.value = UserDTO(user.value?.email!!, ImageUtils.convertToBase64(bitmap))
         repository.updateUser(repository.getLoggedUser()!!,_user.value!!)
     }
 

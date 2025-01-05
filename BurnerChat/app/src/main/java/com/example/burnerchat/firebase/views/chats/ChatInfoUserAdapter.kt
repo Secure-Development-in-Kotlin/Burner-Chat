@@ -11,10 +11,10 @@ import com.example.burnerchat.R
 import com.example.burnerchat.firebase.repositories.ImageUtils
 
 class ChatInfoUserAdapter(
-    private var usersList:List<UserUIInfo>
+    private var usersList:List<UserDTO>
 ) :RecyclerView.Adapter<ChatInfoUserAdapter.ViewHolder>(){
 
-    fun updateUsersList(list:List<UserUIInfo>){
+    fun updateUsersList(list:List<UserDTO>){
         usersList = list
         notifyDataSetChanged()
     }
@@ -27,7 +27,7 @@ class ChatInfoUserAdapter(
 
         private lateinit var ivUserIcon: ImageView
         private lateinit var tvName: TextView
-        private lateinit var userActual : UserUIInfo
+        private lateinit var userActual : UserDTO
         private val view = view
         init  {
             initComponents()
@@ -38,7 +38,7 @@ class ChatInfoUserAdapter(
             tvName = view.findViewById(R.id.tvAddUserEmail)
         }
 
-        fun bind(userInfo: UserUIInfo){
+        fun bind(userInfo: UserDTO){
             userActual = userInfo
             val email = userActual.email
             val loggedUser = usersRepo.getLoggedUser()?.email!!

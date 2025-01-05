@@ -11,13 +11,13 @@ import com.example.burnerchat.firebase.model.chats.Chat
 import kotlinx.coroutines.launch
 
 class ChatsViewViewModel : ViewModel() {
-    private val dataBase = ChatsRepository
+    private val chatsRepository = ChatsRepository
     private val usersRepo = BurnerChatApp.appModule.usersRepository
     private val _chatsList = MutableLiveData(listOf<Chat>())
 
     fun init() {
         viewModelScope.launch {
-            dataBase.listenToChatsRealtime { chats ->
+            chatsRepository.listenToChatsRealtime { chats ->
                 _chatsList.value = chats
                 Log.d("Chats", chats.toString())
             }
@@ -26,17 +26,17 @@ class ChatsViewViewModel : ViewModel() {
 
     }
 
-    suspend fun fetchUser(): UserUIInfo? {
+    suspend fun fetchUser(): UserDTO? {
         return usersRepo.getUserData()
     }
 
     private fun addChat(name: String, participants: Array<String>) {
         val chat = Chat(name, participants)
-        BurnerChatApp.appModule.chatsRepository.addChat(chat)
+        chatsRepository.addChat(chat)
 
         // Update the chats from the view
         viewModelScope.launch {
-            _chatsList.value = dataBase.getChats()
+            _chatsList.value = chatsRepository.getChats()
         }
     }
 
@@ -44,7 +44,7 @@ class ChatsViewViewModel : ViewModel() {
         get() = _chatsList
 
     suspend fun getChats() {
-        _chatsList.value = dataBase.getChats()
+        _chatsList.value = chatsRepository.getChats()
     }
 
 }

@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.firebase.model.chats.Chat
 import com.example.burnerchat.firebase.repositories.ImageUtils
@@ -15,17 +14,12 @@ class ChatInfoActivityViewModel : ViewModel() {
     private val database = BurnerChatApp.appModule.usersRepository
     private val chatsDB = BurnerChatApp.appModule.chatsRepository
 
-    fun init(){
-        viewModelScope.launch {
-
-        }
-    }
     private val _chat = MutableLiveData<Chat>()
     val chat : LiveData<Chat>
         get() = _chat
 
-    private val _usersDBList = MutableLiveData<List<UserUIInfo>>(mutableListOf())
-    val usersDBList :LiveData<List<UserUIInfo>>
+    private val _usersDBList = MutableLiveData<List<UserDTO>>(mutableListOf())
+    val usersDBList :LiveData<List<UserDTO>>
         get() = _usersDBList
 
     suspend fun getChatFromDB(uid:String){

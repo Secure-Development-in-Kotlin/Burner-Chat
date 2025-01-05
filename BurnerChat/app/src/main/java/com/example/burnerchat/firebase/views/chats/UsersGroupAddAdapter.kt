@@ -11,14 +11,14 @@ import com.example.burnerchat.R
 import com.example.burnerchat.firebase.repositories.ImageUtils
 
 class UsersGroupAddAdapter(
-    private var usersList :List<UserUIInfo>,
-    private val onClickListenerAdd: (UserUIInfo) -> Unit,
-    private val onClickListenerRemove:(UserUIInfo)->Unit,
+    private var usersList :List<UserDTO>,
+    private val onClickListenerAdd: (UserDTO) -> Unit,
+    private val onClickListenerRemove:(UserDTO)->Unit,
     private val checkContains:(String)->Boolean
 
 ): RecyclerView.Adapter<UsersGroupAddAdapter.ViewHolder>() {
 
-    fun updateUsersList(list:List<UserUIInfo>){
+    fun updateUsersList(list:List<UserDTO>){
         usersList = list
         notifyDataSetChanged()
     }
@@ -28,15 +28,15 @@ class UsersGroupAddAdapter(
     }
     class ViewHolder(
         view: View,
-        onClick: (UserUIInfo) -> Unit,
-        onClickRemove:(UserUIInfo)->Unit,
+        onClick: (UserDTO) -> Unit,
+        onClickRemove:(UserDTO)->Unit,
         checkContains:(String)->Boolean) :
         RecyclerView.ViewHolder(view){
 
             private lateinit var ivUserIcon: ImageView
             private lateinit var tvName: TextView
             private lateinit var ibAdd: ImageButton
-            private lateinit var userActual : UserUIInfo
+            private lateinit var userActual : UserDTO
             private val onClickFunc = onClick
             private val checkContains = checkContains
             private val deleteFunc = onClickRemove
@@ -61,7 +61,7 @@ class UsersGroupAddAdapter(
 
         }
 
-        fun bind(userInfo: UserUIInfo){
+        fun bind(userInfo: UserDTO){
             userActual = userInfo
             tvName.text = userActual.email
             setImage(userActual.icon)

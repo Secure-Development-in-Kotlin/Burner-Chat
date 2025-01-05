@@ -1,7 +1,8 @@
 package com.example.burnerchat.firebase.repositories
 
 import android.util.Log
-import com.example.burnerchat.firebase.views.chats.UserUIInfo
+import com.example.burnerchat.BurnerChatApp
+import com.example.burnerchat.firebase.views.chats.UserDTO
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -39,7 +40,7 @@ object UsersRepository {
         return Firebase.auth.currentUser
     }
 
-    suspend fun getUserData(): UserUIInfo? {
+    suspend fun getUserData(): UserDTO? {
         val result = ChatsRepository.db.collection(USER_COLLECTION_NAME).get().await()
         for (document in result) {
             val data = document.data
@@ -49,7 +50,7 @@ object UsersRepository {
                 var profilePicture = firebaseUserData["profilePicture"]
                 profilePicture = profilePicture?.toString() ?: ""
 
-                val userData = UserUIInfo(firebaseUserData["email"].toString(), profilePicture.toString())
+                val userData = UserDTO(firebaseUserData["email"].toString(), profilePicture.toString())
                 return userData
             }
 
@@ -81,7 +82,7 @@ object UsersRepository {
             }
     }
 
-    fun updateUser(currentUser: FirebaseUser, userDTO: UserUIInfo) {
+    fun updateUser(currentUser: FirebaseUser, userDTO: UserDTO) {
         val userId: String = currentUser.uid // Unique Firebase Auth UID
         val email: String = currentUser.email.toString()
         val photoUrl: String? =
@@ -109,7 +110,7 @@ object UsersRepository {
     // Delete everything related to the user
     suspend fun sendPanic(currentUser: FirebaseUser) {
         // Se borra lo relacionado con el usuario: mensajes, chats y demás
-        val chats = ChatsRepository.getChatsByUser(currentUser)
+        val chats = BurnerChatApp.appModule.chatsRepository.getChats()
         for (chat in chats) {
             ChatsRepository.deleteMessagesByUser(chat, currentUser)
             deleteUser(currentUser)
@@ -129,9 +130,9 @@ object UsersRepository {
             }
     }
 
-    suspend fun getUsers(): List<UserUIInfo> {
+    suspend fun getUsers(): List<UserDTO> {
         val result = ChatsRepository.db.collection(USER_COLLECTION_NAME).get().await()
-        val usersDataBase = mutableListOf<UserUIInfo>()
+        val usersDataBase = mutableListOf<UserDTO>()
         for (document in result) {
             val data = document.data
             val firebaseUserData = data as Map<String, Any>
@@ -143,7 +144,7 @@ object UsersRepository {
                 else
                     profilePicture = profilePicture.toString()
 
-                val userData = UserUIInfo(firebaseUserData["email"].toString(), profilePicture)
+                val userData = UserDTO(firebaseUserData["email"].toString(), profilePicture)
                 usersDataBase.add(userData)
             }
 
@@ -151,9 +152,9 @@ object UsersRepository {
         return usersDataBase
     }
 
-    suspend fun getUsersByEmail(emails: Array<String>): List<UserUIInfo> {
+    suspend fun getUsersByEmail(emails: Array<String>): List<UserDTO> {
         val result = ChatsRepository.db.collection(USER_COLLECTION_NAME).get().await()
-        val usersDataBase = mutableListOf<UserUIInfo>()
+        val usersDataBase = mutableListOf<UserDTO>()
         for (document in result) {
             val data = document.data
             val firebaseUserData = data as Map<String, Any>
@@ -171,7 +172,7 @@ object UsersRepository {
                     else
                         profilePicture = profilePicture.toString()
 
-                    val userData = UserUIInfo(firebaseUserData["email"].toString(), profilePicture)
+                    val userData = UserDTO(firebaseUserData["email"].toString(), profilePicture)
                     usersDataBase.add(userData)
                 }
 
@@ -182,9 +183,9 @@ object UsersRepository {
         return usersDataBase
     }
 
-    suspend fun getUsersByString(string: String): List<UserUIInfo> {
+    suspend fun getUsersByString(string: String): List<UserDTO> {
         val result = ChatsRepository.db.collection(USER_COLLECTION_NAME).get().await()
-        val usersDataBase = mutableListOf<UserUIInfo>()
+        val usersDataBase = mutableListOf<UserDTO>()
         for (document in result) {
             val data = document.data
             val firebaseUserData = data as Map<String, Any>
@@ -198,7 +199,7 @@ object UsersRepository {
                         profilePicture = profilePicture.toString()
 
                     val userData =
-                        UserUIInfo(firebaseUserData["email"].toString(), profilePicture.toString())
+                        UserDTO(firebaseUserData["email"].toString(), profilePicture.toString())
                     usersDataBase.add(userData)
                 }
 

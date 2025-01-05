@@ -25,21 +25,21 @@ class CreateGroupChatViewViewModel : ViewModel() {
     val createdChat: LiveData<Boolean>
         get() = _createdChat
 
-    private var _dbUsersList = MutableLiveData<List<UserUIInfo>>(mutableListOf())
-    val dbUsersList :LiveData<List<UserUIInfo>>
+    private var _dbUsersList = MutableLiveData<List<UserDTO>>(mutableListOf())
+    val dbUsersList :LiveData<List<UserDTO>>
         get() = _dbUsersList
 
     private var _icon = MutableLiveData<String>("")
     val icon:LiveData<String>
         get()=_icon
 
-    fun addUser(userUIInfo: UserUIInfo){
-        _usersList.value!!.add(userUIInfo.email)
+    fun addUser(userDTO: UserDTO){
+        _usersList.value!!.add(userDTO.email)
         _usersList.value = _usersList.value
     }
 
-    fun removeUser(userUIInfo: UserUIInfo){
-        _usersList.value!!.remove(userUIInfo.email)
+    fun removeUser(userDTO: UserDTO){
+        _usersList.value!!.remove(userDTO.email)
         _usersList.value = _usersList.value
     }
 

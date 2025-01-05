@@ -1,6 +1,7 @@
 package com.example.burnerchat.firebase.repositories
 
 import android.util.Log
+import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.firebase.model.chats.Chat
 import com.example.burnerchat.firebase.model.messages.Message
 import com.example.burnerchat.firebase.model.messages.messageImpls.ImageMessage
@@ -18,7 +19,12 @@ object ChatsRepository {
     private const val CHATS_COLLECTION_NAME = "chats"
 
     suspend fun getChats(): List<Chat> {
-        val result = db.collection(CHATS_COLLECTION_NAME).get().await()
+        val loggedUser = BurnerChatApp.appModule.usersRepository.getLoggedUser()
+
+        val result = db.collection(CHATS_COLLECTION_NAME).whereArrayContains(
+            "participants",
+            loggedUser?.email!!
+        ).get().await()
         val chatsDataBase = mutableListOf<Chat>()
         for (document in result) {
             val participantsList = document.data["participants"] as? List<String> ?: emptyList()
@@ -39,34 +45,6 @@ object ChatsRepository {
         }
         return chatsDataBase
     }
-
-    // Function to get all chats where a user is involved
-    suspend fun getChatsByUser(user: FirebaseUser): List<Chat> {
-        val result = db.collection(CHATS_COLLECTION_NAME).get().await()
-        val chatsDataBase = mutableListOf<Chat>()
-        for (document in result) {
-            val data = document.data
-            val participantsList = document.data["participants"] as? List<String> ?: emptyList()
-            if (participantsList.contains(user.uid)) {
-                val chat = Chat(
-                    name = document.data["name"] as String,
-                    participants = participantsList.toTypedArray(), // Convert List<String> to Array<String>
-                    uid = document.id,
-                    creationDate = document.data["createdAt"] as Timestamp,
-                    imageUrl = if (document.data["imageUrl"] == null) null else document.data["imageUrl"] as String
-                )
-
-                val messagesData = document.data["messages"] as List<Map<String, Any>>
-                messagesData.forEach { msgData ->
-                    chat.messages.add(parseMessageData(msgData))
-                }
-
-                chatsDataBase.add(chat)
-            }
-        }
-        return chatsDataBase
-    }
-
 
     fun addChat(chat: Chat) {
         //TODO: refactor the viewModel to add the chats here
@@ -221,30 +199,36 @@ object ChatsRepository {
     }
 
     fun listenToChatsRealtime(onChatsUpdated: (List<Chat>) -> Unit) {
-        db.collection(CHATS_COLLECTION_NAME).addSnapshotListener { snapshots, error ->
-            if (error != null) {
-                return@addSnapshotListener
-            }
+        val loggedUser = BurnerChatApp.appModule.usersRepository.getLoggedUser()
 
-            val chatsDataBase = mutableListOf<Chat>()
-            if (snapshots != null) {
-                for (document in snapshots) {
-                    val participantsList =
-                        document.data["participants"] as? List<String> ?: emptyList()
-                    val chat = Chat(
-                        name = document.data["name"] as String,
-                        participants = participantsList.toTypedArray(), // Convert List<String> to Array<String>
-                        uid = document.id,
-                        creationDate = document.data["createdAt"] as? Timestamp
-                            ?: Timestamp.now(),
-                        imageUrl = document.data["imageUrl"] as? String,
-                        messages = mutableListOf()
-                    )
-                    chatsDataBase.add(chat)
+        db.collection(CHATS_COLLECTION_NAME).whereArrayContains(
+            "participants",
+            loggedUser?.email!!
+        )
+            .addSnapshotListener { snapshots, error ->
+                if (error != null) {
+                    return@addSnapshotListener
                 }
+
+                val chatsDataBase = mutableListOf<Chat>()
+                if (snapshots != null) {
+                    for (document in snapshots) {
+                        val participantsList =
+                            document.data["participants"] as? List<String> ?: emptyList()
+                        val chat = Chat(
+                            name = document.data["name"] as String,
+                            participants = participantsList.toTypedArray(), // Convert List<String> to Array<String>
+                            uid = document.id,
+                            creationDate = document.data["createdAt"] as? Timestamp
+                                ?: Timestamp.now(),
+                            imageUrl = document.data["imageUrl"] as? String,
+                            messages = mutableListOf()
+                        )
+                        chatsDataBase.add(chat)
+                    }
+                }
+                onChatsUpdated(chatsDataBase)
             }
-            onChatsUpdated(chatsDataBase)
-        }
     }
 
     fun listenForMessagesRealtime(chat: Chat, onMessagesUpdated: (List<Message>) -> Unit) {

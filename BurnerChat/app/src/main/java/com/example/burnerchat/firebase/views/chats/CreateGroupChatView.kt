@@ -117,15 +117,15 @@ class CreateGroupChatView : AppCompatActivity() {
     private fun initUsersRecyler() {
 
         //Crear funciones
-        var onClickAdd = fun(user: UserUIInfo) {
+        val onClickAdd = fun(user: UserDTO) {
             viewModel.addUser(user)
         }
 
-        var onClickRemove = fun(user: UserUIInfo) {
+        val onClickRemove = fun(user: UserDTO) {
             viewModel.removeUser(user)
         }
 
-        var checkContains = fun(user: String): Boolean {
+        val checkContains = fun(user: String): Boolean {
             return viewModel.isSelected(user)
         }
 
@@ -151,9 +151,9 @@ class CreateGroupChatView : AppCompatActivity() {
                 adapter.reset()
             }
 
-            viewModel.dbUsersList.observe(context) { users ->
+            viewModel.dbUsersList.observe(context) { userList ->
                 val adapter = rvGroupUsers.adapter as UsersGroupAddAdapter
-                adapter.updateUsersList(users)
+                adapter.updateUsersList(userList)
             }
         }
 
