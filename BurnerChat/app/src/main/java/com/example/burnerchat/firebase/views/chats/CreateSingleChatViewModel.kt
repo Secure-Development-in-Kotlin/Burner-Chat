@@ -9,15 +9,51 @@ import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.firebase.repositories.ImageUtils
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.firestore
 
 
 class CreateSingleChatViewModel : ViewModel() {
+
+    private val usersRepository = BurnerChatApp.appModule.usersRepository
     private val db = Firebase.firestore
 
     private var _createdChat = MutableLiveData<Boolean>(false)
     val createdChat: LiveData<Boolean>
         get() = _createdChat
+
+    private var _usersDBList = MutableLiveData<List<UserDTO>>(listOf())
+    val usersDBList :LiveData<List<UserDTO>>
+        get() = _usersDBList
+
+    private var _selectedUser = MutableLiveData<String>()
+    val selectedUser:LiveData<String?>
+        get()=_selectedUser
+
+    fun selectUser(user:String){
+        _selectedUser.value = user
+    }
+
+    fun deselectUser(){
+        selectUser("")
+    }
+
+    suspend fun getUsers(){
+        val users = usersRepository.getUsers()
+        _usersDBList.value = users
+    }
+
+    suspend fun findUsers(string: String){
+        val users = usersRepository.getUsersByString(string)
+        _usersDBList.value=users
+    }
+
+    fun isSelected(email:String):Boolean{
+        if(_selectedUser.value==null)
+            return false
+        return _selectedUser.value!! == email
+    }
+
 
     fun setIcon(image: Bitmap){
         _icon.value = ImageUtils.convertToBase64(image)
@@ -27,7 +63,10 @@ class CreateSingleChatViewModel : ViewModel() {
     val icon:LiveData<String>
         get()=_icon
 
-    fun addChat(email: String, name: String) {
+    fun addChat(name: String) {
+        var email = ""
+        if(_selectedUser.value!=null)
+            email = _selectedUser.value!!
         // TODO: Check if the user exists in the db
         db.collection("users")
             .whereEqualTo("email", email)
@@ -63,5 +102,9 @@ class CreateSingleChatViewModel : ViewModel() {
             }
 
 
+    }
+
+    fun canAdd(): Boolean {
+        return !_selectedUser.value.isNullOrBlank()
     }
 }
