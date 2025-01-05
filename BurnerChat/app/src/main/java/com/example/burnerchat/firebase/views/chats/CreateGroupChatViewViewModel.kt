@@ -33,8 +33,6 @@ class CreateGroupChatViewViewModel : ViewModel() {
     val icon:LiveData<String>
         get()=_icon
 
-    private var name = ""
-
     fun addUser(userUIInfo: UserUIInfo){
         _usersList.value!!.add(userUIInfo.email)
         _usersList.value = _usersList.value
@@ -45,17 +43,13 @@ class CreateGroupChatViewViewModel : ViewModel() {
         _usersList.value = _usersList.value
     }
 
-    fun setName(name:String){
-        this.name=name
-    }
-
     suspend fun getUsers(){
         var users = database.getUsers()
         _dbUsersList.value = database.getUsers()
     }
 
     suspend fun findUsers(string: String){
-        var users = database.getUsersByString(string)
+        val users = database.getUsersByString(string)
         _dbUsersList.value=users
     }
 
@@ -63,10 +57,10 @@ class CreateGroupChatViewViewModel : ViewModel() {
         _icon.value = ImageUtils.convertToBase64(image)
     }
 
-    fun addChat(email: String ) {
+    fun addChat(name: String ) {
         // TODO: Check if the user exists in the db
         db.collection("users")
-            .whereEqualTo("email", email)
+            .whereEqualTo("email", name)
             .get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -74,8 +68,7 @@ class CreateGroupChatViewViewModel : ViewModel() {
                     participants.add(BurnerChatApp.appModule.usersRepository.getLoggedUser()!!.email!!)
 
                     val chat = hashMapOf(
-                        "name" to email,
-                        "email" to email,
+                        "name" to name,
                         "participants" to participants,
                         "createdAt" to FieldValue.serverTimestamp(),
                         "lastMessage" to null,

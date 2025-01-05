@@ -20,15 +20,15 @@ import kotlinx.coroutines.launch
 
 class CreateGroupChatView : AppCompatActivity() {
 
-    private val viewModel : CreateGroupChatViewViewModel by viewModels()
+    private val viewModel: CreateGroupChatViewViewModel by viewModels()
 
     private lateinit var btGoBack: ImageButton
     private lateinit var rvGroupUsers: RecyclerView
-    private lateinit var btGroupConfirm:Button
-    private lateinit var ivGroupIcon:ImageView
-    private lateinit var etChatName:EditText
-    private lateinit var ibSearch:ImageButton
-    private lateinit var etSearch:EditText
+    private lateinit var btGroupConfirm: Button
+    private lateinit var ivGroupIcon: ImageView
+    private lateinit var etChatName: EditText
+    private lateinit var ibSearch: ImageButton
+    private lateinit var etSearch: EditText
 
 
     private var galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
@@ -90,13 +90,13 @@ class CreateGroupChatView : AppCompatActivity() {
     }
 
     private fun initSearch() {
-        ibSearch.setOnClickListener{
+        ibSearch.setOnClickListener {
             val string = etSearch.text.toString()
-            if(!string.isNullOrBlank()){
+            if (!string.isNullOrBlank()) {
                 lifecycleScope.launch {
                     viewModel.findUsers(string)
                 }
-            }else{
+            } else {
                 lifecycleScope.launch {
                     viewModel.getUsers()
                 }
@@ -105,10 +105,10 @@ class CreateGroupChatView : AppCompatActivity() {
     }
 
     private fun initConfirmButton() {
-        btGroupConfirm.setOnClickListener{
-            val email = etChatName.text.toString()
-            if (email.isNotEmpty()) {
-                viewModel.addChat(email)
+        btGroupConfirm.setOnClickListener {
+            val name = etChatName.text.toString()
+            if (name.isNotEmpty()) {
+                viewModel.addChat(name)
             }
         }
 
@@ -117,15 +117,15 @@ class CreateGroupChatView : AppCompatActivity() {
     private fun initUsersRecyler() {
 
         //Crear funciones
-        var onClickAdd = fun (user : UserUIInfo){
+        var onClickAdd = fun(user: UserUIInfo) {
             viewModel.addUser(user)
         }
 
-        var onClickRemove = fun(user: UserUIInfo){
+        var onClickRemove = fun(user: UserUIInfo) {
             viewModel.removeUser(user)
         }
 
-        var checkContains = fun(user:String):Boolean{
+        var checkContains = fun(user: String): Boolean {
             return viewModel.isSelected(user)
         }
 
@@ -146,12 +146,12 @@ class CreateGroupChatView : AppCompatActivity() {
             rvGroupUsers.layoutManager = LinearLayoutManager(context)
             rvGroupUsers.adapter = customAdapter
 
-            viewModel.usersList.observe(context){
+            viewModel.usersList.observe(context) {
                 val adapter = rvGroupUsers.adapter as UsersGroupAddAdapter
                 adapter.reset()
             }
 
-            viewModel.dbUsersList.observe(context){ users->
+            viewModel.dbUsersList.observe(context) { users ->
                 val adapter = rvGroupUsers.adapter as UsersGroupAddAdapter
                 adapter.updateUsersList(users)
             }
@@ -169,7 +169,7 @@ class CreateGroupChatView : AppCompatActivity() {
             if (icono != null && icono.isNotBlank()) {
                 val bitmap = ImageUtils.decodeFromBase64(icono.toString())
                 ivGroupIcon.setImageBitmap(bitmap)
-            }else{
+            } else {
                 ivGroupIcon.setImageResource(R.drawable.default_icon_128)
             }
         }

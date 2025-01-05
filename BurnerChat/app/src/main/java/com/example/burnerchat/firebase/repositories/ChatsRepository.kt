@@ -21,8 +21,6 @@ object ChatsRepository {
         val result = db.collection(CHATS_COLLECTION_NAME).get().await()
         val chatsDataBase = mutableListOf<Chat>()
         for (document in result) {
-            val data = document.data
-            val image = data["imageUrl"]
             val participantsList = document.data["participants"] as? List<String> ?: emptyList()
             val chat = Chat(
                 name = document.data["name"] as String,
@@ -48,7 +46,6 @@ object ChatsRepository {
         val chatsDataBase = mutableListOf<Chat>()
         for (document in result) {
             val data = document.data
-            val image = data["imageUrl"]
             val participantsList = document.data["participants"] as? List<String> ?: emptyList()
             if (participantsList.contains(user.uid)) {
                 val chat = Chat(
@@ -267,7 +264,10 @@ object ChatsRepository {
                     msgData["sender"] as String,
                     msgData["createdAt"] as Timestamp
                 )
-                message.textContent = msgData["textContent"] as String
+                if (msgData["textContent"] != null)
+                    message.textContent = msgData["textContent"] as String
+                else
+                    message.textContent = ""
                 return message
             }
 
