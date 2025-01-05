@@ -77,7 +77,8 @@ class ChatInfoActivity : AppCompatActivity() {
     private fun updateInfo(chat:Chat){
 
        if(chat!=null){
-           updateIcon(chat.imageUrl!!)
+
+           updateIcon(chat.imageUrl)
            etName.setText(chat.name)
            lifecycleScope.launch {
                viewModel.getUsers()
@@ -85,7 +86,7 @@ class ChatInfoActivity : AppCompatActivity() {
        }
     }
 
-    private fun updateIcon(icon:String){
+    private fun updateIcon(icon:String?){
         val icono = icon
         if (icono != null && icono.isNotBlank()) {
             val bitmap = ImageUtils.decodeFromBase64(icono.toString())

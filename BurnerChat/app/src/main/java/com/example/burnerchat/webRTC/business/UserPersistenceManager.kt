@@ -39,6 +39,28 @@ object UserPersistenceManager {
         return Firebase.auth.currentUser
     }
 
+    suspend fun getUserData():UserUIInfo?{
+        val result = ChatsPersistenceManager.db.collection(USER_COLLECTION_NAME).get().await()
+        val usersDataBase = UserUIInfo(" "," ")
+        for (document in result) {
+            val data = document.data
+            val firebaseUserData = data as Map<String,Any>
+
+            if(firebaseUserData["email"]== getLoggedUser()?.email){
+                var profilePicture = firebaseUserData["profilePicture"]
+                if(profilePicture == null)
+                    profilePicture = " "
+                else
+                    profilePicture = profilePicture.toString()
+
+                val userData = UserUIInfo(firebaseUserData["email"].toString(),profilePicture)
+                return userData
+            }
+
+        }
+        return null
+    }
+
     fun addUser(currentUser: FirebaseUser) {
         val userId: String = currentUser.uid // Unique Firebase Auth UID
         val email: String = currentUser.email.toString()
@@ -62,6 +84,32 @@ object UserPersistenceManager {
                 Log.e("Firestore", "Error adding/updating user data", e)
             }
     }
+
+    fun updateUser(currentUser: FirebaseUser, userDTO:UserUIInfo) {
+        val userId: String = currentUser.uid // Unique Firebase Auth UID
+        val email: String = currentUser.email.toString()
+        val photoUrl: String? =
+            if ((currentUser.photoUrl != null)) currentUser.photoUrl.toString() else null
+
+
+        // Prepare the user document
+        val userData: MutableMap<String, Any?> = HashMap()
+        userData["email"] = email
+        userData["profilePicture"] = userDTO.icon
+        userData["lastSeen"] = FieldValue.serverTimestamp()
+
+
+        // Add or update user in Firestore
+        db.collection("users").document(userId).set(userData, SetOptions.merge())
+            .addOnSuccessListener { aVoid: Void? ->
+                Log.d("Firestore", "User data added/updated successfully")
+            }
+            .addOnFailureListener { e: Exception? ->
+                Log.e("Firestore", "Error adding/updating user data", e)
+            }
+    }
+
+
 
     // Delete everything related to the user
     suspend fun sendPanic(currentUser: FirebaseUser) {
@@ -114,8 +162,6 @@ object UserPersistenceManager {
         for (document in result) {
             val data = document.data
             val firebaseUserData = data as Map<String, Any>
-
-
             if (emails.contains(firebaseUserData["email"])) {
                 var profilePicture = firebaseUserData["profilePicture"]
                 if (profilePicture == null)
@@ -123,10 +169,19 @@ object UserPersistenceManager {
                 else
                     profilePicture = profilePicture.toString()
 
-                val userData = UserUIInfo(firebaseUserData["email"].toString(), profilePicture)
-                usersDataBase.add(userData)
-            }
+                if (emails.contains(firebaseUserData["email"])) {
+                    var profilePicture = firebaseUserData["profilePicture"]
+                    if (profilePicture == null)
+                        profilePicture = " "
+                    else
+                        profilePicture = profilePicture.toString()
 
+                    val userData = UserUIInfo(firebaseUserData["email"].toString(), profilePicture)
+                    usersDataBase.add(userData)
+                }
+
+
+            }
 
         }
         return usersDataBase
@@ -147,7 +202,7 @@ object UserPersistenceManager {
                     else
                         profilePicture = profilePicture.toString()
 
-                    val userData = UserUIInfo(firebaseUserData["email"].toString(), profilePicture)
+                    val userData = UserUIInfo(firebaseUserData["email"].toString(), profilePicture.toString())
                     usersDataBase.add(userData)
                 }
 
