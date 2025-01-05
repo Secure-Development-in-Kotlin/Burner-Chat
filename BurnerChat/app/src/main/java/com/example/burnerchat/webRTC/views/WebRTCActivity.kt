@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -78,43 +79,158 @@ fun MainScreen() {
     val viewModel = viewModel(modelClass = WebRTCViewModel::class.java)
     val state by viewModel.state.collectAsState()
     val events = rememberFlowWithLifecycle(flow = viewModel.oneTimeEvents)
-    var showIncomingRequestDialog by remember {
-        mutableStateOf(false)
+
+    var showUserInputDialog by remember { mutableStateOf(true) } // Estado para mostrar el diálogo inicial
+    var showConnectionDialog by remember { mutableStateOf(false) } // Estado para mostrar el diálogo de conexión
+    var userName by remember { mutableStateOf("") } // Estado para almacenar el nombre del usuario
+    var connectToName by remember { mutableStateOf("") } // Nombre de la persona a la que se quiere conectar
+
+    // Obtener el contexto actual para usar en cancelación
+    val context = LocalContext.current
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Black) // Fondo negro para toda la pantalla
+    ) {
+        if (showUserInputDialog) {
+            UserNameInputDialog(
+                onConfirm = { enteredName ->
+                    userName = enteredName
+                    viewModel.dispatchAction(MainActions.ConnectAs(userName))
+                    showUserInputDialog = false
+                    showConnectionDialog =
+                        true // Mostrar el diálogo de conexión después de ingresar el nombre
+                },
+                onCancel = {
+                    // Usar el contexto para finalizar la actividad
+                    (context as? ComponentActivity)?.finish()
+                }
+            )
+        } else if (showConnectionDialog) {
+            ConnectToUserDialog(
+                onConfirm = { userToConnect ->
+                    connectToName = userToConnect
+                    viewModel.dispatchAction(MainActions.ConnectToUser(connectToName))
+                    showConnectionDialog = false
+                },
+                onCancel = {
+                    showConnectionDialog = false // Cerrar el diálogo de conexión si se cancela
+                }
+            )
+        } else {
+            HomeScreenContent(
+                state = state,
+                dispatchAction = { viewModel.dispatchAction(it) }
+            )
+        }
     }
-    LaunchedEffect(
-        key1 = events,
-        block = {
-            events.collectLatest {
-                when (it) {
-                    is MainOneTimeEvents.GotInvite -> {
-                        showIncomingRequestDialog = true
-                    }
+}
+
+@Composable
+fun ConnectToUserDialog(
+    onConfirm: (String) -> Unit,
+    onCancel: () -> Unit
+) {
+    var tempConnectTo by remember { mutableStateOf("") }
+
+    Dialog(onDismissRequest = { /* No se puede cerrar sin confirmar */ }) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = Black, shape = RoundedCornerShape(10.dp))
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Introduce el nombre de la persona con la que deseas conectar:",
+                color = Color.White,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            TextField(
+                value = tempConnectTo,
+                onValueChange = { tempConnectTo = it },
+                placeholder = { Text(text = "Nombre de usuario a conectar") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(
+                    onClick = onCancel, // Llamada a función de cancelación
+                    colors = ButtonDefaults.buttonColors(containerColor = SoftRed)
+                ) {
+                    Text(text = "Cancelar", color = Color.Black)
+                }
+                Button(
+                    onClick = {
+                        if (tempConnectTo.isNotBlank()) {
+                            onConfirm(tempConnectTo.trim()) // Llamada a función para confirmar
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Green)
+                ) {
+                    Text(text = "Conectar", color = Color.Black)
                 }
             }
-        },
-    )
-    if (showIncomingRequestDialog) {
-        DialogForIncomingRequest(
-            onDismiss = {
-                showIncomingRequestDialog = false
-            },
-            onAccept = {
-                viewModel.dispatchAction(
-                    MainActions.AcceptIncomingConnection
-                )
-                showIncomingRequestDialog = false
-            },
-            inviteFrom = state.inComingRequestFrom,
-        )
+        }
     }
-    HomeScreenContent(
-        state = state,
-        dispatchAction = {
-            viewModel.dispatchAction(
-                it
+}
+
+@Composable
+fun UserNameInputDialog(
+    onConfirm: (String) -> Unit,
+    onCancel: () -> Unit
+) {
+    var tempUserName by remember { mutableStateOf("") }
+
+    Dialog(onDismissRequest = { /* No se puede cerrar sin confirmar */ }) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = Black, shape = RoundedCornerShape(10.dp))
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Introduce tu nombre de usuario",
+                color = Color.White,
+                modifier = Modifier.padding(bottom = 16.dp)
             )
-        },
-    )
+            TextField(
+                value = tempUserName,
+                onValueChange = { tempUserName = it },
+                placeholder = { Text(text = "Nombre de usuario") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(
+                    onClick = onCancel, // Llamada a función normal
+                    colors = ButtonDefaults.buttonColors(containerColor = SoftRed)
+                ) {
+                    Text(text = "Cancelar", color = Color.Black)
+                }
+                Button(
+                    onClick = {
+                        if (tempUserName.isNotBlank()) {
+                            onConfirm(tempUserName.trim()) // Llamada a función normal
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Green)
+                ) {
+                    Text(text = "Confirmar", color = Color.Black)
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -150,8 +266,7 @@ fun HomeScreenContent(
                         content = {
                             item {
                                 Text(
-                                    text = state.inComingRequestFrom
-                                        ?: "Nombre del pibardo", // Mostrar isConnectToPeer o texto predeterminado,
+                                    text = state.inComingRequestFrom ?: "Nombre del pibardo",
                                     color = Color.White,
                                     modifier = Modifier.padding(start = 16.dp)
                                 )
@@ -160,7 +275,10 @@ fun HomeScreenContent(
                                 Box(
                                     modifier = Modifier
                                         .padding(end = 16.dp, top = 8.dp)
-                                        .background(color = Green, shape = RoundedCornerShape(8.dp))
+                                        .background(
+                                            color = if (state.isRtcEstablished) Green else SoftRed, // Cambia el color según isRtcEstablished
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
                                         .padding(10.dp)
                                 ) {
                                     Text(
@@ -318,7 +436,7 @@ fun HomeScreenContent(
                             containerColor = Green
                         )
                     ) {
-                        Text(text = "GO")
+                        Text(text = "Connect")
                     }
                 }
             }
@@ -333,7 +451,7 @@ fun DialogForIncomingRequestPreview() {
         DialogForIncomingRequest(
             onAccept = {},
             onDismiss = {},
-            inviteFrom = "Shah Rukh Khan"
+            inviteFrom = "Mr. X"
         )
     }
 }
