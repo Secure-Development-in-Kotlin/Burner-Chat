@@ -44,7 +44,7 @@
     <string name="log_out">Cerrar sesión</string>
     <string name="chat_individual">Chat individual</string>
     <string name="chat_grupal">Chat grupal</string>
-    <string name="new_chat_name">New chat name</string>
+    <string name="new_chat_name">Nombre del chat</string>
     <string name="nombre_del_chat">Nombre del chat</string>
     <string name="search_user">Buscar usuario</string>
     <string name="users">Usuarios</string>
