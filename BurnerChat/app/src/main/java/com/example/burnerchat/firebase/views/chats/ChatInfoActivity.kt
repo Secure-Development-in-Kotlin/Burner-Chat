@@ -1,10 +1,13 @@
 package com.example.burnerchat.firebase.views.chats
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -18,6 +21,7 @@ import com.example.burnerchat.R
 import com.example.burnerchat.firebase.repositories.ImageUtils
 import com.example.burnerchat.firebase.model.chats.Chat
 import kotlinx.coroutines.launch
+import org.w3c.dom.Text
 
 class ChatInfoActivity : AppCompatActivity() {
 
@@ -28,6 +32,9 @@ class ChatInfoActivity : AppCompatActivity() {
     private lateinit var etName: EditText
     private lateinit var rvUsers: RecyclerView
     private lateinit var btUpdate: Button
+    private lateinit var ibSearch: ImageButton
+    private lateinit var etSearch: EditText
+    private lateinit var rvUsersToAdd:RecyclerView
 
     private var galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
         val galleryURI = it
@@ -45,6 +52,9 @@ class ChatInfoActivity : AppCompatActivity() {
         etName = findViewById(R.id.etInfoChatName)
         rvUsers = findViewById(R.id.rvInfoUsers)
         btUpdate = findViewById(R.id.btUpdateChat)
+        etSearch = findViewById(R.id.etSearchChatInfo)
+        ibSearch = findViewById(R.id.ibSearchChatInfo)
+        rvUsersToAdd = findViewById(R.id.rvAddChatInfo)
 
         viewModel.chat.observe(this){
             newChat->
@@ -53,7 +63,11 @@ class ChatInfoActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             viewModel.getChatFromDB(intent.getStringExtra("chatId")!!)
-            initRecycler()
+            viewModel.getAddableUsers()
+            viewModel.getUsersInChat()
+            initUsersFromChatRecyler()
+            initAddableUsersRecyler()
+
         }
 
         btGoBack.setOnClickListener{
@@ -65,36 +79,137 @@ class ChatInfoActivity : AppCompatActivity() {
         }
 
         btUpdate.setOnClickListener{
-            viewModel.setNombre(etName.text.toString())
-            viewModel.updateChat()
-            finish()
+            if(viewModel.canDelete()){
+                viewModel.setNombre(etName.text.toString())
+                viewModel.updateChat()
+                finish()
+            }else{
+                Toast.makeText(this, "Los Chats grupales tienen que tener un mínimo de 3 usuarios", Toast.LENGTH_SHORT).show()
+            }
+
         }
 
+        initSearch()
 
 
 
     }
 
-    private fun initRecycler(){
-        val context = this
-        lifecycleScope.launch {
-            viewModel.getUsers()
-            val users = viewModel.usersDBList.value!!
+    private  fun initUsersFromChatRecyler() {
 
-            val customAdapter = ChatInfoUserAdapter(
-                users
+        if(viewModel.isGroup()){//Crear funciones
+            val onClickAdd = fun(user: UserDTO) {
+                viewModel.selectUserToRemove(user)
+            }
+
+            val onClickRemove = fun(user: UserDTO) {
+                viewModel.deselectUserToRemove(user)
+            }
+
+            val checkContains = fun(user: String): Boolean {
+                return viewModel.isInToRemove(user)
+            }
+
+            val context = this
+            //Coger datos de la base de datos
+            val users = viewModel.usersDBList.value
+
+            val customAdapter = UsersGroupAddAdapter(
+                users!!,
+                onClickAdd,
+                onClickRemove,
+                checkContains
             )
 
             rvUsers.layoutManager = LinearLayoutManager(context)
-            rvUsers.adapter=customAdapter
+            rvUsers.adapter = customAdapter
 
-            viewModel.usersDBList.observe(context){
-                users->
-                val adapter = rvUsers.adapter as ChatInfoUserAdapter
-                adapter.updateUsersList(users)
+            viewModel.selectedToRemoveUsersList.observe(context) {
+                val adapter = rvUsers.adapter as UsersGroupAddAdapter
+                adapter.reset()
+            }
+
+            viewModel.usersDBList.observe(context) { userList ->
+                val adapter = rvUsers.adapter as UsersGroupAddAdapter
+                adapter.updateUsersList(userList)
+
+            }
+        }else{
+            val users = viewModel.usersDBList.value
+
+            val customAdapter = ChatInfoUserAdapter(
+                users!!
+            )
+
+            rvUsers.layoutManager = LinearLayoutManager(this)
+            rvUsers.adapter = customAdapter
+        }
+
+    }
+
+    private fun initSearch() {
+        ibSearch.setOnClickListener {
+            val string = etSearch.text.toString()
+            if (!string.isNullOrBlank()) {
+                lifecycleScope.launch {
+                    viewModel.findCurrentAddableUsers(string)
+                }
+            } else {
+                lifecycleScope.launch {
+                    viewModel.getAddableUsers()
+                }
             }
         }
     }
+
+    private fun initAddableUsersRecyler() {
+
+        if(viewModel.isGroup()){//Crear funciones
+            val onClickAdd = fun(user: UserDTO) {
+                viewModel.selectUserToAdd(user)
+            }
+
+            val onClickRemove = fun(user: UserDTO) {
+                viewModel.deselectUserToAdd(user)
+            }
+
+            val checkContains = fun(user: String): Boolean {
+                return viewModel.isInToAdd(user)
+            }
+
+            val context = this
+            //Coger datos de la base de datos
+
+            val users = viewModel.usersDBListAll.value
+
+            val customAdapter = UsersGroupAddAdapter(
+                users!!,
+                onClickAdd,
+                onClickRemove,
+                checkContains
+            )
+
+            rvUsersToAdd.layoutManager = LinearLayoutManager(context)
+            rvUsersToAdd.adapter = customAdapter
+
+            viewModel.selectedToAddUsersList.observe(context) {
+                val adapter = rvUsersToAdd.adapter as UsersGroupAddAdapter
+                adapter.reset()
+            }
+
+            viewModel.usersDBListAll.observe(context) { userList ->
+                val adapter = rvUsersToAdd.adapter as UsersGroupAddAdapter
+                adapter.updateUsersList(userList)
+            }
+         }else{
+            ibSearch.visibility = View.GONE
+            etSearch.visibility = View.GONE
+            rvUsersToAdd.visibility = View.GONE
+            findViewById<TextView>(R.id.tvAddUsersInfo).visibility = View.GONE
+        }
+    }
+
+
 
     private fun updateInfo(chat: Chat){
 
@@ -103,7 +218,7 @@ class ChatInfoActivity : AppCompatActivity() {
            updateIcon(chat.imageUrl)
            etName.setText(chat.name)
            lifecycleScope.launch {
-               viewModel.getUsers()
+               viewModel.getUsersInChat()
            }
        }
     }

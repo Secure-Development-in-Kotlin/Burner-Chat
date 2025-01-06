@@ -7,6 +7,8 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Visibility
+import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.R
 import com.example.burnerchat.firebase.repositories.ImageUtils
 
@@ -67,7 +69,11 @@ class UsersGroupAddAdapter(
             setImage(userActual.icon)
             val isOnList = checkContains(userActual.email)
 
-            if(isOnList){
+            if(userActual.email == BurnerChatApp.appModule.usersRepository.getLoggedUser()?.email){
+                tvName.text = userActual.email+" (You)"
+                ibAdd.visibility=View.GONE
+            }
+            else if(isOnList){
                 ibAdd.setBackgroundColor(vista.resources.getColor(R.color.button2,null))
                 ibAdd.setImageResource(R.drawable.baseline_cancel_24)
                 ibAdd.setOnClickListener{

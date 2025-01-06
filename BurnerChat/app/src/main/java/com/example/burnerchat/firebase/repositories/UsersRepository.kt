@@ -29,6 +29,17 @@ object UsersRepository {
         }
     }
 
+    fun getUser(userId: String): FirebaseUser? {
+//        var user: FirebaseUser? = null
+//        db.collection("users").document(userId).get().addOnSuccessListener {
+//            user = it.toObject(FirebaseUser::class.java)
+//        }
+        // TODO: add onFailureListener
+
+//        return user
+        return Firebase.auth.currentUser
+    }
+
     suspend fun getUserData(): UserDTO? {
         val result = ChatsRepository.db.collection(USER_COLLECTION_NAME).get().await()
         for (document in result) {
@@ -207,6 +218,52 @@ object UsersRepository {
         } else {
             return false
         }
+    }
+
+    suspend fun getUsersExcept(emails:List<String>): List<UserDTO>? {
+        val result = ChatsRepository.db.collection(USER_COLLECTION_NAME).get().await()
+        val usersDataBase = mutableListOf<UserDTO>()
+        for (document in result) {
+            val data = document.data
+            val firebaseUserData = data as Map<String, Any>
+            if (!emails.contains(firebaseUserData["email"])) {
+                    var profilePicture = firebaseUserData["profilePicture"]
+                    if (profilePicture == null)
+                        profilePicture = " "
+                    else
+                        profilePicture = profilePicture.toString()
+
+                    val userData = UserDTO(firebaseUserData["email"].toString(), profilePicture)
+                    usersDataBase.add(userData)
+            }
+
+        }
+        return usersDataBase
+    }
+
+    suspend fun getUsersByStringExcept(string: String, emails: Array<String>): List<UserDTO>? {
+        val result = ChatsRepository.db.collection(USER_COLLECTION_NAME).get().await()
+        val usersDataBase = mutableListOf<UserDTO>()
+        for (document in result) {
+            val data = document.data
+            val firebaseUserData = data as Map<String, Any>
+            if (!emails.contains(firebaseUserData["email"]) && firebaseUserData["email"]!= getLoggedUser()?.email) {
+                if ((firebaseUserData["email"].toString().contains(string))) {
+                    var profilePicture = firebaseUserData["profilePicture"]
+                    if (profilePicture == null)
+                        profilePicture = " "
+                    else
+                        profilePicture = profilePicture.toString()
+
+                    val userData = UserDTO(firebaseUserData["email"].toString(), profilePicture)
+                    usersDataBase.add(userData)
+                }
+
+
+            }
+
+        }
+        return usersDataBase
     }
 
 }

@@ -11,17 +11,23 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.R
 import com.example.burnerchat.firebase.repositories.ImageUtils
+import kotlinx.coroutines.launch
 
 class CreateSingleChatView : AppCompatActivity() {
     private val viewModel: CreateSingleChatViewModel by viewModels()
 
     private lateinit var btGoBack: ImageButton
-    private lateinit var etEmail: EditText
     private lateinit var btConfirm: Button
     private lateinit var etName: EditText
     private lateinit var ivIcon:ImageView
+    private lateinit var ibSearch: ImageButton
+    private lateinit var etSearch: EditText
+    private lateinit var rvUsers:RecyclerView
 
     private var galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
         val galleryURI = it
@@ -34,6 +40,20 @@ class CreateSingleChatView : AppCompatActivity() {
     }
 
 
+    private fun initSearch() {
+        ibSearch.setOnClickListener {
+            val string = etSearch.text.toString()
+            if (!string.isNullOrBlank()) {
+                lifecycleScope.launch {
+                    viewModel.findUsers(string)
+                }
+            } else {
+                lifecycleScope.launch {
+                    viewModel.getUsers()
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,9 +70,11 @@ class CreateSingleChatView : AppCompatActivity() {
 
     private fun initComponents() {
         btGoBack = findViewById(R.id.ibGoBack)
-        etEmail = findViewById(R.id.etTargetEmail)
         btConfirm = findViewById(R.id.btConfirm)
         etName = findViewById(R.id.etName)
+        ibSearch = findViewById(R.id.ibSingleUserSearch)
+        etSearch = findViewById(R.id.etSingleUserChat)
+        rvUsers = findViewById(R.id.rvSingleUserUsers)
 
         ivIcon = findViewById(R.id.ivSingleChatCreation)
         btGoBack.setOnClickListener {
@@ -60,10 +82,9 @@ class CreateSingleChatView : AppCompatActivity() {
         }
 
         btConfirm.setOnClickListener {
-            val email = etEmail.text.toString()
             val name = etName.text.toString()
-            if (email.isNotEmpty() && name.isNotEmpty()) {
-                viewModel.addChat(email, name)
+            if (viewModel.canAdd() && name.isNotEmpty()) {
+                viewModel.addChat(name)
             }
         }
 
@@ -74,6 +95,9 @@ class CreateSingleChatView : AppCompatActivity() {
         }
 
         initImageButton()
+        initUsersRecyler()
+        initSearch()
+
     }
 
     private fun initImageButton() {
@@ -90,6 +114,51 @@ class CreateSingleChatView : AppCompatActivity() {
                 ivIcon.setImageResource(R.drawable.default_icon_128)
             }
         }
+    }
+
+    private fun initUsersRecyler() {
+
+        //Crear funciones
+        val onClickAdd = fun(user: UserDTO) {
+            viewModel.selectUser(user.email)
+        }
+
+        val onClickRemove = fun(user: UserDTO) {
+            viewModel.deselectUser()
+        }
+
+        val checkContains = fun(user: String): Boolean {
+            return viewModel.isSelected(user)
+        }
+
+        val context = this
+        //Coger datos de la base de datos
+        lifecycleScope.launch {
+            viewModel.getUsers()
+
+            val users = viewModel.usersDBList.value
+
+            val customAdapter = UsersGroupAddAdapter(
+                users!!,
+                onClickAdd,
+                onClickRemove,
+                checkContains
+            )
+
+            rvUsers.layoutManager = LinearLayoutManager(context)
+            rvUsers.adapter = customAdapter
+
+            viewModel.selectedUser.observe(context) {
+                val adapter = rvUsers.adapter as UsersGroupAddAdapter
+                adapter.reset()
+            }
+
+            viewModel.usersDBList.observe(context) { userList ->
+                val adapter = rvUsers.adapter as UsersGroupAddAdapter
+                adapter.updateUsersList(userList)
+            }
+        }
+
     }
 
 }
