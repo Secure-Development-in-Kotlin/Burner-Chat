@@ -50,4 +50,9 @@
     <string name="users">Пользователи</string>
     <string name="update">Обновить</string>
     <string name="log_out_confirmation">Вы уверены, что хотите выйти?</string>
+    <string name="textError">Ошибка</string>
+    <string name="textLogoutError">Не удалось выйти. Попробуйте еще раз.</string>
+    <string name="text_add_user">Пользователи для добавления</string>
+    <string name="buscar_persona">Искать человека:</string>
+    <string name="person_to_add">Человек для добавления</string>
 </resources>

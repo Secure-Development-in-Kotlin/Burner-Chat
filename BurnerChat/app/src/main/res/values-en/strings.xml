@@ -50,4 +50,9 @@
     <string name="users">Users</string>
     <string name="update">Update</string>
     <string name="log_out_confirmation">Are you sure you want to log out?</string>
+    <string name="textError">Error</string>
+    <string name="textLogoutError">Unable to log out. Please try again.</string>
+    <string name="text_add_user">Users to add</string>
+    <string name="buscar_persona">Search person:</string>
+    <string name="person_to_add">Person to add</string>
 </resources>

@@ -171,9 +171,9 @@ class UserProfileActivity : AppCompatActivity() {
                     } else {
                         // Mostrar un mensaje de error
                         AlertDialog.Builder(this)
-                            .setTitle("Error")
-                            .setMessage("No se pudo cerrar sesión. Inténtalo de nuevo.")
-                            .setPositiveButton("Aceptar", null)
+                            .setTitle(R.string.textError)
+                            .setMessage(R.string.textLogoutError)
+                            .setPositiveButton(R.string.textAccept, null)
                             .show()
                     }
                 }

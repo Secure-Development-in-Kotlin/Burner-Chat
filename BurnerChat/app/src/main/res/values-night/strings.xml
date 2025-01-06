@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="buscar_persona">Buscar persona:</string>
+    <string name="person_to_add">Persona a añadir</string>
+</resources>

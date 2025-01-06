@@ -50,4 +50,9 @@
     <string name="users">Utilisateurs</string>
     <string name="update">Mettre à jour</string>
     <string name="log_out_confirmation">Êtes-vous sûr de vouloir vous déconnecter ?</string>
+    <string name="textError">Erreur</string>
+    <string name="textLogoutError">Impossible de se déconnecter. Veuillez réessayer.</string>
+    <string name="text_add_user">Utilisateurs à ajouter</string>
+    <string name="buscar_persona">Rechercher une personne:</string>
+    <string name="person_to_add">Personne à ajouter</string>
 </resources>

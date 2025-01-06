@@ -50,4 +50,9 @@
     <string name="users">Usuarios</string>
     <string name="update">Actualizar</string>
     <string name="log_out_confirmation">¿Estás seguro de que deseas cerrar sesión?</string>
+    <string name="textError">Error</string>
+    <string name="textLogoutError">No se pudo cerrar sesión. Inténtalo de nuevo.</string>
+    <string name="text_add_user">Usuarios a añadir</string>
+    <string name="buscar_persona">Buscar persona:</string>
+    <string name="person_to_add">Persona a añadir</string>
 </resources>
