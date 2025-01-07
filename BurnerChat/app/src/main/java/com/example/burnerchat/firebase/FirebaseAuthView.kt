@@ -2,7 +2,6 @@ package com.example.burnerchat.firebase
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
@@ -11,25 +10,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.burnerchat.BurnerChatApp
-import com.example.burnerchat.MainActivity.Companion.CLAVE_NOMBRE_USUARIO
 import com.example.burnerchat.R
 import com.example.burnerchat.firebase.views.chats.ChatsView
+import com.example.burnerchat.firebase.views.chats.UserDTO
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
-import java.lang.Exception
 
 class FirebaseAuthView : AppCompatActivity() {
     private lateinit var etEmail: EditText
     private lateinit var etPassword: EditText
     private lateinit var btLogIn: Button
     private lateinit var btSignUp: Button
-
-    companion object {
-        const val EMAIL_KEY : String = "email"
-        const val PROVIDER_KEY : String = "provider"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,14 +48,15 @@ class FirebaseAuthView : AppCompatActivity() {
             val email = etEmail.text.toString()
             val password = etPassword.text.toString()
             if (email.isNotBlank() && password.isNotBlank()) {
-                FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        syncUserInDB(it.result.user!!)
-                        showChats(email, ProviderType.BASIC)
-                    } else {
-                        showAlert(it.exception)
+                FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            syncUserInDB(it.result.user!!)
+                            showChats(email, ProviderType.BASIC)
+                        } else {
+                            showAlert(it.exception)
+                        }
                     }
-                }
             }
         }
 
@@ -70,43 +64,45 @@ class FirebaseAuthView : AppCompatActivity() {
             val email = etEmail.text.toString()
             val password = etPassword.text.toString()
             if (email.isNotBlank() && password.isNotBlank()) {
-                FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        syncUserInDB(it.result.user!!)
-                        showChats(email, ProviderType.BASIC)
-                    } else {
-                        showAlert(it.exception)
+                FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            syncUserInDB(it.result.user!!)
+                            showChats(email, ProviderType.BASIC)
+                        } else {
+                            showAlert(it.exception)
+                        }
                     }
-                }
             }
         }
     }
 
     private fun syncUserInDB(user: FirebaseUser) {
         val usersRepository = BurnerChatApp.appModule.usersRepository
-        val userDB = Firebase.auth.currentUser
+
+        val currentUser = Firebase.auth.currentUser
+        val userDB = usersRepository.getUser(currentUser?.uid!!)
         if (userDB == null) {
             usersRepository.addUser(user)
         } else {
-            Log.d("FirebaseAuthView", "User already in DB")
+            val userDTO = UserDTO(currentUser.email!!, currentUser.photoUrl.toString())
+            usersRepository.updateUser(currentUser, userDTO)
         }
     }
 
     private fun showChats(email: String, provider: ProviderType) {
         val intent = Intent(applicationContext, ChatsView::class.java)
-        intent.putExtra(CLAVE_NOMBRE_USUARIO, email)
-        intent.putExtra(EMAIL_KEY, email)
-        intent.putExtra(PROVIDER_KEY, provider.toString())
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         setResult(RESULT_OK, intent)
         finish()
     }
 
     private fun showAlert(exception: Exception?) {
-        val builder= AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
         builder.setTitle("Error")
         builder.setMessage("Se ha producido un error autenticando al usuario: ${exception?.message}")
-        builder.setPositiveButton("Aceptar",null)
+        builder.setPositiveButton("Aceptar", null)
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }

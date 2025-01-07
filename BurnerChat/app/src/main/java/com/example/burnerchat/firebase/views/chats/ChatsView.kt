@@ -87,9 +87,6 @@ class ChatsView : AppCompatActivity() {
         initChatRecycler()
         initFAB()
         initIcon()
-
-
-
     }
 
     private fun initIcon() {

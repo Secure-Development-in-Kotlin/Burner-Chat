@@ -29,18 +29,17 @@ object UsersRepository {
         }
     }
 
-    fun getUser(userId: String): FirebaseUser? {
-//        var user: FirebaseUser? = null
-//        db.collection("users").document(userId).get().addOnSuccessListener {
-//            user = it.toObject(FirebaseUser::class.java)
-//        }
-        // TODO: add onFailureListener
+    fun getUser(userId: String): UserDTO? {
+        var user: UserDTO? = null
+        db.collection("users").document(userId).get().addOnSuccessListener {
+            user = UserDTO(it["email"].toString(), it["profilePicture"].toString())
+        }
 
-//        return user
-        return Firebase.auth.currentUser
+        return user
     }
 
     suspend fun getUserData(): UserDTO? {
+        // TODO: refactor to search by id
         val result = ChatsRepository.db.collection(USER_COLLECTION_NAME).get().await()
         for (document in result) {
             val data = document.data
@@ -86,9 +85,6 @@ object UsersRepository {
     fun updateUser(currentUser: FirebaseUser, userDTO: UserDTO) {
         val userId: String = currentUser.uid // Unique Firebase Auth UID
         val email: String = currentUser.email.toString()
-        val photoUrl: String? =
-            if ((currentUser.photoUrl != null)) currentUser.photoUrl.toString() else null
-
 
         // Prepare the user document
         val userData: MutableMap<String, Any?> = HashMap()
