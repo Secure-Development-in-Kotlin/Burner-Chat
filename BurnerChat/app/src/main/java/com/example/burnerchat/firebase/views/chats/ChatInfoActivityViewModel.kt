@@ -14,74 +14,75 @@ class ChatInfoActivityViewModel : ViewModel() {
 
 
     private val _chat = MutableLiveData<Chat>()
-    val chat : LiveData<Chat>
+    val chat: LiveData<Chat>
         get() = _chat
 
     private val _usersDBList = MutableLiveData<List<UserDTO>>(mutableListOf())
-    val usersDBList :LiveData<List<UserDTO>>
+    val usersDBList: LiveData<List<UserDTO>>
         get() = _usersDBList
 
     private var _usersDBListAll = MutableLiveData<List<UserDTO>>(listOf())
-    val usersDBListAll :LiveData<List<UserDTO>>
+    val usersDBListAll: LiveData<List<UserDTO>>
         get() = _usersDBListAll
 
     private var _selectedToAddUsersList = MutableLiveData<MutableList<String>>(mutableListOf())
-    val selectedToAddUsersList :LiveData<MutableList<String>>
+    val selectedToAddUsersList: LiveData<MutableList<String>>
         get() = _selectedToAddUsersList
 
     private var _selectedToRemoveUsersList = MutableLiveData<MutableList<String>>(mutableListOf())
-    val selectedToRemoveUsersList :LiveData<MutableList<String>>
+    val selectedToRemoveUsersList: LiveData<MutableList<String>>
         get() = _selectedToRemoveUsersList
 
-    fun selectUserToAdd(user:UserDTO){
+    fun selectUserToAdd(user: UserDTO) {
         _selectedToAddUsersList.value?.add(user.email)
         _selectedToAddUsersList.value = _selectedToAddUsersList.value
     }
 
-    fun deselectUserToAdd(user: UserDTO){
+    fun deselectUserToAdd(user: UserDTO) {
         _selectedToAddUsersList.value?.remove(user.email)
         _selectedToAddUsersList.value = _selectedToAddUsersList.value
     }
-    fun isInToAdd(email:String):Boolean{
+
+    fun isInToAdd(email: String): Boolean {
         return _selectedToAddUsersList.value?.contains(email)!!
     }
 
-    fun selectUserToRemove(user:UserDTO){
+    fun selectUserToRemove(user: UserDTO) {
         _selectedToRemoveUsersList.value?.add(user.email)
         _selectedToRemoveUsersList.value = _selectedToRemoveUsersList.value
     }
 
-    fun deselectUserToRemove(user: UserDTO){
+    fun deselectUserToRemove(user: UserDTO) {
         _selectedToRemoveUsersList.value?.remove(user.email)
         _selectedToRemoveUsersList.value = _selectedToRemoveUsersList.value
     }
 
-    fun isInToRemove(email:String):Boolean{
+    fun isInToRemove(email: String): Boolean {
         return _selectedToRemoveUsersList.value?.contains(email)!!
     }
 
-    suspend fun getAddableUsers(){
+    suspend fun getAddableUsers() {
         val users = usersRepository.getUsersExcept(chat.value?.participants?.toList()!!)
         _usersDBListAll.value = users!!
     }
 
-    suspend fun findCurrentAddableUsers(string: String){
+    suspend fun findCurrentAddableUsers(string: String) {
         val users = usersRepository.getUsersByStringExcept(string, chat.value?.participants!!)
-        _usersDBListAll.value=users!!
+        _usersDBListAll.value = users!!
     }
 
 
-    suspend fun getChatFromDB(uid:String){
+    suspend fun getChatFromDB(uid: String) {
         val chat = chatsDB.getChat(uid)
         setChat(chat)
 
     }
 
-    fun setChat(chat: Chat){
+    fun setChat(chat: Chat) {
         _chat.value = chat
     }
 
-    suspend fun getUsersInChat(){
+    suspend fun getUsersInChat() {
         val emails = chat.value?.participants!!
         var users = usersRepository.getUsersByEmail(emails)
         _usersDBList.value = users
@@ -92,24 +93,27 @@ class ChatInfoActivityViewModel : ViewModel() {
         setChat(chat.value!!)
     }
 
-    fun setNombre(name: String){
+    fun setNombre(name: String) {
         chat.value?.name = name
         setChat(chat.value!!)
     }
 
-    fun canDelete():Boolean{
+    // Si tienes un chat grupa (> 2 usuarios), devuelve si después de borrarlos sigues teniendo un chat grupal
+    // Si tienes un chat individual devuelve false (no puedes borrar)
+    fun canDelete(): Boolean {
         val initialLength = chat.value?.participants?.size!!
         val usersToAdd = _selectedToAddUsersList.value?.size!!
         val usersToRemove = _selectedToRemoveUsersList.value?.size!!
-        if(initialLength>2)
-            return initialLength+usersToAdd-usersToRemove>2
+        if (initialLength > 2)
+            return initialLength + usersToAdd - usersToRemove > 2
         return false
     }
-    fun isGroup():Boolean{
+
+    fun isGroup(): Boolean {
         return chat.value?.isGroup()!!
     }
 
-    fun updateChat(){
+    fun updateChat() {
         val list = chat.value?.participants?.toMutableList()!!
         list.removeAll(selectedToRemoveUsersList.value!!)
         list.addAll(selectedToAddUsersList.value!!)

@@ -25,7 +25,7 @@ import org.w3c.dom.Text
 
 class ChatInfoActivity : AppCompatActivity() {
 
-    private val viewModel : ChatInfoActivityViewModel by viewModels()
+    private val viewModel: ChatInfoActivityViewModel by viewModels()
 
     private lateinit var btGoBack: ImageButton
     private lateinit var ivIcon: ImageView
@@ -34,7 +34,7 @@ class ChatInfoActivity : AppCompatActivity() {
     private lateinit var btUpdate: Button
     private lateinit var ibSearch: ImageButton
     private lateinit var etSearch: EditText
-    private lateinit var rvUsersToAdd:RecyclerView
+    private lateinit var rvUsersToAdd: RecyclerView
 
     private var galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
         val galleryURI = it
@@ -46,7 +46,7 @@ class ChatInfoActivity : AppCompatActivity() {
         }
     }
 
-    private fun initComponents(){
+    private fun initComponents() {
         btGoBack = findViewById(R.id.ibGoBackInfoChat)
         ivIcon = findViewById(R.id.ivInfoChatIcon)
         etName = findViewById(R.id.etInfoChatName)
@@ -56,8 +56,7 @@ class ChatInfoActivity : AppCompatActivity() {
         ibSearch = findViewById(R.id.ibSearchChatInfo)
         rvUsersToAdd = findViewById(R.id.rvAddChatInfo)
 
-        viewModel.chat.observe(this){
-            newChat->
+        viewModel.chat.observe(this) { newChat ->
             updateInfo(newChat)
         }
 
@@ -70,34 +69,40 @@ class ChatInfoActivity : AppCompatActivity() {
 
         }
 
-        btGoBack.setOnClickListener{
+        btGoBack.setOnClickListener {
             finish()
         }
 
-        ivIcon.setOnClickListener{
+        ivIcon.setOnClickListener {
             galleryLauncher.launch("image/*")
         }
 
-        btUpdate.setOnClickListener{
-            if(viewModel.canDelete()){
+        btUpdate.setOnClickListener {
+            // Comprobar si es o no un chat grupal
+            if (viewModel.isGroup()) {
+                if (viewModel.canDelete()) {
+                    viewModel.setNombre(etName.text.toString())
+                    viewModel.updateChat()
+                    finish()
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Los Chats grupales tienen que tener un mínimo de 3 usuarios",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } else {
                 viewModel.setNombre(etName.text.toString())
                 viewModel.updateChat()
                 finish()
-            }else{
-                Toast.makeText(this, "Los Chats grupales tienen que tener un mínimo de 3 usuarios", Toast.LENGTH_SHORT).show()
             }
-
         }
-
         initSearch()
-
-
-
     }
 
-    private  fun initUsersFromChatRecyler() {
+    private fun initUsersFromChatRecyler() {
 
-        if(viewModel.isGroup()){//Crear funciones
+        if (viewModel.isGroup()) {//Crear funciones
             val onClickAdd = fun(user: UserDTO) {
                 viewModel.selectUserToRemove(user)
             }
@@ -134,7 +139,7 @@ class ChatInfoActivity : AppCompatActivity() {
                 adapter.updateUsersList(userList)
 
             }
-        }else{
+        } else {
             val users = viewModel.usersDBList.value
 
             val customAdapter = ChatInfoUserAdapter(
@@ -164,7 +169,7 @@ class ChatInfoActivity : AppCompatActivity() {
 
     private fun initAddableUsersRecyler() {
 
-        if(viewModel.isGroup()){//Crear funciones
+        if (viewModel.isGroup()) {//Crear funciones
             val onClickAdd = fun(user: UserDTO) {
                 viewModel.selectUserToAdd(user)
             }
@@ -201,7 +206,7 @@ class ChatInfoActivity : AppCompatActivity() {
                 val adapter = rvUsersToAdd.adapter as UsersGroupAddAdapter
                 adapter.updateUsersList(userList)
             }
-         }else{
+        } else {
             ibSearch.visibility = View.GONE
             etSearch.visibility = View.GONE
             rvUsersToAdd.visibility = View.GONE
@@ -210,25 +215,21 @@ class ChatInfoActivity : AppCompatActivity() {
     }
 
 
-
-    private fun updateInfo(chat: Chat){
-
-       if(chat!=null){
-
-           updateIcon(chat.imageUrl)
-           etName.setText(chat.name)
-           lifecycleScope.launch {
-               viewModel.getUsersInChat()
-           }
-       }
+    private fun updateInfo(chat: Chat) {
+        updateIcon(chat.imageUrl)
+        if (etName.text.toString().isBlank())
+            etName.setText(chat.name)
+        lifecycleScope.launch {
+            viewModel.getUsersInChat()
+        }
     }
 
-    private fun updateIcon(icon:String?){
+    private fun updateIcon(icon: String?) {
         val icono = icon
         if (icono != null && icono.isNotBlank()) {
             val bitmap = ImageUtils.decodeFromBase64(icono.toString())
             ivIcon.setImageBitmap(bitmap)
-        }else{
+        } else {
             ivIcon.setImageResource(R.drawable.default_icon_128)
         }
     }
