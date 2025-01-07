@@ -46,10 +46,6 @@ object ChatsRepository {
         return chatsDataBase
     }
 
-    fun addChat(chat: Chat) {
-        //TODO: refactor the viewModel to add the chats here
-    }
-
     fun addMessage(chat: Chat, message: Message) {
         // Create a map for the message attributes
         val updatedMessages = getUpdatedMapMessages(chat, message)

@@ -30,16 +30,6 @@ class ChatsViewViewModel : ViewModel() {
         return usersRepo.getUserData()
     }
 
-    private fun addChat(name: String, participants: Array<String>) {
-        val chat = Chat(name, participants)
-        chatsRepository.addChat(chat)
-
-        // Update the chats from the view
-        viewModelScope.launch {
-            _chatsList.value = chatsRepository.getChats()
-        }
-    }
-
     val chatsList: LiveData<List<Chat>>
         get() = _chatsList
 

@@ -74,7 +74,7 @@ object UsersRepository {
 
         // Add or update user in Firestore
         db.collection("users").document(userId).set(userData, SetOptions.merge())
-            .addOnSuccessListener { aVoid: Void? ->
+            .addOnSuccessListener {
                 Log.d("Firestore", "User data added/updated successfully")
             }
             .addOnFailureListener { e: Exception? ->
@@ -95,7 +95,7 @@ object UsersRepository {
 
         // Add or update user in Firestore
         db.collection("users").document(userId).set(userData, SetOptions.merge())
-            .addOnSuccessListener { aVoid: Void? ->
+            .addOnSuccessListener {
                 Log.d("Firestore", "User data added/updated successfully")
             }
             .addOnFailureListener { e: Exception? ->
@@ -105,13 +105,12 @@ object UsersRepository {
 
 
     // Delete everything related to the user
-    suspend fun sendPanic(currentUser: FirebaseUser) {
+    fun sendPanic() {
         // Se borra lo relacionado con el usuario: mensajes, chats y demás
-        val chats = BurnerChatApp.appModule.chatsRepository.getChats()
-        for (chat in chats) {
-            ChatsRepository.deleteMessagesByUser(chat, currentUser)
-            deleteUser(currentUser)
-        }
+        val currentUser = getLoggedUser()!!
+
+        deleteUser(currentUser)
+
     }
 
     // Delete the user from the database
@@ -119,7 +118,7 @@ object UsersRepository {
         db.collection(USER_COLLECTION_NAME).document(currentUser.uid).delete()
             .addOnSuccessListener {
                 Log.d("Firestore", "User data deleted successfully")
-                // Deletes cached user
+                // Deletes logged user from FirebaseAuth
                 currentUser.delete()
             }
             .addOnFailureListener { e: Exception? ->
@@ -156,6 +155,7 @@ object UsersRepository {
             val data = document.data
             val firebaseUserData = data as Map<String, Any>
             if (emails.contains(firebaseUserData["email"])) {
+                // TODO: ver que eliminar de aqui
                 var profilePicture = firebaseUserData["profilePicture"]
                 if (profilePicture == null)
                     profilePicture = " "
