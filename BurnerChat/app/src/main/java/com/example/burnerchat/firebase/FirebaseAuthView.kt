@@ -52,7 +52,7 @@ class FirebaseAuthView : AppCompatActivity() {
                     .addOnCompleteListener {
                         if (it.isSuccessful) {
                             syncUserInDB(it.result.user!!)
-                            showChats(email, ProviderType.BASIC)
+                            showChats()
                         } else {
                             showAlert(it.exception)
                         }
@@ -68,7 +68,7 @@ class FirebaseAuthView : AppCompatActivity() {
                     .addOnCompleteListener {
                         if (it.isSuccessful) {
                             syncUserInDB(it.result.user!!)
-                            showChats(email, ProviderType.BASIC)
+                            showChats()
                         } else {
                             showAlert(it.exception)
                         }
@@ -90,7 +90,7 @@ class FirebaseAuthView : AppCompatActivity() {
         }
     }
 
-    private fun showChats(email: String, provider: ProviderType) {
+    private fun showChats() {
         val intent = Intent(applicationContext, ChatsView::class.java)
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
