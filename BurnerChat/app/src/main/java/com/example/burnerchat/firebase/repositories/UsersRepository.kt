@@ -1,12 +1,10 @@
 package com.example.burnerchat.firebase.repositories
 
 import android.util.Log
-import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.firebase.views.chats.UserDTO
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.firestore
@@ -29,14 +27,22 @@ object UsersRepository {
         }
     }
 
-    fun getUser(userId: String): UserDTO? {
-        var user: UserDTO? = null
-        db.collection("users").document(userId).get().addOnSuccessListener {
-            user = UserDTO(it["email"].toString(), it["profilePicture"].toString())
-        }
-
-        return user
+    fun getUser(userId: String, callback: (UserDTO?) -> Unit) {
+        db.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val email = document.getString("email")
+                    val profilePicture = document.getString("profilePicture")
+                    callback(UserDTO(email!!, profilePicture ?: ""))
+                } else {
+                    callback(null) // User does not exist
+                }
+            }
+            .addOnFailureListener {
+                callback(null) // Handle error case
+            }
     }
+
 
     suspend fun getUserData(): UserDTO? {
         // TODO: refactor to search by id
@@ -46,11 +52,10 @@ object UsersRepository {
             val firebaseUserData = data as Map<String, Any>
 
             if (firebaseUserData["email"] == getLoggedUser()?.email) {
-                var profilePicture = firebaseUserData["profilePicture"]
-                profilePicture = profilePicture?.toString() ?: ""
+                var profilePicture = firebaseUserData["profilePicture"].toString() ?: ""
 
                 val userData =
-                    UserDTO(firebaseUserData["email"].toString(), profilePicture.toString())
+                    UserDTO(firebaseUserData["email"].toString(), profilePicture)
                 return userData
             }
 
@@ -135,12 +140,9 @@ object UsersRepository {
 
             if (firebaseUserData["email"] != getLoggedUser()?.email) {
                 var profilePicture = firebaseUserData["profilePicture"]
-                if (profilePicture == null)
-                    profilePicture = " "
-                else
-                    profilePicture = profilePicture.toString()
+                profilePicture = profilePicture?.toString() ?: " "
 
-                val userData = UserDTO(firebaseUserData["email"].toString(), profilePicture)
+                val userData = UserDTO(firebaseUserData["email"].toString(), profilePicture.toString())
                 usersDataBase.add(userData)
             }
 
@@ -155,25 +157,14 @@ object UsersRepository {
             val data = document.data
             val firebaseUserData = data as Map<String, Any>
             if (emails.contains(firebaseUserData["email"])) {
-                // TODO: ver que eliminar de aqui
                 var profilePicture = firebaseUserData["profilePicture"]
-                if (profilePicture == null)
-                    profilePicture = " "
-                else
-                    profilePicture = profilePicture.toString()
+                profilePicture = profilePicture?.toString() ?: ""
 
-                if (emails.contains(firebaseUserData["email"])) {
-                    var profilePicture = firebaseUserData["profilePicture"]
-                    if (profilePicture == null)
-                        profilePicture = " "
-                    else
-                        profilePicture = profilePicture.toString()
-
-                    val userData = UserDTO(firebaseUserData["email"].toString(), profilePicture)
-                    usersDataBase.add(userData)
-                }
-
-
+                val userData = UserDTO(
+                    firebaseUserData["email"].toString(),
+                    profilePicture.toString()
+                )
+                usersDataBase.add(userData)
             }
 
         }
@@ -190,10 +181,7 @@ object UsersRepository {
             if (firebaseUserData["email"] != getLoggedUser()?.email) {
                 if ((firebaseUserData["email"].toString().contains(string))) {
                     var profilePicture = firebaseUserData["profilePicture"]
-                    if (profilePicture == null)
-                        profilePicture = " "
-                    else
-                        profilePicture = profilePicture.toString()
+                    profilePicture = profilePicture?.toString() ?: ""
 
                     val userData =
                         UserDTO(firebaseUserData["email"].toString(), profilePicture.toString())
@@ -209,28 +197,24 @@ object UsersRepository {
     fun logout(): Boolean {
         FirebaseAuth.getInstance()
             .signOut()
-        if (FirebaseAuth.getInstance().currentUser == null) {
-            return true
-        } else {
-            return false
-        }
+        return FirebaseAuth.getInstance().currentUser == null
     }
 
-    suspend fun getUsersExcept(emails:List<String>): List<UserDTO>? {
+    suspend fun getUsersExcept(emails: List<String>): List<UserDTO> {
         val result = ChatsRepository.db.collection(USER_COLLECTION_NAME).get().await()
         val usersDataBase = mutableListOf<UserDTO>()
         for (document in result) {
             val data = document.data
             val firebaseUserData = data as Map<String, Any>
             if (!emails.contains(firebaseUserData["email"])) {
-                    var profilePicture = firebaseUserData["profilePicture"]
-                    if (profilePicture == null)
-                        profilePicture = " "
-                    else
-                        profilePicture = profilePicture.toString()
+                var profilePicture = firebaseUserData["profilePicture"]
+                profilePicture = profilePicture?.toString() ?: ""
 
-                    val userData = UserDTO(firebaseUserData["email"].toString(), profilePicture)
-                    usersDataBase.add(userData)
+                val userData = UserDTO(
+                    firebaseUserData["email"].toString(),
+                    profilePicture.toString()
+                )
+                usersDataBase.add(userData)
             }
 
         }
@@ -243,11 +227,11 @@ object UsersRepository {
         for (document in result) {
             val data = document.data
             val firebaseUserData = data as Map<String, Any>
-            if (!emails.contains(firebaseUserData["email"]) && firebaseUserData["email"]!= getLoggedUser()?.email) {
+            if (!emails.contains(firebaseUserData["email"]) && firebaseUserData["email"] != getLoggedUser()?.email) {
                 if ((firebaseUserData["email"].toString().contains(string))) {
                     var profilePicture = firebaseUserData["profilePicture"]
                     if (profilePicture == null)
-                        profilePicture = " "
+                        profilePicture = ""
                     else
                         profilePicture = profilePicture.toString()
 

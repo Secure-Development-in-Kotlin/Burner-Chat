@@ -20,8 +20,8 @@ class ImageMessage(
         return "Image message " + textContent
     }
 
-    override fun getMessageTypeCode(userId: String): Int {
-        return if (userId != this.getUserId()) {
+    override fun getMessageTypeCode(userEmail: String): Int {
+        return if (userEmail != this.getUserEmail()) {
             Message.LayoutType.ImagenAjena.ordinal
         } else
             Message.LayoutType.ImagenPropia.ordinal

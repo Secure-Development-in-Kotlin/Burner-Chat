@@ -17,6 +17,8 @@ object ChatsRepository {
     val db = Firebase.firestore
 
     private const val CHATS_COLLECTION_NAME = "chats"
+    // Map where the key is the userId and the value is the email
+    private var userList = mutableMapOf<String, String>()
 
     suspend fun getChats(): List<Chat> {
         val loggedUser = BurnerChatApp.appModule.usersRepository.getLoggedUser()
@@ -38,7 +40,9 @@ object ChatsRepository {
 
             val messagesData = document.data["messages"] as List<Map<String, Any>>
             messagesData.forEach { msgData ->
-                chat.messages.add(parseMessageData(msgData))
+                parseMessageData(msgData) {
+                    chat.messages.add(it)
+                }
             }
 
             chatsDataBase.add(chat)
@@ -73,7 +77,7 @@ object ChatsRepository {
         else {
             val originalMessages = chat.messages
             for (msg in chat.messages) {
-                if (msg.getUserId() == user.uid) {
+                if (msg.getUserEmail() == user.uid) {
                     originalMessages.remove(msg)
                 }
             }
@@ -126,9 +130,9 @@ object ChatsRepository {
             updatedMessages.add(
                 mapOf(
                     "content" to msg.getContent(),
-                    "sender" to msg.getUserId(),
+                    "sender" to msg.getUserEmail(),
                     "createdAt" to msg.getSentDate(),
-                    "messageType" to msg.getMessageTypeCode(msg.getUserId())
+                    "messageType" to msg.getMessageTypeCode(msg.getUserEmail())
                 )
             )
         }
@@ -138,15 +142,15 @@ object ChatsRepository {
     private fun getUpdatedMapMessages(chat: Chat, message: Message): List<Map<String, Any>> {
         val updatedMessages = convertMessagesToMap(chat.messages)
 
-        when (message.getMessageTypeCode(message.getUserId())) {
+        when (message.getMessageTypeCode(message.getUserEmail())) {
             0, 1 -> {
                 // Text message
                 updatedMessages.add(
                     mapOf(
                         "content" to message.getContent(),
-                        "sender" to message.getUserId(),
+                        "sender" to message.getUserEmail(),
                         "createdAt" to message.getSentDate(),
-                        "messageType" to message.getMessageTypeCode(message.getUserId())
+                        "messageType" to message.getMessageTypeCode(message.getUserEmail())
                     )
                 )
             }
@@ -156,9 +160,9 @@ object ChatsRepository {
                 updatedMessages.add(
                     mapOf(
                         "content" to message.getContent(),
-                        "sender" to message.getUserId(),
+                        "sender" to message.getUserEmail(),
                         "createdAt" to message.getSentDate(),
-                        "messageType" to message.getMessageTypeCode(message.getUserId()),
+                        "messageType" to message.getMessageTypeCode(message.getUserEmail()),
                         "textContent" to (message as ImageMessage).textContent
                     )
                 )
@@ -185,7 +189,9 @@ object ChatsRepository {
 
             val messagesData = result.data?.get("messages") as List<Map<String, Any>>
             messagesData.forEach { msgData ->
-                chat.messages.add(parseMessageData(msgData))
+                parseMessageData(msgData) {
+                    chat.messages.add(it)
+                }
             }
 
 
@@ -240,48 +246,76 @@ object ChatsRepository {
                         snapshot.data?.get("messages") as? List<Map<String, Any>> ?: emptyList()
 
                     messagesList.forEach { msgData ->
-                        messages.add(parseMessageData(msgData))
+                        parseMessageData(msgData) {
+                            messages.add(it)
+                        }
                     }
                 }
                 onMessagesUpdated(messages)
             }
     }
 
-    private fun parseMessageData(msgData: Map<String, Any>): Message {
-        when (msgData["messageType"]) {
+    private fun parseMessageData(
+        msgData: Map<String, Any>,
+        onComplete: (Message) -> Unit
+    ) {
+        val senderId = msgData["sender"] as String
+        var userEmail = userList[senderId]
+
+        if (userEmail == null) {
+            // Get the user data from the database
+            BurnerChatApp.appModule.usersRepository.getUser(senderId) { userDTO ->
+                if (userDTO != null) {
+                    userList[senderId] = userDTO.email
+                    userEmail = userDTO.email
+                }
+                // Proceed with parsing after fetching the email
+                processMessageData(msgData, userEmail, onComplete)
+            }
+        } else {
+            // User email is already cached, proceed immediately
+            processMessageData(msgData, userEmail, onComplete)
+        }
+    }
+
+    private fun processMessageData(
+        msgData: Map<String, Any>,
+        userEmail: String?,
+        onComplete: (Message) -> Unit
+    ) {
+        val message = when (msgData["messageType"]) {
             0L, 1L -> {
                 // Text message
-                val message = TextMessage(
+                TextMessage(
                     msgData["content"] as String,
-                    msgData["sender"] as String,
+                    userEmail ?: msgData["sender"] as String,
                     msgData["createdAt"] as Timestamp
                 )
-                return message
             }
 
             2L, 3L -> {
                 // Image message
-                val message = ImageMessage(
+                ImageMessage(
                     msgData["content"] as String,
-                    msgData["sender"] as String,
+                    userEmail ?: msgData["sender"] as String,
                     msgData["createdAt"] as Timestamp
-                )
-                if (msgData["textContent"] != null)
-                    message.textContent = msgData["textContent"] as String
-                else
-                    message.textContent = ""
-                return message
+                ).apply {
+                    textContent = msgData["textContent"] as? String ?: ""
+                }
             }
 
             else -> {
-                val message = TextMessage(
+                // Default to TextMessage
+                TextMessage(
                     msgData["content"] as String,
-                    msgData["sender"] as String,
+                    userEmail ?: msgData["sender"] as String,
                     msgData["createdAt"] as Timestamp
                 )
-                return message
             }
         }
+
+        // Return the message using the callback
+        onComplete(message)
     }
 
 }

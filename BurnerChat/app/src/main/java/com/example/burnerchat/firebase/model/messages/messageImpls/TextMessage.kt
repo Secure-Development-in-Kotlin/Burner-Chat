@@ -3,13 +3,12 @@ package com.example.burnerchat.firebase.model.messages.messageImpls
 import com.example.burnerchat.firebase.model.messages.Message
 import com.example.burnerchat.firebase.model.messages.MessageImpl
 import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseUser
 
 class TextMessage(
     private val text: String,
-    user: String,
+    userEmail: String,
     sentDate: Timestamp = Timestamp.now()
-) : MessageImpl(user, sentDate) {
+) : MessageImpl(userEmail, sentDate) {
     override fun getConcreteContent(): String {
         return text;
     }

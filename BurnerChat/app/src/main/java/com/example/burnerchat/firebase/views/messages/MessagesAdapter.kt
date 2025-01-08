@@ -23,10 +23,10 @@ class MessagesAdapter(
     }
     abstract class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        protected var tvDate: TextView = view.findViewById(R.id.tvDate)
+        private var tvDate: TextView = view.findViewById(R.id.tvDate)
         protected lateinit var message: Message
 
-        protected fun formatDate(message: Message): String {
+        private fun formatDate(message: Message): String {
             val timestamp = message.getSentDate()
             val localDateTime = timestamp.toDate().toInstant()
                 .atZone(ZoneId.systemDefault())
@@ -60,7 +60,7 @@ class MessagesAdapter(
     class NameTextViewHolder(view: View) : TextViewHolder(view) {
         private val tvNombre: TextView = view.findViewById(R.id.tvUser)
         override fun extraContent(message: Message) {
-            tvNombre.text = message.getUserId()
+            tvNombre.text = message.getUserEmail()
             tvMessage.text = message.getContent()
         }
     }
@@ -85,13 +85,13 @@ class MessagesAdapter(
             val text = messageCast.textContent
             ivImage.setImageBitmap(ImageUtils.decodeFromBase64(image))
             tvText.text = text
-            tvNombre.text = message.getUserId()
+            tvNombre.text = message.getUserEmail()
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         val message = messagesList[position]
-        return message.getMessageTypeCode(BurnerChatApp.appModule.usersRepository.getLoggedUser()?.uid!!)
+        return message.getMessageTypeCode(BurnerChatApp.appModule.usersRepository.getLoggedUser()?.email!!)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

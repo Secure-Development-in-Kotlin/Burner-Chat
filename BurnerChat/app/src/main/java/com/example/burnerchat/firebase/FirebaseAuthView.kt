@@ -2,6 +2,7 @@ package com.example.burnerchat.firebase
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
@@ -81,14 +82,25 @@ class FirebaseAuthView : AppCompatActivity() {
         val usersRepository = BurnerChatApp.appModule.usersRepository
 
         val currentUser = Firebase.auth.currentUser
-        val userDB = usersRepository.getUser(currentUser?.uid!!)
-        if (userDB == null) {
-            usersRepository.addUser(user)
+        val currentUserId = currentUser?.uid
+
+        if (currentUserId != null) {
+            usersRepository.getUser(currentUserId) { userDB ->
+                if (userDB == null) {
+                    // User does not exist in the database, add the user
+                    usersRepository.addUser(user)
+                } else {
+                    // User exists in the database, update the user
+                    val userDTO = UserDTO(currentUser.email!!, currentUser.photoUrl.toString())
+                    usersRepository.updateUser(currentUser, userDTO)
+                }
+            }
         } else {
-            val userDTO = UserDTO(currentUser.email!!, currentUser.photoUrl.toString())
-            usersRepository.updateUser(currentUser, userDTO)
+            // Handle the case where there is no authenticated user
+            Log.d("FirebaseAuth", "No authenticated user found.")
         }
     }
+
 
     private fun showChats() {
         val intent = Intent(applicationContext, ChatsView::class.java)

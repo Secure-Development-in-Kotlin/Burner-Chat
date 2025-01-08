@@ -112,9 +112,13 @@ class UserProfileActivity : AppCompatActivity() {
 
             viewModel.user.observe(context) { newUser ->
                 val icono = newUser.icon
-                if (!icono.isNullOrBlank()) {
-                    val bitmap = ImageUtils.decodeFromBase64(icono)
-                    ivIcon.setImageBitmap(bitmap)
+                if (icono != "null") {
+                    if (icono.isNotBlank()) {
+                        val bitmap = ImageUtils.decodeFromBase64(icono)
+                        ivIcon.setImageBitmap(bitmap)
+                    } else {
+                        ivIcon.setImageResource(R.drawable.default_icon_128)
+                    }
                 } else {
                     ivIcon.setImageResource(R.drawable.default_icon_128)
                 }

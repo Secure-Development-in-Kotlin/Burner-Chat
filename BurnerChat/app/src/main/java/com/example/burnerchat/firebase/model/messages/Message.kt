@@ -5,7 +5,7 @@ import com.google.firebase.Timestamp
 interface Message {
     fun getSentDate(): Timestamp
     fun getContent(): String
-    fun getUserId(): String
+    fun getUserEmail(): String
     fun getLastContent(): String
     fun getMessageTypeCode(userId: String): Int
     enum class LayoutType(value: Int){

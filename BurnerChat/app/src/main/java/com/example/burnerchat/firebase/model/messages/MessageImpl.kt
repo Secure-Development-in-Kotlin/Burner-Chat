@@ -1,11 +1,9 @@
 package com.example.burnerchat.firebase.model.messages
 
-import com.example.burnerchat.BurnerChatApp
 import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseUser
 
 abstract class MessageImpl(
-    private val userId: String,
+    private val userEmail: String,
     private val sentDate: Timestamp = Timestamp.now()
 ) : Message {
 
@@ -17,21 +15,21 @@ abstract class MessageImpl(
         return getConcreteContent();
     }
 
-    override fun getUserId(): String {
-        return userId;
+    override fun getUserEmail(): String {
+        return userEmail;
     }
 
     abstract fun getConcreteContent(): String;
 
     fun isYourMessage(userToCheckId: String): Boolean {
-        return  userId == userToCheckId
+        return  userEmail == userToCheckId
     }
 
     override fun getMessageTypeCode(userId: String): Int {
-        if (!isYourMessage(userId)) {
-            return getOtherType()
+        return if (!isYourMessage(userId)) {
+            getOtherType()
         } else
-            return getSelfType()
+            getSelfType()
     }
 
     protected abstract fun getSelfType(): Int

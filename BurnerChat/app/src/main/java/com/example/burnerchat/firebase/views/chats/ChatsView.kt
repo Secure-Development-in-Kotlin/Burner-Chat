@@ -64,7 +64,7 @@ class ChatsView : AppCompatActivity() {
             } else {
                 val icon = user.icon
 
-                if (TextUtils.isEmpty(icon)) {
+                if (icon == "null" || TextUtils.isEmpty(icon)){
                     ivIcon.setImageResource(R.drawable.baseline_person_24)
                 } else {
                     // Adaptar la imagen al tamaño máximo de 46dp
