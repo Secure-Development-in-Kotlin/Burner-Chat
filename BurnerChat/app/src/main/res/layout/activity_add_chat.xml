@@ -13,15 +13,14 @@
         android:id="@+id/btSingleChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="14dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginTop="120dp"
         android:backgroundTint="@color/button1"
         android:text="@string/chat_individual"
         android:textColor="@color/buttonText"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btGroupChat"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/btGroupChat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvAddContact" />
 
     <ImageButton
         android:id="@+id/ibGoBackFromAddChat"
@@ -59,52 +58,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvLogo" />
 
-    <TextView
-        android:id="@+id/tvAddQR"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16sp"
-        android:text="@string/byQR"
-        android:textColor="@color/textColor"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvAddContact" />
-
-    <Button
-        android:id="@+id/btAddQR"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16sp"
-        android:layout_marginTop="8sp"
-        android:backgroundTint="#03A9F4"
-        android:text="@string/scanQR"
-        android:textColor="@color/buttonText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvAddQR" />
-
-    <ImageView
-        android:id="@+id/ivNewChat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btAddQR"
-        tools:srcCompat="@tools:sample/avatars" />
-
     <Button
         android:id="@+id/btGroupChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="120dp"
         android:backgroundTint="@color/button1"
         android:text="@string/chat_grupal"
         android:textColor="@color/buttonText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btSingleChat" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btSingleChat" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

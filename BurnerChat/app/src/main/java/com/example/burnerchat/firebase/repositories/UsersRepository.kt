@@ -43,16 +43,14 @@ object UsersRepository {
             }
     }
 
-
     suspend fun getUserData(): UserDTO? {
-        // TODO: refactor to search by id
         val result = ChatsRepository.db.collection(USER_COLLECTION_NAME).get().await()
         for (document in result) {
             val data = document.data
             val firebaseUserData = data as Map<String, Any>
 
             if (firebaseUserData["email"] == getLoggedUser()?.email) {
-                var profilePicture = firebaseUserData["profilePicture"].toString()
+                val profilePicture = firebaseUserData["profilePicture"].toString()
 
                 val userData =
                     UserDTO(firebaseUserData["email"].toString(), profilePicture)
@@ -68,7 +66,6 @@ object UsersRepository {
         val email: String = currentUser.email.toString()
         val photoUrl: String? =
             if ((currentUser.photoUrl != null)) currentUser.photoUrl.toString() else null
-
 
         // Prepare the user document
         val userData: MutableMap<String, Any?> = HashMap()
@@ -107,7 +104,6 @@ object UsersRepository {
                 Log.e("Firestore", "Error adding/updating user data", e)
             }
     }
-
 
     // Delete everything related to the user
     fun sendPanic() {

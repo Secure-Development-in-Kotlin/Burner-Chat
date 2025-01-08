@@ -17,7 +17,7 @@ class CreateSingleChatViewModel : ViewModel() {
     private val usersRepository = BurnerChatApp.appModule.usersRepository
     private val db = Firebase.firestore
 
-    private var _createdChat = MutableLiveData<Boolean>(false)
+    private var _createdChat = MutableLiveData(false)
     val createdChat: LiveData<Boolean>
         get() = _createdChat
 

@@ -85,8 +85,6 @@ class UsersGroupAddAdapter(
                     onClickFunc(userActual)
                 }
             }
-
-
         }
 
         private fun setImage(imageUrl: String?) {

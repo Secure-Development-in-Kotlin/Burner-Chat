@@ -65,7 +65,6 @@ class ChatInfoActivity : AppCompatActivity() {
             viewModel.getUsersInChat()
             initUsersFromChatRecyler()
             initAddableUsersRecyler()
-
         }
 
         btGoBack.setOnClickListener {
@@ -101,7 +100,7 @@ class ChatInfoActivity : AppCompatActivity() {
 
     private fun initUsersFromChatRecyler() {
 
-        if (viewModel.isGroup()) {//Crear funciones
+        if (viewModel.isGroup()) { //Crear funciones
             val onClickAdd = fun(user: UserDTO) {
                 viewModel.selectUserToRemove(user)
             }

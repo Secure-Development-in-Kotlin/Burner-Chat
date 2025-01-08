@@ -45,7 +45,7 @@ class ChatInfoUserAdapter(
         }
 
         private fun setImage(imageUrl: String?) {
-            if (imageUrl.isNullOrBlank()) {
+            if (imageUrl == "null" || imageUrl.isNullOrBlank()) {
                 ivUserIcon.setImageResource(R.drawable.baseline_person_24)
             } else
                 ivUserIcon.setImageBitmap(ImageUtils.decodeFromBase64(imageUrl.toString()))

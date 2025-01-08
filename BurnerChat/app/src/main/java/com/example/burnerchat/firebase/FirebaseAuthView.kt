@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -20,6 +21,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 
 class FirebaseAuthView : AppCompatActivity() {
+    private val viewModel: FirebaseAuthViewModel by viewModels()
+
     private lateinit var etEmail: EditText
     private lateinit var etPassword: EditText
     private lateinit var btLogIn: Button
@@ -48,64 +51,39 @@ class FirebaseAuthView : AppCompatActivity() {
         btSignUp.setOnClickListener {
             val email = etEmail.text.toString()
             val password = etPassword.text.toString()
-            if (email.isNotBlank() && password.isNotBlank()) {
-                FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            syncUserInDB(it.result.user!!) {
-                                showChats()
-                            }
-                        } else {
-                            showAlert(it.exception)
-                        }
+
+            viewModel.signUp(
+                email = email,
+                password = password,
+                onSuccess = { user ->
+                    viewModel.syncUserInDB(user) {
+                        showChats()
                     }
-            }
+                },
+                onError = { exception ->
+                    showAlert(exception)
+                }
+            )
         }
 
         btLogIn.setOnClickListener {
             val email = etEmail.text.toString()
             val password = etPassword.text.toString()
-            if (email.isNotBlank() && password.isNotBlank()) {
-                FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            syncUserInDB(it.result.user!!) {
-                                showChats()
-                            }
-                        } else {
-                            showAlert(it.exception)
-                        }
+
+            viewModel.logIn(
+                email = email,
+                password = password,
+                onSuccess = { user ->
+                    viewModel.syncUserInDB(user) {
+                        showChats()
                     }
-            }
-        }
-    }
-
-    private fun syncUserInDB(user: FirebaseUser, callback: () -> Unit) {
-        val usersRepository = BurnerChatApp.appModule.usersRepository
-
-        val currentUser = Firebase.auth.currentUser
-        val currentUserId = currentUser?.uid
-
-        if (currentUserId != null) {
-            usersRepository.getUser(currentUserId) { userDB ->
-                if (userDB == null) {
-                    // User does not exist in the database, add the user
-                    usersRepository.addUser(user)
-                } else {
-                    // User exists in the database, update the user
-                    val userDTO = UserDTO(currentUser.email!!, currentUser.photoUrl.toString())
-                    usersRepository.updateUser(currentUser, userDTO)
+                },
+                onError = { exception ->
+                    showAlert(exception)
                 }
-                callback() // Ensure the callback is executed here
-            }
-        } else {
-            // Handle the case where there is no authenticated user
-            Log.d("FirebaseAuth", "No authenticated user found.")
-            callback() // Ensure the callback is executed even if no user is authenticated
+            )
         }
     }
-
-
 
     private fun showChats() {
         val intent = Intent(applicationContext, ChatsView::class.java)

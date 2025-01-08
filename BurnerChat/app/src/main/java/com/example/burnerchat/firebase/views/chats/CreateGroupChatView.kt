@@ -107,11 +107,18 @@ class CreateGroupChatView : AppCompatActivity() {
 
     private fun initConfirmButton() {
         btGroupConfirm.setOnClickListener {
+            val name = etChatName.text.toString()
+            if (name.isEmpty()) {
+                Toast.makeText(
+                    this,
+                    "El chat debe tener un nombre",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
             if (viewModel.isGroup()) {
-                val name = etChatName.text.toString()
-                if (name.isNotEmpty()) {
-                    viewModel.addChat(name)
-                }
+                viewModel.addChat(name)
             } else {
                 Toast.makeText(
                     this,

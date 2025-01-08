@@ -5,6 +5,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -83,8 +84,23 @@ class CreateSingleChatView : AppCompatActivity() {
 
         btConfirm.setOnClickListener {
             val name = etName.text.toString()
-            if (viewModel.canAdd() && name.isNotEmpty()) {
+            if (name.isEmpty()) {
+                Toast.makeText(
+                    this,
+                    "El chat debe tener un nombre",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+            if (viewModel.canAdd()) {
                 viewModel.addChat(name)
+            } else {
+                Toast.makeText(
+                    this,
+                    "Necesitas tener un usuario seleccionado",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 

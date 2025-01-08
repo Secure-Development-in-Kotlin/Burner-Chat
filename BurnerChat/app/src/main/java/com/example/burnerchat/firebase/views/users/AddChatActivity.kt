@@ -16,16 +16,13 @@ import com.example.burnerchat.firebase.views.chats.CreateSingleChatView
 class AddChatActivity : AppCompatActivity() {
     private lateinit var btSingleChat: Button
     private lateinit var btGroupChat: Button
-    private lateinit var ivIcon: ImageView
     private lateinit var btQR: Button
     private lateinit var btGoBack: ImageButton
 
     private fun initComponents() {
         btSingleChat = findViewById(R.id.btSingleChat)
         btGroupChat = findViewById(R.id.btGroupChat)
-        ivIcon = findViewById(R.id.ivNewChat)
         btGoBack = findViewById(R.id.ibGoBackFromAddChat)
-        btQR = findViewById(R.id.btAddQR)
 
         btGoBack.setOnClickListener {
             finish()
