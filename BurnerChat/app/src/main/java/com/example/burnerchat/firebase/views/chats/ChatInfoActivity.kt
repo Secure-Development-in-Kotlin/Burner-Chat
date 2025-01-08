@@ -18,10 +18,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.R
-import com.example.burnerchat.firebase.repositories.ImageUtils
 import com.example.burnerchat.firebase.model.chats.Chat
+import com.example.burnerchat.firebase.repositories.ImageUtils
 import kotlinx.coroutines.launch
-import org.w3c.dom.Text
 
 class ChatInfoActivity : AppCompatActivity() {
 
@@ -155,7 +154,7 @@ class ChatInfoActivity : AppCompatActivity() {
     private fun initSearch() {
         ibSearch.setOnClickListener {
             val string = etSearch.text.toString()
-            if (!string.isNullOrBlank()) {
+            if (string.isNotBlank()) {
                 lifecycleScope.launch {
                     viewModel.findCurrentAddableUsers(string)
                 }
@@ -225,9 +224,8 @@ class ChatInfoActivity : AppCompatActivity() {
     }
 
     private fun updateIcon(icon: String?) {
-        val icono = icon
-        if (icono != null && icono.isNotBlank()) {
-            val bitmap = ImageUtils.decodeFromBase64(icono.toString())
+        if (!icon.isNullOrBlank()) {
+            val bitmap = ImageUtils.decodeFromBase64(icon.toString())
             ivIcon.setImageBitmap(bitmap)
         } else {
             ivIcon.setImageResource(R.drawable.default_icon_128)

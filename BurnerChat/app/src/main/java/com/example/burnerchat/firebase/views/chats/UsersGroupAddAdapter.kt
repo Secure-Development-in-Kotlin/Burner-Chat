@@ -32,7 +32,7 @@ class UsersGroupAddAdapter(
         view: View,
         onClick: (UserDTO) -> Unit,
         onClickRemove: (UserDTO) -> Unit,
-        checkContains: (String) -> Boolean
+        private val checkContains: (String) -> Boolean
     ) :
         RecyclerView.ViewHolder(view) {
 
@@ -41,7 +41,6 @@ class UsersGroupAddAdapter(
         private lateinit var ibAdd: ImageButton
         private lateinit var userActual: UserDTO
         private val onClickFunc = onClick
-        private val checkContains = checkContains
         private val deleteFunc = onClickRemove
         private val vista = view
 
@@ -96,7 +95,6 @@ class UsersGroupAddAdapter(
             } else
                 ivUserIcon.setImageBitmap(ImageUtils.decodeFromBase64(imageUrl.toString()))
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

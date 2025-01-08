@@ -11,45 +11,40 @@ import com.example.burnerchat.R
 import com.example.burnerchat.firebase.repositories.ImageUtils
 
 class ChatInfoUserAdapter(
-    private var usersList:List<UserDTO>
-) :RecyclerView.Adapter<ChatInfoUserAdapter.ViewHolder>(){
-
-    fun updateUsersList(list:List<UserDTO>){
-        usersList = list
-        notifyDataSetChanged()
-    }
+    private var usersList: List<UserDTO>
+) : RecyclerView.Adapter<ChatInfoUserAdapter.ViewHolder>() {
 
     class ViewHolder(
-        view: View
-    ):RecyclerView.ViewHolder(view){
+        private val view: View
+    ) : RecyclerView.ViewHolder(view) {
 
         private val usersRepo = BurnerChatApp.appModule.usersRepository
 
         private lateinit var ivUserIcon: ImageView
         private lateinit var tvName: TextView
-        private lateinit var userActual : UserDTO
-        private val view = view
-        init  {
+        private lateinit var userActual: UserDTO
+
+        init {
             initComponents()
         }
 
-        private fun initComponents(){
+        private fun initComponents() {
             ivUserIcon = view.findViewById(R.id.ivGroupAddIcon)
             tvName = view.findViewById(R.id.tvAddUserEmail)
         }
 
-        fun bind(userInfo: UserDTO){
+        fun bind(userInfo: UserDTO) {
             userActual = userInfo
             val email = userActual.email
             val loggedUser = usersRepo.getLoggedUser()?.email!!
-            if(email == loggedUser)
-                tvName.text = userActual.email+" (You)"
+            if (email == loggedUser)
+                tvName.text = userActual.email + " (You)"
             else
                 tvName.text = userActual.email
             setImage(userActual.icon)
         }
 
-        fun setImage(imageUrl: String?) {
+        private fun setImage(imageUrl: String?) {
             if (imageUrl.isNullOrBlank()) {
                 ivUserIcon.setImageResource(R.drawable.baseline_person_24)
             } else

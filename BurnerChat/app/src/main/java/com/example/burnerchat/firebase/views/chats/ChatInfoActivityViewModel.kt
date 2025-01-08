@@ -63,12 +63,12 @@ class ChatInfoActivityViewModel : ViewModel() {
 
     suspend fun getAddableUsers() {
         val users = usersRepository.getUsersExcept(chat.value?.participants?.toList()!!)
-        _usersDBListAll.value = users!!
+        _usersDBListAll.value = users
     }
 
     suspend fun findCurrentAddableUsers(string: String) {
         val users = usersRepository.getUsersByStringExcept(string, chat.value?.participants!!)
-        _usersDBListAll.value = users!!
+        _usersDBListAll.value = users
     }
 
 
@@ -78,13 +78,13 @@ class ChatInfoActivityViewModel : ViewModel() {
 
     }
 
-    fun setChat(chat: Chat) {
+    private fun setChat(chat: Chat) {
         _chat.value = chat
     }
 
     suspend fun getUsersInChat() {
         val emails = chat.value?.participants!!
-        var users = usersRepository.getUsersByEmail(emails)
+        val users = usersRepository.getUsersByEmail(emails)
         _usersDBList.value = users
     }
 

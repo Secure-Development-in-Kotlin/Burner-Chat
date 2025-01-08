@@ -22,6 +22,7 @@ object ChatsRepository {
     val db = Firebase.firestore
 
     private const val CHATS_COLLECTION_NAME = "chats"
+
     // Map where the key is the userId and the value is the email
     private var userList = mutableMapOf<String, String>()
 
@@ -113,7 +114,7 @@ object ChatsRepository {
     }
 
     //Function to update a chat (In general)
-    fun updateChat(chat: Chat){
+    fun updateChat(chat: Chat) {
         val messages = convertMessagesToMap(chat.messages)
         val uid = chat.uid
         val name = chat.name
@@ -121,10 +122,12 @@ object ChatsRepository {
         val participants = chat.participants.toList()
         try {
             db.collection(CHATS_COLLECTION_NAME).document(uid)
-                .update("messages", messages,
-                    "name",name,
-                    "imageUrl",image,
-                    "participants", participants).addOnSuccessListener {
+                .update(
+                    "messages", messages,
+                    "name", name,
+                    "imageUrl", image,
+                    "participants", participants
+                ).addOnSuccessListener {
                     Log.d("ChatsPersistenceManager", "Chat updated")
                 }.addOnFailureListener {
                     Log.e("ChatsPersistenceManager", "Error updating chat", it)

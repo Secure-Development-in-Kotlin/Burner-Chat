@@ -9,15 +9,15 @@ class ImageMessage(
     private val base64Path: String,
     userId: String,
     sentDate: Timestamp = Timestamp.now()
-    ) : MessageImpl(userId, sentDate) {
+) : MessageImpl(userId, sentDate) {
     var textContent: String = ""
 
     override fun getConcreteContent(): String {
-        return base64Path;
+        return base64Path
     }
 
     override fun getLastContent(): String {
-        return "Image message " + textContent
+        return "Image message $textContent"
     }
 
     override fun getMessageTypeCode(userEmail: String): Int {

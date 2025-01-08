@@ -29,13 +29,12 @@ class MessagesActivity : AppCompatActivity() {
 
     // View elements
     private lateinit var tvChatName: TextView
-    private lateinit var tvServerState: TextView
     private lateinit var etMessage: EditText
     private lateinit var btSendMessage: ImageButton
     private lateinit var btSendFoto: ImageButton
     private lateinit var currentImage: Bitmap
     private lateinit var ibGoBackFromChat: ImageButton
-    private lateinit var ibChatInfo:ImageButton
+    private lateinit var ibChatInfo: ImageButton
 
     private var galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
         val galleryURI = it
@@ -96,7 +95,6 @@ class MessagesActivity : AppCompatActivity() {
         }
 
 
-
     }
 
     private fun initComponents() {
@@ -119,14 +117,11 @@ class MessagesActivity : AppCompatActivity() {
             finish()
         }
 
-        ibChatInfo.setOnClickListener{
+        ibChatInfo.setOnClickListener {
             val chat = viewModel.chat.value!!
             val intent = Intent(this, ChatInfoActivity::class.java)
-            intent.putExtra("chatId", chat?.uid)
-            if (chat != null) {
-                startActivity(intent)
-            }
-
+            intent.putExtra("chatId", chat.uid)
+            startActivity(intent)
         }
         initBtFoto()
     }

@@ -1,6 +1,5 @@
 package com.example.burnerchat.firebase.model.chats
 
-import android.util.Log
 import com.example.burnerchat.firebase.model.messages.Message
 import com.google.firebase.Timestamp
 import java.util.UUID
@@ -53,8 +52,8 @@ class Chat(
         return result
     }
 
-    fun isGroup() :Boolean{
-        return participants.size>2
+    fun isGroup(): Boolean {
+        return participants.size > 2
     }
 
 

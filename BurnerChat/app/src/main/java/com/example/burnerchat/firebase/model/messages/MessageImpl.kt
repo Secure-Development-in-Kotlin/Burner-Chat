@@ -8,25 +8,25 @@ abstract class MessageImpl(
 ) : Message {
 
     override fun getSentDate(): Timestamp {
-        return sentDate;
+        return sentDate
     }
 
     override fun getContent(): String {
-        return getConcreteContent();
+        return getConcreteContent()
     }
 
     override fun getUserEmail(): String {
-        return userEmail;
+        return userEmail
     }
 
-    abstract fun getConcreteContent(): String;
+    abstract fun getConcreteContent(): String
 
     fun isYourMessage(userToCheckId: String): Boolean {
-        return  userEmail == userToCheckId
+        return userEmail == userToCheckId
     }
 
-    override fun getMessageTypeCode(userId: String): Int {
-        return if (!isYourMessage(userId)) {
+    override fun getMessageTypeCode(userEmail: String): Int {
+        return if (!isYourMessage(userEmail)) {
             getOtherType()
         } else
             getSelfType()

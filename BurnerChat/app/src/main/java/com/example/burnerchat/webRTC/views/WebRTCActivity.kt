@@ -211,8 +211,7 @@ fun HomeScreenContent(
                         content = {
                             item {
                                 Text(
-                                    text = state.inComingRequestFrom
-                                        ?: "Nombre del pibardo", // Mostrar isConnectToPeer o texto predeterminado,
+                                    text = state.inComingRequestFrom, // Mostrar isConnectToPeer o texto predeterminado,
                                     color = Color.White,
                                     modifier = Modifier.padding(start = 16.dp)
                                 )
@@ -238,8 +237,7 @@ fun HomeScreenContent(
                     )
                 }
                 items(state.messagesFromServer.size) {
-                    val current = state.messagesFromServer[it]
-                    when (current) {
+                    when (val current = state.messagesFromServer[it]) {
                         is MessageType.Info -> {
                             Text(
                                 color = Color.White,
@@ -334,7 +332,7 @@ fun HomeScreenContent(
                     )
                     Button(
                         onClick = {
-                            dispatchAction(MainActions.SendChatMessage(chatMessage));
+                            dispatchAction(MainActions.SendChatMessage(chatMessage))
                             chatMessage = ""
                         },
                         modifier = Modifier.padding(start = 10.dp, end = 10.dp),

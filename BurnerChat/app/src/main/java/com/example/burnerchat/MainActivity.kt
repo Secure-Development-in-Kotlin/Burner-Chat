@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -12,35 +11,21 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.example.burnerchat.backend.WebRTCViewModel
 import com.example.burnerchat.firebase.FirebaseAuthView
 import com.example.burnerchat.firebase.preferences.AppPreferences
 import com.example.burnerchat.views.WebRTCActivity
-import com.example.burnerchat.firebase.views.chats.ChatsView
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
-    private val viewModel: MainActivityViewModel by viewModels()
-
-    companion object {
-        const val CLAVE_NOMBRE_USUARIO = "userName"
-    }
-
     //LogIn button
     private lateinit var btWebRTC: Button
-    private lateinit var etUserName: EditText
 
     // Firebase button
     private lateinit var btFirebase: Button
 
     // Preferencias del usuario
     private lateinit var appPreferences: AppPreferences
-
-//    init {
-//        BurnerChatApp.appModule.protocolHandler.setScope(lifecycleScope)
-//    }
 
     /**
      * Initalizes all components
@@ -64,11 +49,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Forzar el modo oscuro al inicio de la aplicación -> no funciona, hace crashear la app
-        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-
-        // Función para aplicar el tema guardado en DataStore
-        // Inicializar AppPreferences
         appPreferences = AppPreferences(this)
 
         enableEdgeToEdge()

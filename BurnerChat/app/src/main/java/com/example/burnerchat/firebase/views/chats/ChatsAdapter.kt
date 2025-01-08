@@ -8,8 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.R
-import com.example.burnerchat.firebase.repositories.ImageUtils
 import com.example.burnerchat.firebase.model.chats.Chat
+import com.example.burnerchat.firebase.repositories.ImageUtils
 
 class ChatsAdapter(
 
@@ -19,7 +19,7 @@ class ChatsAdapter(
 
 ) : RecyclerView.Adapter<ChatsAdapter.ViewHolder>() {
 
-    fun updateChatsList(list:List<Chat>){
+    fun updateChatsList(list: List<Chat>) {
         chatsList = list
         notifyDataSetChanged()
     }
@@ -57,7 +57,7 @@ class ChatsAdapter(
             tvLastMessage = view.findViewById(R.id.tvLastMessage)
         }
 
-        fun setImage(imageUrl: String?) {
+        private fun setImage(imageUrl: String?) {
             if (imageUrl == null || TextUtils.isEmpty(imageUrl.toString())) {
                 ivIcon.setImageResource(R.drawable.baseline_person_24)
             } else

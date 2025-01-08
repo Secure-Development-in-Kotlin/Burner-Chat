@@ -52,8 +52,9 @@ class FirebaseAuthView : AppCompatActivity() {
                 FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener {
                         if (it.isSuccessful) {
-                            syncUserInDB(it.result.user!!)
-                            showChats()
+                            syncUserInDB(it.result.user!!) {
+                                showChats()
+                            }
                         } else {
                             showAlert(it.exception)
                         }
@@ -68,8 +69,9 @@ class FirebaseAuthView : AppCompatActivity() {
                 FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener {
                         if (it.isSuccessful) {
-                            syncUserInDB(it.result.user!!)
-                            showChats()
+                            syncUserInDB(it.result.user!!) {
+                                showChats()
+                            }
                         } else {
                             showAlert(it.exception)
                         }
@@ -78,7 +80,7 @@ class FirebaseAuthView : AppCompatActivity() {
         }
     }
 
-    private fun syncUserInDB(user: FirebaseUser) {
+    private fun syncUserInDB(user: FirebaseUser, callback: () -> Unit) {
         val usersRepository = BurnerChatApp.appModule.usersRepository
 
         val currentUser = Firebase.auth.currentUser
@@ -94,12 +96,15 @@ class FirebaseAuthView : AppCompatActivity() {
                     val userDTO = UserDTO(currentUser.email!!, currentUser.photoUrl.toString())
                     usersRepository.updateUser(currentUser, userDTO)
                 }
+                callback() // Ensure the callback is executed here
             }
         } else {
             // Handle the case where there is no authenticated user
             Log.d("FirebaseAuth", "No authenticated user found.")
+            callback() // Ensure the callback is executed even if no user is authenticated
         }
     }
+
 
 
     private fun showChats() {

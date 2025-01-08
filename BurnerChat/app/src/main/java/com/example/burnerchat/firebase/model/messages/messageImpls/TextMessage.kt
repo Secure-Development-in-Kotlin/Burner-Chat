@@ -10,11 +10,11 @@ class TextMessage(
     sentDate: Timestamp = Timestamp.now()
 ) : MessageImpl(userEmail, sentDate) {
     override fun getConcreteContent(): String {
-        return text;
+        return text
     }
 
     override fun getLastContent(): String {
-        return text;
+        return text
     }
 
     override fun getSelfType(): Int {

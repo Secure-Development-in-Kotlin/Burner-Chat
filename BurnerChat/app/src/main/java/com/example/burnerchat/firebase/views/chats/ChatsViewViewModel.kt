@@ -6,8 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.burnerchat.BurnerChatApp
-import com.example.burnerchat.firebase.repositories.ChatsRepository
 import com.example.burnerchat.firebase.model.chats.Chat
+import com.example.burnerchat.firebase.repositories.ChatsRepository
 import kotlinx.coroutines.launch
 
 class ChatsViewViewModel : ViewModel() {
@@ -22,8 +22,6 @@ class ChatsViewViewModel : ViewModel() {
                 Log.d("Chats", chats.toString())
             }
         }
-
-
     }
 
     suspend fun fetchUser(): UserDTO? {

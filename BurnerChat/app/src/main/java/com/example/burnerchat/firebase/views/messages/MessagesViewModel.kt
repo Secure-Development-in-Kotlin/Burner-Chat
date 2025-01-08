@@ -6,10 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.burnerchat.BurnerChatApp
-import com.example.burnerchat.firebase.repositories.ImageUtils
 import com.example.burnerchat.firebase.model.chats.Chat
 import com.example.burnerchat.firebase.model.messages.messageImpls.ImageMessage
 import com.example.burnerchat.firebase.model.messages.messageImpls.TextMessage
+import com.example.burnerchat.firebase.repositories.ImageUtils
 import kotlinx.coroutines.launch
 
 class MessagesViewModel : ViewModel() {
@@ -34,20 +34,6 @@ class MessagesViewModel : ViewModel() {
             )
         }
 
-    }
-
-    fun sendImageMessage(bitmap: Bitmap) {
-        val messageObject = ImageMessage(
-            ImageUtils.convertToBase64(bitmap),
-            userRepository.getLoggedUser()?.uid!!
-        )
-
-        viewModelScope.launch {
-            chatsRepository.addMessage(
-                _chat.value!!,
-                messageObject
-            )
-        }
     }
 
     fun sendImageMessage(bitmap: Bitmap, text: String) {

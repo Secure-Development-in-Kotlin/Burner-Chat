@@ -8,19 +8,20 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.R
-import com.example.burnerchat.firebase.repositories.ImageUtils
 import com.example.burnerchat.firebase.model.messages.Message
 import com.example.burnerchat.firebase.model.messages.messageImpls.ImageMessage
+import com.example.burnerchat.firebase.repositories.ImageUtils
 import java.time.ZoneId
 
 class MessagesAdapter(
     private var messagesList: List<Message>,
 ) : RecyclerView.Adapter<MessagesAdapter.ViewHolder>() {
 
-    fun updateMessages(messages : List<Message>){
+    fun updateMessages(messages: List<Message>) {
         messagesList = messages
 
     }
+
     abstract class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         private var tvDate: TextView = view.findViewById(R.id.tvDate)
@@ -95,7 +96,6 @@ class MessagesAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-
         return when (viewType) {
             Message.LayoutType.TextoAjeno.ordinal -> {
                 val layoutElement = R.layout.other_text_message_element_view

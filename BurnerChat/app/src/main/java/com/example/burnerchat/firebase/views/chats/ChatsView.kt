@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.burnerchat.BurnerChatApp
 import com.example.burnerchat.R
 import com.example.burnerchat.firebase.FirebaseAuthView
-import com.example.burnerchat.firebase.repositories.ImageUtils
 import com.example.burnerchat.firebase.model.chats.Chat
+import com.example.burnerchat.firebase.repositories.ImageUtils
 import com.example.burnerchat.firebase.views.messages.MessagesActivity
 import com.example.burnerchat.firebase.views.users.AddChatActivity
 import com.example.burnerchat.firebase.views.users.UserProfileActivity
@@ -32,10 +32,10 @@ class ChatsView : AppCompatActivity() {
     private val userRepository = BurnerChatApp.appModule.usersRepository
 
     //Main recyclerView
-    private lateinit var rvChats: RecyclerView;
+    private lateinit var rvChats: RecyclerView
 
     //ImageView that displays the profile icon
-    private lateinit var ivIcon: ImageView;
+    private lateinit var ivIcon: ImageView
 
     //FAB which opens the add chat menu
     private lateinit var fabAdd: FloatingActionButton
@@ -64,7 +64,7 @@ class ChatsView : AppCompatActivity() {
             } else {
                 val icon = user.icon
 
-                if (icon == "null" || TextUtils.isEmpty(icon)){
+                if (icon == "null" || TextUtils.isEmpty(icon)) {
                     ivIcon.setImageResource(R.drawable.baseline_person_24)
                 } else {
                     // Adaptar la imagen al tamaño máximo de 46dp
@@ -72,17 +72,15 @@ class ChatsView : AppCompatActivity() {
                 }
             }
         }
-
-
     }
 
     /**
      * Initializes all components
      */
     private fun initComponents() {
-        rvChats = findViewById(R.id.rcChats);
-        ivIcon = findViewById(R.id.ivIcon);
-        fabAdd = findViewById(R.id.fabAdd);
+        rvChats = findViewById(R.id.rcChats)
+        ivIcon = findViewById(R.id.ivIcon)
+        fabAdd = findViewById(R.id.fabAdd)
 
         initChatRecycler()
         initFAB()

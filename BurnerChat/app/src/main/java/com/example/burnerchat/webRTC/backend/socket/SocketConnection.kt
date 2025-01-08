@@ -15,14 +15,14 @@ import java.net.URI
 private const val TAG = "SocketConnection"
 
 sealed class SocketEvents {
-    data class OnSocketMessageReceived(val message: com.example.burnerchat.webRTC.backend.socket.MessageModel) :
-        com.example.burnerchat.webRTC.backend.socket.SocketEvents()
+    data class OnSocketMessageReceived(val message: MessageModel) :
+        SocketEvents()
 
     data class ConnectionChange(val isConnected: Boolean) :
-        com.example.burnerchat.webRTC.backend.socket.SocketEvents()
+        SocketEvents()
 
     data class ConnectionError(val error: String) :
-        com.example.burnerchat.webRTC.backend.socket.SocketEvents()
+        SocketEvents()
 }
 
 class SocketConnection {
@@ -33,8 +33,8 @@ class SocketConnection {
     private val gson = Gson()
 
     private val _events =
-        MutableSharedFlow<com.example.burnerchat.webRTC.backend.socket.SocketEvents>()
-    val event: SharedFlow<com.example.burnerchat.webRTC.backend.socket.SocketEvents>
+        MutableSharedFlow<SocketEvents>()
+    val event: SharedFlow<SocketEvents>
         get() = _events
 
     fun initSocket(
@@ -44,11 +44,11 @@ class SocketConnection {
         webSocket = object : WebSocketClient(URI("ws://83.54.225.146:3000")) {
             override fun onOpen(handshakedata: ServerHandshake?) {
                 Log.d(
-                    com.example.burnerchat.webRTC.backend.socket.TAG,
+                    TAG,
                     "onOpen: ${Thread.currentThread()}"
                 )
                 sendMessageToSocket(
-                    com.example.burnerchat.webRTC.backend.socket.MessageModel(
+                    MessageModel(
                         "store_user", username, null, null
                     )
                 )
@@ -56,22 +56,22 @@ class SocketConnection {
 
             override fun onMessage(message: String?) {
                 try {
-                    Log.d(com.example.burnerchat.webRTC.backend.socket.TAG, "onMessage: $message")
+                    Log.d(TAG, "onMessage: $message")
                     emitEvent(
-                        com.example.burnerchat.webRTC.backend.socket.SocketEvents.OnSocketMessageReceived(
+                        SocketEvents.OnSocketMessageReceived(
                             gson.fromJson(
                                 message,
-                                com.example.burnerchat.webRTC.backend.socket.MessageModel::class.java
+                                MessageModel::class.java
                             )
                         )
                     )
                 } catch (e: Exception) {
                     Log.d(
-                        com.example.burnerchat.webRTC.backend.socket.TAG,
+                        TAG,
                         "onMessage: error -> $e"
                     )
                     emitEvent(
-                        com.example.burnerchat.webRTC.backend.socket.SocketEvents.ConnectionError(
+                        SocketEvents.ConnectionError(
                             e.message ?: "error in receiving messages from socket"
                         )
                     )
@@ -80,18 +80,18 @@ class SocketConnection {
             }
 
             override fun onClose(code: Int, reason: String?, remote: Boolean) {
-                Log.d(com.example.burnerchat.webRTC.backend.socket.TAG, "onClose: $reason")
+                Log.d(TAG, "onClose: $reason")
                 emitEvent(
-                    com.example.burnerchat.webRTC.backend.socket.SocketEvents.ConnectionChange(
+                    SocketEvents.ConnectionChange(
                         isConnected = false,
                     )
                 )
             }
 
             override fun onError(ex: Exception?) {
-                Log.d(com.example.burnerchat.webRTC.backend.socket.TAG, "onError: $ex")
+                Log.d(TAG, "onError: $ex")
                 emitEvent(
-                    com.example.burnerchat.webRTC.backend.socket.SocketEvents.ConnectionError(
+                    SocketEvents.ConnectionError(
                         ex?.message ?: "Socket exception"
                     )
                 )
@@ -100,7 +100,7 @@ class SocketConnection {
         webSocket?.connect()
     }
 
-    private fun emitEvent(event: com.example.burnerchat.webRTC.backend.socket.SocketEvents) {
+    private fun emitEvent(event: SocketEvents) {
         scope.launch {
             _events.emit(
                 event
@@ -108,12 +108,12 @@ class SocketConnection {
         }
     }
 
-    fun sendMessageToSocket(message: com.example.burnerchat.webRTC.backend.socket.MessageModel) {
+    fun sendMessageToSocket(message: MessageModel) {
         try {
-            Log.d(com.example.burnerchat.webRTC.backend.socket.TAG, "sendMessageToSocket: $message")
+            Log.d(TAG, "sendMessageToSocket: $message")
             webSocket?.send(Gson().toJson(message))
         } catch (e: Exception) {
-            Log.d(com.example.burnerchat.webRTC.backend.socket.TAG, "sendMessageToSocket: $e")
+            Log.d(TAG, "sendMessageToSocket: $e")
         }
     }
 

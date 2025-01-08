@@ -130,7 +130,6 @@ class UserProfileActivity : AppCompatActivity() {
         initGoBack()
         initEditIcon()
 
-
         // Botón de idioma
         initAvailableLanguages()
 

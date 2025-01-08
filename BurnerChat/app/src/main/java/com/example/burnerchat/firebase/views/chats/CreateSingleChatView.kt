@@ -24,10 +24,10 @@ class CreateSingleChatView : AppCompatActivity() {
     private lateinit var btGoBack: ImageButton
     private lateinit var btConfirm: Button
     private lateinit var etName: EditText
-    private lateinit var ivIcon:ImageView
+    private lateinit var ivIcon: ImageView
     private lateinit var ibSearch: ImageButton
     private lateinit var etSearch: EditText
-    private lateinit var rvUsers:RecyclerView
+    private lateinit var rvUsers: RecyclerView
 
     private var galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
         val galleryURI = it
@@ -43,7 +43,7 @@ class CreateSingleChatView : AppCompatActivity() {
     private fun initSearch() {
         ibSearch.setOnClickListener {
             val string = etSearch.text.toString()
-            if (!string.isNullOrBlank()) {
+            if (string.isNotBlank()) {
                 lifecycleScope.launch {
                     viewModel.findUsers(string)
                 }
@@ -106,11 +106,10 @@ class CreateSingleChatView : AppCompatActivity() {
         }
 
         viewModel.icon.observe(this) { icon ->
-            val icono = icon
-            if (icono != null && icono.isNotBlank()) {
-                val bitmap = ImageUtils.decodeFromBase64(icono.toString())
+            if (icon != null && icon.isNotBlank()) {
+                val bitmap = ImageUtils.decodeFromBase64(icon.toString())
                 ivIcon.setImageBitmap(bitmap)
-            }else{
+            } else {
                 ivIcon.setImageResource(R.drawable.default_icon_128)
             }
         }
@@ -123,7 +122,7 @@ class CreateSingleChatView : AppCompatActivity() {
             viewModel.selectUser(user.email)
         }
 
-        val onClickRemove = fun(user: UserDTO) {
+        val onClickRemove = fun(_: UserDTO) {
             viewModel.deselectUser()
         }
 

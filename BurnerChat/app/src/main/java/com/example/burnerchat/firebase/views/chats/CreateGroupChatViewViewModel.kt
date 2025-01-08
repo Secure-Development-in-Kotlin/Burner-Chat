@@ -18,46 +18,45 @@ class CreateGroupChatViewViewModel : ViewModel() {
     private val database = BurnerChatApp.appModule.usersRepository
     private var _usersList = MutableLiveData<MutableList<String>>(mutableListOf())
 
-    val usersList :LiveData<MutableList<String>>
+    val usersList: LiveData<MutableList<String>>
         get() = _usersList
 
-    private var _createdChat = MutableLiveData<Boolean>(false)
+    private var _createdChat = MutableLiveData(false)
     val createdChat: LiveData<Boolean>
         get() = _createdChat
 
     private var _dbUsersList = MutableLiveData<List<UserDTO>>(mutableListOf())
-    val dbUsersList :LiveData<List<UserDTO>>
+    val dbUsersList: LiveData<List<UserDTO>>
         get() = _dbUsersList
 
-    private var _icon = MutableLiveData<String>("")
-    val icon:LiveData<String>
-        get()=_icon
+    private var _icon = MutableLiveData("")
+    val icon: LiveData<String>
+        get() = _icon
 
-    fun addUser(userDTO: UserDTO){
+    fun addUser(userDTO: UserDTO) {
         _usersList.value!!.add(userDTO.email)
         _usersList.value = _usersList.value
     }
 
-    fun removeUser(userDTO: UserDTO){
+    fun removeUser(userDTO: UserDTO) {
         _usersList.value!!.remove(userDTO.email)
         _usersList.value = _usersList.value
     }
 
-    suspend fun getUsers(){
-        var users = database.getUsers()
+    suspend fun getUsers() {
         _dbUsersList.value = database.getUsers()
     }
 
-    suspend fun findUsers(string: String){
+    suspend fun findUsers(string: String) {
         val users = database.getUsersByString(string)
-        _dbUsersList.value=users
+        _dbUsersList.value = users
     }
 
-    fun setIcon(image:Bitmap){
+    fun setIcon(image: Bitmap) {
         _icon.value = ImageUtils.convertToBase64(image)
     }
 
-    fun addChat(name: String ) {
+    fun addChat(name: String) {
         // TODO: Check if the user exists in the db
         db.collection("users")
             .whereEqualTo("email", name)
@@ -76,12 +75,14 @@ class CreateGroupChatViewViewModel : ViewModel() {
                         "imageUrl" to icon.value
                     )
 
-
                     db.collection("chats")
                         .add(chat)
                         .addOnSuccessListener { documentReference ->
-                            Log.d("Firestore", "Chat document added with ID: ${documentReference.id}")
-                           _createdChat.value = true
+                            Log.d(
+                                "Firestore",
+                                "Chat document added with ID: ${documentReference.id}"
+                            )
+                            _createdChat.value = true
                         }
                         .addOnFailureListener { e ->
                             Log.e("Firestore", "Error adding chat document: ", e)
@@ -94,14 +95,13 @@ class CreateGroupChatViewViewModel : ViewModel() {
 
     }
 
-    fun isSelected(email:String):Boolean{
+    fun isSelected(email: String): Boolean {
         return _usersList.value!!.contains(email)
     }
 
-    fun isGroup():Boolean{
-        return _usersList.value?.size!!>=2
+    fun isGroup(): Boolean {
+        return _usersList.value?.size!! >= 2
     }
-
 
 
 }

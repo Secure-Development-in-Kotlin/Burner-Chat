@@ -93,7 +93,7 @@ class CreateGroupChatView : AppCompatActivity() {
     private fun initSearch() {
         ibSearch.setOnClickListener {
             val string = etSearch.text.toString()
-            if (!string.isNullOrBlank()) {
+            if (string.isNotBlank()) {
                 lifecycleScope.launch {
                     viewModel.findUsers(string)
                 }
@@ -107,13 +107,17 @@ class CreateGroupChatView : AppCompatActivity() {
 
     private fun initConfirmButton() {
         btGroupConfirm.setOnClickListener {
-            if(viewModel.isGroup()){
+            if (viewModel.isGroup()) {
                 val name = etChatName.text.toString()
                 if (name.isNotEmpty()) {
                     viewModel.addChat(name)
                 }
-            }else{
-                Toast.makeText(this, "Debe seleccionar un mínimo de dos usuarios", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    "Debe seleccionar un mínimo de dos usuarios",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
         }
@@ -171,9 +175,8 @@ class CreateGroupChatView : AppCompatActivity() {
         }
 
         viewModel.icon.observe(this) { icon ->
-            val icono = icon
-            if (icono != null && icono.isNotBlank()) {
-                val bitmap = ImageUtils.decodeFromBase64(icono.toString())
+            if (icon != null && icon.isNotBlank()) {
+                val bitmap = ImageUtils.decodeFromBase64(icon.toString())
                 ivGroupIcon.setImageBitmap(bitmap)
             } else {
                 ivGroupIcon.setImageResource(R.drawable.default_icon_128)

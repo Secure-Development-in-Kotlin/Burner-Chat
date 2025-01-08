@@ -19,17 +19,13 @@ class UserProfileViewModel : ViewModel() {
     val user: LiveData<UserDTO>
         get() = _user
 
-    fun setUser(user: UserDTO) {
-        _user.value = (user)
-    }
-
-    suspend fun fetchUser(){
+    suspend fun fetchUser() {
         _user.value = usersRepository.getUserData()
     }
 
     fun setIcon(bitmap: Bitmap) {
         _user.value = UserDTO(user.value?.email!!, ImageUtils.convertToBase64(bitmap))
-        usersRepository.updateUser(usersRepository.getLoggedUser()!!,_user.value!!)
+        usersRepository.updateUser(usersRepository.getLoggedUser()!!, _user.value!!)
     }
 
     fun sendPanic() {

@@ -23,15 +23,6 @@ object ImageUtils {
         return BitmapFactory.decodeByteArray(decoded, 0, decoded.size)
     }
 
-    fun loadBitmapFromURL(path: String): Bitmap {
-        val file = BitmapFactory.decodeFile(path)
-        return file
-    }
-
-    fun loadBase64FromURL(path: String): String {
-        return convertToBase64(loadBitmapFromURL(path))
-    }
-
     fun loadBitmapFromURI(uri: Uri, contentResolver: ContentResolver): Bitmap? {
         try {
             val parcelFileDescriptor = contentResolver.openFileDescriptor(uri, "r")
@@ -58,7 +49,7 @@ object ImageUtils {
         val height = bitmap.height
 
         // Calculamos el factor de escala necesario para ajustar la imagen al tamaño máximo
-        val scale = Math.min(maxSizePx.toFloat() / width, maxSizePx.toFloat() / height)
+        val scale = (maxSizePx.toFloat() / width).coerceAtMost(maxSizePx.toFloat() / height)
 
         // Redimensionamos la imagen solo si es necesario
         val scaledBitmap = if (scale < 1f) {
