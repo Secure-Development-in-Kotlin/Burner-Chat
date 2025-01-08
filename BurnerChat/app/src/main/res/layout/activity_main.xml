@@ -26,6 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="60sp"
+        android:layout_marginEnd="8dp"
         android:backgroundTint="@color/button1"
         android:text="@string/textWebRTC"
         android:textColor="@color/buttonText"
@@ -33,14 +34,16 @@
         android:textStyle="bold"
         app:cornerRadius="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btFirebase"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle"
         app:rippleColor="#2FFF00" />
 
     <Button
         android:id="@+id/btFirebase"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="114dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="8dp"
         android:layout_marginRight="60sp"
         android:backgroundTint="@color/button2"
         android:text="@string/textFirebase"
@@ -50,6 +53,7 @@
         app:cornerRadius="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btWebRTC"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
     <TextView
