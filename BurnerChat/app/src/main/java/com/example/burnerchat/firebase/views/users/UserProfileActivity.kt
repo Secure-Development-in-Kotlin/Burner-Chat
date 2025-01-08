@@ -32,7 +32,6 @@ import java.util.Locale
 class UserProfileActivity : AppCompatActivity() {
     companion object {
         const val CLAVE_NOMBRE_USUARIO: String = "nombreUsuario"
-        const val CLAVE_CLAVE_PUBLICA: String = "clavePublica"
     }
 
     private val viewModel: UserProfileViewModel by viewModels()

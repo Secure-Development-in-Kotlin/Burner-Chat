@@ -78,42 +78,7 @@ object ChatsRepository {
         }
     }
 
-    // Function to delete all messages of a user in a chat (for Panic Mode)
-    fun deleteMessagesByUser(chat: Chat, user: FirebaseUser) {
-        // If the chat is a private chat, delete the chat
-        if (chat.participants.size == 2) {
-            db.collection(CHATS_COLLECTION_NAME).document(chat.uid).delete()
-            return
-        }
-        // If the chat is a group chat, delete all messages sent by the user
-        else {
-            val originalMessages = chat.messages
-            for (msg in chat.messages) {
-                if (msg.getUserEmail() == user.uid) {
-                    originalMessages.remove(msg)
-                }
-            }
-
-            // Updates the chat with the new messages list
-            updateChat(chat, convertMessagesToMap(originalMessages))
-        }
-    }
-
-    // Function to update a group chat (for Panic Mode)
-    private fun updateChat(chat: Chat, convertMessagesToMap: MutableList<Map<String, Any>>) {
-        try {
-            db.collection(CHATS_COLLECTION_NAME).document(chat.uid)
-                .update("messages", convertMessagesToMap).addOnSuccessListener {
-                    Log.d("ChatsPersistenceManager", "Chat updated")
-                }.addOnFailureListener {
-                    Log.e("ChatsPersistenceManager", "Error updating chat", it)
-                }
-        } catch (e: Exception) {
-            Log.e("ChatsPersistenceManager", "Error updating chat", e)
-        }
-    }
-
-    //Function to update a chat (In general)
+    //Function to update a chat
     fun updateChat(chat: Chat) {
         val messages = convertMessagesToMap(chat.messages)
         val uid = chat.uid

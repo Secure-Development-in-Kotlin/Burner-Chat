@@ -57,7 +57,6 @@ class CreateGroupChatViewViewModel : ViewModel() {
     }
 
     fun addChat(name: String) {
-        // TODO: Check if the user exists in the db
         db.collection("users")
             .whereEqualTo("email", name)
             .get()
