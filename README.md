@@ -24,4 +24,4 @@ No será necesario un número de teléfono, sino que el usuario se registrará c
 
 ## Cómo configurar los servidores
 
-- Revisar [Documentación](https://github.com/Secure-Development-in-Kotlin/Burner-Chat/blob/gitblanc/documentation/Configure%20server.md)
+- Revisar [Documentación](https://github.com/Secure-Development-in-Kotlin/Burner-Chat/blob/main/documentation/Configure%20server.md)
