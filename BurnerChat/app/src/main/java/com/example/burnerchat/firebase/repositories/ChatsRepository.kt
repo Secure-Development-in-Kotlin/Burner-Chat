@@ -10,7 +10,12 @@ import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 
 object ChatsRepository {
@@ -39,10 +44,16 @@ object ChatsRepository {
             )
 
             val messagesData = document.data["messages"] as List<Map<String, Any>>
-            messagesData.forEach { msgData ->
-                parseMessageData(msgData) {
-                    chat.messages.add(it)
+            coroutineScope {
+                val messageDeferreds = messagesData.map { msgData ->
+                    async {
+                        parseMessageDataAsync(msgData) // Assume this returns the parsed message
+                    }
                 }
+
+                // Wait for all messages to be parsed and add them to the chat
+                val messages = messageDeferreds.awaitAll()
+                chat.messages.addAll(messages)
             }
 
             chatsDataBase.add(chat)
@@ -188,16 +199,29 @@ object ChatsRepository {
             )
 
             val messagesData = result.data?.get("messages") as List<Map<String, Any>>
-            messagesData.forEach { msgData ->
-                parseMessageData(msgData) {
-                    chat.messages.add(it)
+            coroutineScope {
+                val messageDeferreds = messagesData.map { msgData ->
+                    async {
+                        parseMessageDataAsync(msgData) // Assume this returns the parsed message
+                    }
                 }
-            }
 
+                // Wait for all messages to be parsed and add them to the chat
+                val messages = messageDeferreds.awaitAll()
+                chat.messages.addAll(messages)
+            }
 
             return chat
         }
         throw Exception("Chat not found")
+    }
+
+    private suspend fun parseMessageDataAsync(msgData: Map<String, Any>): Message {
+        return suspendCoroutine { continuation ->
+            parseMessageData(msgData) { message ->
+                continuation.resume(message)
+            }
+        }
     }
 
     fun listenToChatsRealtime(onChatsUpdated: (List<Chat>) -> Unit) {

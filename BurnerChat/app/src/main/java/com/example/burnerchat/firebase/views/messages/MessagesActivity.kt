@@ -86,7 +86,8 @@ class MessagesActivity : AppCompatActivity() {
             viewModel.setChat(intent.getStringExtra("chatId")!!)
             initChatRecycler()
             viewModel.chat.observe(context) { chat ->
-                //rvMessages.adapter?.notifyDataSetChanged()
+                tvChatName.text = chat.name
+
                 val adapter = rvMessages.adapter!! as MessagesAdapter
                 adapter.updateMessages(chat.messages)
                 if (chat.messages.isNotEmpty())
@@ -100,7 +101,6 @@ class MessagesActivity : AppCompatActivity() {
 
     private fun initComponents() {
         tvChatName = findViewById(R.id.tvChatName)
-        tvChatName.text = intent.getStringExtra("target")
         etMessage = findViewById(R.id.etMessage)
         btSendMessage = findViewById(R.id.btSendMessage)
         rvMessages = findViewById(R.id.rvMessages)
