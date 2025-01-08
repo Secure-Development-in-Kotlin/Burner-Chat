@@ -360,7 +360,7 @@ fun HomeScreenContent(
                             }
                         },
                         colors = TextFieldDefaults.colors(
-                            focusedIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Black,
                             unfocusedIndicatorColor = Color.Transparent,
                             unfocusedContainerColor = Color.Gray
                         ),
